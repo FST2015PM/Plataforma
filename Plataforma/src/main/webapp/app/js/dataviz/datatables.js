@@ -36,36 +36,20 @@ class DataTablesFactory {
 } );
   }
 
+//gijgo
+      alinearTabla(container, data, alinear ){
+      $('#'+container).grid({
+        dataSource: data
+        columns: [ align: alinear  ]
+      });
+      }
 
-
-
- //Gijgo
-  alinearTabla(container, data, alinear ){
-  $('#'+container).grid({
-    dataSource: data
-    columns: [ align: alinear  ]
-  });
-  }
-    ordenarTabla(container, data, ordenar){
-  $('#'+container).grid({
-      dataSource: data,
-      columns: [sortable: ordenar]
-    });
-  }
-  informacionExtra(container, data){
-    $('#'+container).grid({
-         dataSource: data,
-         uiLibrary: 'bootstrap',
-         columns: [
-               title: 'Info', field: 'Info', width: 34, type: 'icon', icon: 'glyphicon-info-sign',
-               events: {
-                 'click': function (e) {
-                     alert('record with id=' + e.data.id + ' is clicked.');
-                 }
-               }
-             }
-         ]
-     });
+      ordenarTabla(container, data, ordenar){
+      $('#'+container).grid({
+          dataSource: data,
+          columns: [sortable: ordenar]
+        });
+      }
 
 
      renombraColumna(container, data, columna, nuevoNombre){
@@ -94,20 +78,6 @@ class DataTablesFactory {
 
      }
 
-    agregarRegistro(container, data){
-    var grid = $('#'+container).grid({
-    dataSource: data,
-    primaryKey: 'ID',
-    inlineEditing: { mode: 'command' },
-    uiLibrary: 'bootstrap',
-    columns: [
-
-        { field: 'Nombre', editor: true }
-
-    ],
-    pager: { limit: 3 }
-    });
-    }
 
     editarClick(container, data){
     var grid = $('#'+container).grid({
@@ -163,8 +133,6 @@ class DataTablesFactory {
     columns: [{ field: 'Nombre' }, { field: 'Salary' } ]
     });
     }
-
-
 
 
 }
