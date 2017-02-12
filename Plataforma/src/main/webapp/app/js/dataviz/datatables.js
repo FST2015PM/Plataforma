@@ -11,12 +11,12 @@ class DataTablesFactory {
     } );
   }
 
-  habilitarOpciones(container,data,paginacion,ordenar,informacion){
+  habilitarOpciones(container,data){
   $('#'+container).DataTable( {
       data: data
-        "paging":   paginacion,
-        "ordering": ordenar,
-        "info":     informacion
+      "paging":   false,
+      "ordering": false,
+      "info":     false
     } );
   }
 
