@@ -1,0 +1,29 @@
+<link id="grid-styles" href="css/_gridster.css" rel="stylesheet">
+<div class="animated fadeIn">
+  <div class="row title-ribbon">
+    <h1 class="page-header" ng-show="formVisible">{{ pageTitle }}</h1>
+    <div class="text-left">
+      <a ng-show="formVisible" class="pull-right btn btn-primary btn-minw" ng-click="clear()"><i clsass="glyphicon glyphicon-trash"></i> Clear</a>
+      <a ng-show="formVisible" class="pull-right btn btn-primary btn-minw" ng-click="addWidget()"><i class="glyphicon glyphicon-plus"></i> Add Widget</a>
+      <a ng-show="formVisible" class="pull-right btn btn-primary btn-minw" ng-click="save()"><i class="glyphicon glyphicon-floppy-saved"></i> Save </a>
+      <div ng-show="formVisible" class="form-group">
+        <label for="dashboardName">Dashboard Name</label>
+        <input id="dashboardName" type="text" ng-model="dashboard.name">
+      </div>
+      <h1 style="display: inline-block;">{{ dashboard.name }}</h1>
+    </div>
+  </div>
+  <div gridster>
+    <ul>
+      <li ng-class="desactiveClass" gridster-item="item" ng-repeat="item in dashboard.widgets">
+        <div class="actions toolbar-widget">
+          <h5>{{item.name}}</h5>
+          <button ng-show="formVisible" id="{{item._id}}" class="glyphicon glyphicon-trash" ng-click="deleteWidget($event)"></button>
+          <button ng-show="formVisible" id="{{item._id}}" class="glyphicon glyphicon-cog" ng-click="editWidget($event)"></button>
+        </div>
+        <div class="gridster-angular-content-item" ng-bind-html="item.content">
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="animate fadeIn">
+  <div class="row title-ribbon">
+    <h3 class="pull-left">EndPoints</h3>
+    <div class="pull-right">
+      <a ui-sref="admin.addendpoint" class="btn btn-primary btn-minw">Agregar endpoint</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group has-feedback pull-right">
+      <input type="text" class="form-control" ng-model="ds.searchText">
+      <span class="form-control-feedback" aria-hidden="true">
+        <i class="fa fa-search"></i>
+      </span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>DataSource</th>
+              <th>Restricción</th>
+              <th>Activo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="ds in endpoint.dsList | filter:ds.searchText | orderBy:'ds.dataSourceName'">
+              <td>{{ds.dataSourceName}}</td>
+              <td>{{ds.restrictionType === "1" ? "Ninguna" : ds.restrictionType === "2" ? "Session token" : ""}}</td>
+              <td>
+                <span ng-show="{{ds.enabled}}" class="fa fa-check"></span>
+              </td>
+              <td class="text-right">
+                <a class="btn btn-sm btn-primary" ui-sref="admin.editendpoint({id: '{{ds._id}}'})"><span class="fa fa-pencil"></span></a>
+                <a class="btn btn-sm btn-primary" ng-click="endpoint.deleteEndPoint(ds._id)"><span class="fa fa-trash-o"></span></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

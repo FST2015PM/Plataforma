@@ -1,0 +1,104 @@
+<div class="animated fadeIn">
+  <div class="row title-ribbon">
+    <h3>{{mtown.formTitle}}</h3>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <div class="panel-body">
+        <div class="col-sm-8 col-sm-offset-2">
+          <form name="pmForm" novalidate class="form-horizontal" ng-submit="mtown.submitForm(pmForm)">
+            <div class="form-group" ng-class="{ 'has-error' : (pmForm.$submitted || pmForm.name.$touched) && pmForm.name.$invalid }">
+              <label class="col-sm-2 control-label">Nombre</label>
+              <div class="col-sm-10">
+                <input type="text" name="name" required class="form-control" ng-model="mtown.pmData.name"/>
+                <span ng-show="(pmForm.$submitted || pmForm.name.$touched) && pmForm.name.$invalid" class="help-block">El nombre es requerido</span>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (pmForm.$submitted || pmForm.description.$touched) && pmForm.description.$invalid }">
+              <label class="col-sm-2 control-label">Descripción</label>
+              <div class="col-sm-10">
+                <textarea name="description" required class="form-control" rows="3" ng-model="mtown.pmData.description"></textarea>
+                <span ng-show="(pmForm.$submitted || pmForm.description.$touched) && pmForm.description.$invalid" class="help-block">La descripción es requerida</span>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (pmForm.$submitted || pmForm.CVE_ENT.$touched) && pmForm.CVE_ENT.$invalid }">
+              <label class="col-sm-2 control-label">Estado</label>
+              <div class="col-sm-10">
+                <select name="CVE_ENT" required class="form-control" ng-model="mtown.pmData.CVE_ENT" ng-options="option.CVE_ENT as option.NOM_ENT for option in mtown.stateList | orderBy: 'NOM_ENT'" ng-change="mtown.updateMuniList(true)">
+                  <option value="">Seleccione un estado</option>
+                </select>
+                <span ng-show="(pmForm.$submitted || pmForm.CVE_ENT.$touched) && pmForm.CVE_ENT.$invalid" class="help-block">El estado es requerido</span>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (pmForm.$submitted || pmForm.CVE_MUN.$touched) && pmForm.CVE_MUN.$invalid }">
+              <label class="col-sm-2 control-label">Municipio</label>
+              <div class="col-sm-10">
+                <select name="CVE_MUN" required class="form-control" ng-model="mtown.pmData.CVE_MUN" ng-options="option.CVE_MUN as option.NOM_MUN for option in mtown.muniList | orderBy:'NOM_MUN'" ng-change="mtown.updateLocList(true)">
+                  <option value="">Seleccione un municipio</option>
+                </select>
+                <span ng-show="(pmForm.$submitted || pmForm.CVE_MUN.$touched) && pmForm.CVE_MUN.$invalid" class="help-block">El municipio es requerido</span>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (pmForm.$submitted || pmForm.CVE_LOC.$touched) && pmForm.CVE_LOC.$invalid }">
+              <label class="col-sm-2 control-label">Localidad</label>
+              <div class="col-sm-10">
+                <select name="CVE_LOC" required class="form-control" ng-model="mtown.pmData.CVE_LOC" ng-options="option.CVE_LOC as option.NOM_LOC for option in mtown.locList | orderBy:'NOM_LOC'">
+                  <option value="">Seleccione una localidad</option>
+                </select>
+                <span ng-show="(pmForm.$submitted || pmForm.CVE_LOC.$touched) && pmForm.CVE_LOC.$invalid" class="help-block">La localidad es requerida</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="accepted" ng-model="mtown.pmData.accepted"> Aceptado
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (pmForm.$submitted || pmForm.inclusion_date.$touched) && pmForm.inclusion_date.$invalid }">
+              <label class="col-sm-2 control-label">Fecha de inclusión</label>
+              <div class="col-sm-10">
+                <div class="input-group">
+									<input type="text" name="inclusion_date" class="form-control" required datetimepicker
+		                ng-model="mtown.pmData.inclusion_date"
+						        datetimepicker-options="{useCurrent: false, format:'YYYY-MM-DD'}" />
+                   <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+								</div>
+                <span ng-show="(pmForm.$submitted || pmForm.inclusion_date.$touched) && pmForm.inclusion_date.$error.required" class="help-block">La fecha de inclusión es requerida</span>
+              </div>
+            </div>
+            <!--div class="form-group">
+              <label class="col-sm-2 control-label">Fotografía</label>
+              <div class="col-sm-10">
+                <input type="file" ngf-select ng-model="pm.picFile" name="file" accept="image/*" ngf-max-size="2MB" required>
+                <img ngf-src="pm.picFile" class="img-thumbnail">
+              </div>
+            </div-->
+            <!--label>Clave Geo: </label>
+            <input id="claveGeo" name="CVE_MTW" class="form-control" type="text" ng-model="dbPM.CVE_MTW"/>
+            <label>Incorporado: </label>
+            <input type="checkbox" class="form-control" ng-model="dbPM.ACCEPTED" id="incorporado" name="ACCEPTED" >
+            <label>Imagen:</label>
+            <input type="file" ngf-select ng-model="picFile" name="file"
+                           accept="image/*" ngf-max-size="2MB" required
+                           ngf-model-invalid="errorFile">
+            <i ng-show="pmForm.file.$error.maxSize">El archivo es muy grande
+                {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
+            <img ng-show="pmForm.file.$valid" ngf-thumbnail="picFile" class="thumb" style="height: 100px"> <button ng-click="picFile = null" ng-show="picFile">Eliminar</button>
+            <span class="progress" ng-show="picFile.progress >= 0">
+              <div style="width:{{picFile.progress}}%"
+                ng-bind="picFile.progress + '%'"></div>
+            </span>
+            <span class="err" ng-show="errorMsg">{{errorMsg}}</span-->
+            <div class="text-right">
+              <button type="submit" class="btn btn-primary btn-minw">Guardar</button>
+              <button ui-sref="admin.pmcatalog" class="btn btn-default btn-minw" type="button">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

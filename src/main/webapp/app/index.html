@@ -7,7 +7,11 @@
 
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+		<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+		<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+		<link rel="manifest" href="/manifest.json">
+		<meta name="theme-color" content="#ffffff">
 
     <title>Pueblos Mágicos</title>
     <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,6 +19,7 @@
     <link href="lib/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
     <link href="lib/animate.css/animate.min.css" rel="stylesheet">
     <link href="lib/gridster/dist/jquery.gridster.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/_gridster.css">
     <link id="mainStyles" href="css/app.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -36,19 +41,24 @@
     <script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="lib/angular-animate/angular-animate.min.js"></script>
     <script src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="lib/angular-bootstrap/ui-bootstrap.min.js"></script>
     <script src="lib/oclazyload/dist/ocLazyLoad.min.js"></script>
     <script src="lib/angular-ui-codemirror/ui-codemirror.min.js"></script>
 
     <!-- App services -->
     <script src="js/modules/services.module.js"></script>
     <script src="js/services/filemanager.service.js"></script>
+    <script src="js/services/datasource.service.js"></script>
     <script src="js/services/pmcatalog.service.js"></script>
+        <script src="js/services/apikey.service.js"></script>
+    <script src="js/providers/datetimepicker.provider.js"></script>
 
     <!-- App filters -->
     <script src="js/modules/filters.module.js"></script>
 
     <!-- App directives -->
     <script src="js/modules/directives.module.js"></script>
+    <script src="js/directives/datetimepicker.directive.js"></script>
 
     <!-- App controllers -->
     <script src="js/modules/controllers.module.js"></script>
@@ -61,7 +71,24 @@
     <script src="js/controllers/maps.controller.js"></script>
     <script src="js/controllers/charts.controller.js"></script>
     <script src="js/controllers/datatables.controller.js"></script>
-    <script src="js/controllers/pmcatalog.controller.js"></script>
+    <script src="js/controllers/magictowns/pm.controller.js"></script>
+    <script src="js/controllers/magictowns/pmedit.controller.js"></script>
+    <script src="js/controllers/users/user.controller.js"></script>
+    <script src="js/controllers/users/useredit.controller.js"></script>
+    <script src="js/controllers/roles/role.controller.js"></script>
+    <script src="js/controllers/roles/roleedit.controller.js"></script>
+    <script src="js/controllers/endpoints/endpoint.controller.js"></script>
+    <script src="js/controllers/endpoints/endpointedit.controller.js"></script>
+    <script src="js/controllers/endpoints/apikey.controller.js"></script>
+    <script src="js/controllers/endpoints/apikeyedit.controller.js"></script>
+    <script src="js/controllers/geolayers/geolayer.controller.js"></script>
+    <script src="js/controllers/geolayers/geolayeredit.controller.js"></script>
+    <script src="js/controllers/geolayers/geolayerpreview.controller.js"></script>
+    <script src="js/controllers/dashboards/dashboardlist.controller.js"></script>
+    <script src="js/controllers/dashboards/editdashboard.controller.js"></script>
+    <script src="js/controllers/gridsterangular.controller.js"></script>
+    <script src="js/controllers/extractors/extractor.controller.js"></script>
+    <script src="js/controllers/extractors/extractoredit.controller.js"></script>
 
     <!-- App main modules -->
     <script src="js/modules/app.module.js"></script>

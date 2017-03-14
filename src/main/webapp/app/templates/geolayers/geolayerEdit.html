@@ -1,0 +1,45 @@
+<div class="animate fadeIn">
+  <div class="row title-ribbon">
+    <h3>{{geo.formTitle}}</h3>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <div class="panel-body">
+        <div class="col-sm-8 col-sm-offset-2">
+          <form name="editForm" novalidate class="form-horizontal" ng-submit="geo.submitForm(editForm)">
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid }">
+              <label class="col-sm-2 control-label">Nombre</label>
+              <div class="col-sm-10">
+                <input type="text" name="name" required class="form-control" ng-model="geo.layerData.name"/>
+                <span ng-show="(editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid" class="help-block">El nombre es requerido</span>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.type.$touched) && editForm.type.$invalid }">
+              <label class="col-sm-2 control-label">Tipo</label>
+              <div class="col-sm-10">
+                <select name="type" required class="form-control" ng-model="geo.layerData.type">
+                  <option value="">Seleccione un tipo</option>
+                  <option value="geoJSON">GeoJSON</option>
+                  <option value="kml">KML</option>
+                  <option value="shapeFile">ShapeFile</option>
+                </select>
+                <span ng-show="(editForm.$submitted || editForm.type.$touched) && editForm.type.$invalid" class="help-block">El tipo es requerido</span>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.file.$touched) && editForm.file.$invalid }">
+              <label class="col-sm-2 control-label">Archivo</label>
+              <div class="col-sm-10">
+                <input type="text" name="file" required class="form-control" ng-model="geo.layerData.file"/>
+                <span ng-show="(editForm.$submitted || editForm.file.$touched) && editForm.file.$invalid" class="help-block">El archivo es requerido</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <button type="submit" class="btn btn-primary btn-minw">Guardar</button>
+              <button ui-sref="admin.geolayers" class="btn btn-default btn-minw">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

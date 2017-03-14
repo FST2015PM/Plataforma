@@ -1,0 +1,36 @@
+<div class="animate fadeIn">
+  <div class="row title-ribbon">
+    <h3 class="pull-left">Dashboards</h3>
+    <div class="pull-right">
+      <a ui-sref="dashboard.editdashboard({mode:'new'})" class="btn btn-primary btn-minw">Agregar Dashboard</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Widgets</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="dashboard in dashboards.dashboardList">
+              <td>{{dashboard.name}}</td>
+              <td>
+                <span ng-show="{{dashboard.widgets }}" class="fa fa-check"></span>
+              </td>
+              <td class="text-right">
+                <a class="btn btn-sm btn-primary" ui-sref="dashboard.editdashboard({id: '{{dashboard._id}}', mode: 'view'})"><span class="fa fa-eye"></span></a> 
+                <a class="btn btn-sm btn-primary" ui-sref="dashboard.editdashboard({id: '{{dashboard._id}}', mode: 'edit'})"><span class="fa fa-pencil"></span></a>
+                <a class="btn btn-sm btn-primary" ng-click="deleteDashboard(dashboard._id)"><span class="fa fa-trash-o"></span></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

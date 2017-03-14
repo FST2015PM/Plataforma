@@ -1,0 +1,43 @@
+<div class="animate fadeIn">
+  <div class="row title-ribbon">
+    <h3 class="pull-left">Extractores</h3>
+    <div class="pull-right">
+      <a ui-sref="admin.addextractor" class="btn btn-primary btn-minw">Agregar extractor</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group has-feedback pull-right">
+      <input type="text" class="form-control" ng-model="extractors.searchText">
+      <span class="form-control-feedback" aria-hidden="true">
+        <i class="fa fa-search"></i>
+      </span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <div class="panel-body">
+        <table class="table" id="usersTable">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>DataSource</th>
+              <th>Estatus</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="extractor in extractors.extractorList | filter:extractors.searchText | orderBy:'extractor.name'">
+              <td>{{extractor.name}}</td>
+              <td>{{extractor.dataSource}}</td>
+              <td>{{extractor.status}}</td>
+              <td class="text-right">
+                <a class="btn btn-sm btn-primary" ui-sref="admin.editextractor({id: '{{extractor._id}}'})"><span class="fa fa-pencil"></span></a>
+                <a class="btn btn-sm btn-primary" ng-click="users.deleteExtractor(extractor._id)"><span class="fa fa-trash-o"></span></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

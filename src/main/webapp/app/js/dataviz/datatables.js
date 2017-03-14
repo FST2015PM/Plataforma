@@ -13,31 +13,31 @@ class DataTablesFactory {
 
   habilitarOpciones(container,data,paginacion,ordenar,informacion){
   $('#'+container).DataTable( {
-      data: data
-        "paging":   paginacion,
+        data: data,
+        "paging": paginacion,
         "ordering": ordenar,
-        "info":     informacion
+        "info": informacion
     } );
   }
 
   scrollvertical(container,data){
-  $('#'+container).DataTable( {
-        data: data
-    scrollY:        '50vh',
-    scrollCollapse: true,
-    paging:         false
-} );
+    $('#'+container).DataTable( {
+      data: data,
+      scrollY: '50vh',
+      scrollCollapse: true,
+      paging: false
+    });
   }
 
   scrollhorizontal(container,data){
-  $('#'+container).DataTable( {
-        data: data
-    "scrollX": true
-} );
+    $('#'+container).DataTable( {
+      data: data,
+      "scrollX": true
+    } );
   }
 
 
-
+/*
 
  //Gijgo
   alinearTabla(container, data, alinear ){
@@ -164,7 +164,7 @@ class DataTablesFactory {
     });
     }
 
-
+*/
 
 
 }

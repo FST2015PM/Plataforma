@@ -1,0 +1,42 @@
+<div class="animate fadeIn">
+  <div class="row title-ribbon">
+    <h3 class="pull-left">Capas</h3>
+    <div class="pull-right">
+      <a ui-sref="admin.addgeolayer" class="btn btn-primary btn-minw">Agregar capa</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group has-feedback pull-right">
+      <input type="text" class="form-control" ng-model="geo.searchText">
+      <span class="form-control-feedback" aria-hidden="true">
+        <i class="fa fa-search"></i>
+      </span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="layer in geo.layerList | filter:geo.searchText | orderBy:'name'">
+              <td>{{layer.name}}</td>
+              <td>{{layer.type}}</td>
+              <td class="text-right">
+                <a class="btn btn-sm btn-primary" ui-sref="admin.previewgeolayer({id: '{{layer._id}}'})"><span class="fa fa-map-o"></span></a>
+                <a class="btn btn-sm btn-primary" ui-sref="admin.editgeolayer({id: '{{layer._id}}'})"><span class="fa fa-pencil"></span></a>
+                <a class="btn btn-sm btn-primary" ng-click="geo.deleteLayer(layer._id)"><span class="fa fa-trash-o"></span></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

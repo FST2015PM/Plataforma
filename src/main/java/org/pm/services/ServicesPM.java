@@ -1,5 +1,6 @@
 package org.pm.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -29,6 +30,7 @@ public class ServicesPM extends HttpServlet {
     private static final String ACTION_ADD = "add";
     private static final String ACTION_UPDATE = "update";
     private static final String ACTION_DELETE = "delete";
+    private final String IMAGES_PATH = "/images/pm";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -71,6 +73,11 @@ public class ServicesPM extends HttpServlet {
             case ACTION_DELETE:
                 if (request.getParameter("id") != null && !request.getParameter("id").isEmpty()) {
                     DataObject obj = ds.fetchObjById(request.getParameter("id"));
+                    if (obj.getString("imagen") != null) {
+                        String imagePath = getImagePath(obj.getString("_id"));
+                        File oldImage = new File(request.getServletContext().getRealPath(imagePath));
+                        oldImage.delete();
+                    }
                     ds.removeObj(obj);
                 }
                 break;
@@ -97,6 +104,16 @@ public class ServicesPM extends HttpServlet {
             default:
                 break;
         }
+    }
+
+    private String getImagePath(String id) {
+        StringBuffer path = new StringBuffer(IMAGES_PATH);
+        if (id != null && !id.isEmpty() && id.lastIndexOf(":") > 0) {
+            path.append("/");
+            path.append(id.substring(id.lastIndexOf(":") + 1));
+
+        }
+        return path.toString();
     }
 
     private StringBuilder getParameters(Reader reader) throws IOException {
