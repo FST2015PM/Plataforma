@@ -35,9 +35,24 @@ class DataTablesFactory {
       "scrollX": true
     } );
   }
+  remoteData(container, data){
+  $('#'+container).DataTable( {
+    ajax: {
+        url: '/api/myData', //archivo
+        dataSrc: data
+    },
+    columns: [ ... ]
+} );
+  }
 
+/*En  gijgo para un archivo remoto
 
-/*
+  remoteData(){
+  $('#grid').grid({
+  dataSource: '/Grid/GetPlayers', //archivo
+  columns: [ { field: 'Name' }, { field: 'PlaceOfBirth' } ]
+     });
+}
 
  //Gijgo
   alinearTabla(container, data, alinear ){
@@ -85,14 +100,7 @@ class DataTablesFactory {
         });
      }
 
-     activarBusqueda(container, data, activo){
-       $('#'+container).grid({
-            dataSource: data,
-           headerFilter: activo,
-           columns: [ { field: 'Nombre' } ]
-       });
 
-     }
 
     agregarRegistro(container, data){
     var grid = $('#'+container).grid({
