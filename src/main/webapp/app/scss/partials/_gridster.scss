@@ -5,6 +5,10 @@
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
+li.ng-scope.gridster-item {
+  background-color: transparent;
+}
+
 div.gridster-desktop {
     li.gridster-item {
       background-color: #61A9CF;
@@ -19,15 +23,42 @@ div.gridster-desktop {
 }
 
 div.toolbar-widget {
+  background-color: transparent;
   width: 100%;
-  padding: 0px 5px;
-  float: left;
+  position: absolute;
+  z-index: 5;
   h5 {
-    position: absolute;
+    display: inline;
   }
   button {
+    border: 0px;
+    margin: 10px;
     float: right;
+    background-color: transparent;
   }
+}
+
+.gridster-angular-content-item {
+  width: 100%;
+  height: 100%;
+  table {
+    width: 100% !important;
+  }
+}
+
+.dataTables_wrapper.no-footer {
+  height: 100%;
+  overflow: overlay;
+}
+
+.dataTables_length {
+  margin-top: 25px;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
 }
 
 .desactive-element {

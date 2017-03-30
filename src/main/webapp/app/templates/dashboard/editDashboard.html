@@ -3,11 +3,11 @@
   <div class="row title-ribbon">
     <h1 class="page-header" ng-show="formVisible">{{ pageTitle }}</h1>
     <div class="text-left">
-      <a ng-show="formVisible" class="pull-right btn btn-primary btn-minw" ng-click="clear()"><i clsass="glyphicon glyphicon-trash"></i> Clear</a>
-      <a ng-show="formVisible" class="pull-right btn btn-primary btn-minw" ng-click="addWidget()"><i class="glyphicon glyphicon-plus"></i> Add Widget</a>
-      <a ng-show="formVisible" class="pull-right btn btn-primary btn-minw" ng-click="save()"><i class="glyphicon glyphicon-floppy-saved"></i> Save </a>
+      <div class="btn btn-group pull-right">
+        <a ng-click="returnPage()" class="pull-right btn btn-primary btn-minw">Regresar</a>
+      </div>
       <div ng-show="formVisible" class="form-group">
-        <label for="dashboardName">Dashboard Name</label>
+        <label for="dashboardName">Nombre del dashboard</label>
         <input id="dashboardName" type="text" ng-model="dashboard.name">
       </div>
       <h1 style="display: inline-block;">{{ dashboard.name }}</h1>
@@ -15,15 +15,21 @@
   </div>
   <div gridster>
     <ul>
-      <li ng-class="desactiveClass" gridster-item="item" ng-repeat="item in dashboard.widgets">
+      <li class="item-li" ng-class="desactiveClass" gridster-item="item" ng-repeat="item in dashboard.widgets">
         <div class="actions toolbar-widget">
-          <h5>{{item.name}}</h5>
+          <h5 id="{{item._id}}" ng-click="editWidget($event)"><i>{{item.name}}</i></h5>
           <button ng-show="formVisible" id="{{item._id}}" class="glyphicon glyphicon-trash" ng-click="deleteWidget($event)"></button>
-          <button ng-show="formVisible" id="{{item._id}}" class="glyphicon glyphicon-cog" ng-click="editWidget($event)"></button>
         </div>
-        <div class="gridster-angular-content-item" ng-bind-html="item.content">
-        </div>
+        <div id="content-{{item._id}}" class="gridster-angular-content-item"></div>
       </li>
     </ul>
+  </div>
+  <hr>
+  <div ng-show="formVisible" class="pull-right">
+    <div class="btn btn-group">
+      <a  class="btn btn-primary btn-minw" ng-click="clear()">Limpiar</a>
+      <a class="btn btn-primary btn-minw" ng-click="addWidget()">Agregar widget</a>
+      <a class="btn btn-primary btn-minw" ng-click="save()">Guardar</a>
+    </div>
   </div>
 </div>

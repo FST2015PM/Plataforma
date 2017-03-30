@@ -30,38 +30,95 @@ public class FSTUtils {
 	static int BUFFER = 2048;
 	
 	public static class DATA {
-		public static Object getTypedObject(String val, String type) {
-			switch (type.toLowerCase()) {
-			case "string":
-				return new String(val);
-			case "float":
-				try {
-					return Float.parseFloat(val);
-				} catch (NumberFormatException nfe) {
-					return null;
-				}
-			case "double":
-				try {
-					return Double.parseDouble(val);
-				} catch (NumberFormatException nfe) {
-					return null;
-				}
-			case "int":
-			case "integer":
-				try {
-					return Integer.parseInt(val);
-				} catch (NumberFormatException bfe) {
-					return null;
-				}
-			case "boolean":
-			case "bool":
-				if ("true".equalsIgnoreCase(val) || "false".equalsIgnoreCase(val)) {
-					return Boolean.parseBoolean(val);
-				}
-				return null;
+		public static Object inferTypedValue(String val) {
+			Object ret = parseBoolean(val);
+			if (null == ret) ret = parseInt(val);
+			if (null == ret) ret = parseLong(val);
+			if (null == ret) ret = parseDouble(val);
+			if (null == ret) ret = (String)val;
+			return ret;
+		}
+		
+		/**
+		 * Parses a string to get an Integer object
+		 * @param val Value to parse
+		 * @return Integer object for String value val
+		 */
+		public static Integer parseInt(String val) {
+			Integer ret = null;
+			if (null != val && !val.isEmpty()) {
+				//if (val.startsWith("0") && val.length() > 1) {
+				//	return ret;
+				//} else {
+					try {
+						ret = Integer.valueOf(Integer.parseInt(val));
+					} catch (NumberFormatException e) { }
+				//}
 			}
 			
-			return null;
+			return ret;
+		}
+		
+		/**
+		 * Parses a string to get an Long object
+		 * @param val Value to parse
+		 * @return Long object for String value val
+		 */
+		public static Long parseLong(String val) {
+			Long ret = null;
+			if (null != val && !val.isEmpty()) {
+				try {
+					ret = Long.valueOf(Long.parseLong(val));
+				} catch (NumberFormatException e) { }
+			}
+			return ret;
+		}
+		
+		/**
+		 * Parses a string to get an Float object
+		 * @param val Value to parse
+		 * @return Float object for String value val
+		 */
+		public static Float parseFloat(String val) {
+			Float ret = null;
+			if (null != val && !val.isEmpty()) {
+				val = val.replace(",", ".");
+				try {
+					ret = Float.valueOf(Float.parseFloat(val));
+				} catch (NumberFormatException e) { }
+			}
+			return ret;
+		}
+		
+		/**
+		 * Parses a string to get an Double object
+		 * @param val Value to parse
+		 * @return Float object for String value val
+		 */
+		public static Double parseDouble(String val) {
+			Double ret = null;
+			if (null != val && !val.isEmpty()) {
+				val = val.replace(",", ".");
+				try {
+					ret = Double.valueOf(Double.parseDouble(val));
+				} catch (NumberFormatException e) { }
+			}
+			return ret;
+		}
+		
+		/**
+		 * Parses a string to get an Boolean object
+		 * @param val Value to parse
+		 * @return Boolean object for String value val
+		 */
+		public static Boolean parseBoolean(String val) {
+			Boolean ret = null;
+			if (null != val && !val.isEmpty() && ("true".equalsIgnoreCase(val) || "false".equalsIgnoreCase(val))) {
+				try {
+					ret = Boolean.valueOf(Boolean.parseBoolean(val));
+				} catch (NumberFormatException e) { }
+			}
+			return ret;
 		}
 	}
 	

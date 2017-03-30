@@ -49,7 +49,7 @@
         <dependency>
           <groupId>net.sourceforge.csvjdbc</groupId>
           <artifactId>csvjdbc</artifactId>
-          <version>1.0.28</version>
+          <version>1.0.31</version>
         </dependency>
         <dependency>
           <groupId>commons-io</groupId>
@@ -236,7 +236,7 @@
         <dependency>
           <groupId>net.sourceforge.csvjdbc</groupId>
           <artifactId>csvjdbc</artifactId>
-          <version>1.0.28</version>
+          <version>1.0.31</version>
         </dependency>
         <dependency>
           <groupId>commons-io</groupId>

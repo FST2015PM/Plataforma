@@ -26,11 +26,9 @@ public class CSVExtractor extends PMExtractorBase {
 	}
 	
 	@Override
-	public void store() {
-		String filePath = "";
+	public void store(String filePath) {
 		HashMap<String, DataObject> colMapping = new HashMap<>();
 		Properties props = new Properties();
-		//ScriptObject extractorDef = base.getScriptObject();
 		String dbPath = filePath.substring(0, filePath.lastIndexOf("/"));
 		String tblName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length());
 		String charset = extractorDef.getString("charset");
@@ -38,6 +36,7 @@ public class CSVExtractor extends PMExtractorBase {
 		
 		tblName = tblName.substring(0, tblName.lastIndexOf("."));
 		props.put("charset", charset);
+		props.put("columnTypes", "");
 		
 		//Get column mapping
 		DataObject columnMapping = extractorDef.getDataObject("columns");
@@ -72,7 +71,7 @@ public class CSVExtractor extends PMExtractorBase {
 		    		String dataType = null != entry.getString("type") ? entry.getString("type") : "string";
 		    		
 		    		int colIdx = results.findColumn(key);
-		    		Object val = FSTUtils.DATA.getTypedObject(results.getString(colIdx), dataType);
+		    		Object val = FSTUtils.DATA.inferTypedValue(results.getString(colIdx));//TODO: Verificar tipos de datpos en columnas con el driver
 		    		//System.out.println("Key: "+key+", finalName: "+finalField+", colIndex: "+colIdx);
 		    		if (null != val) {
 		    			obj.put(finalField, val);

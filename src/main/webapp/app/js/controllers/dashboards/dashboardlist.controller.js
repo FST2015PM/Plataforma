@@ -9,7 +9,7 @@
   function DashboardListCtrl($Datasource, $stateParams, $state, $scope) {
     let context = this;
     context.formTitle = "Agregar Dashboard";
-    context.dashboardList = [];
+    context.dashboardLsist = [];
 
     $Datasource.listDatasources()
     .then(res => {

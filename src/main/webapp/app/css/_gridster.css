@@ -4,6 +4,9 @@
   -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); }
 
+li.ng-scope.gridster-item {
+  background-color: transparent; }
+
 div.gridster-desktop li.gridster-item {
   background-color: #61A9CF;
   cursor: pointer;
@@ -13,13 +16,35 @@ div.gridster-desktop li.gridster-item {
     height: 100%; }
 
 div.toolbar-widget {
+  background-color: transparent;
   width: 100%;
-  padding: 0px 5px;
-  float: left; }
+  position: absolute;
+  z-index: 5; }
   div.toolbar-widget h5 {
-    position: absolute; }
+    display: inline; }
   div.toolbar-widget button {
-    float: right; }
+    border: 0px;
+    margin: 10px;
+    float: right;
+    background-color: transparent; }
+
+.gridster-angular-content-item {
+  width: 100%;
+  height: 100%; }
+  .gridster-angular-content-item table {
+    width: 100% !important; }
+
+.dataTables_wrapper.no-footer {
+  height: 100%;
+  overflow: overlay; }
+
+.dataTables_length {
+  margin-top: 25px; }
+
+.scrollable-menu {
+  height: auto;
+  max-height: 200px;
+  overflow-x: hidden; }
 
 .desactive-element {
   pointer-events: none;

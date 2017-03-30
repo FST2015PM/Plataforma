@@ -2,7 +2,9 @@ package org.fst2015pm.swbforms.api.v1;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.SortedMap;
 import java.util.UUID;
 
 import javax.servlet.ServletContext;
@@ -10,8 +12,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -20,8 +24,10 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.fst2015pm.swbforms.extractors.ExtractorManager;
 import org.fst2015pm.swbforms.utils.FSTUtils;
 import org.fst2015pm.swbforms.utils.SimpleMailSender;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.semanticwb.datamanager.DataList;
@@ -33,19 +39,41 @@ import org.semanticwb.datamanager.SWBScriptEngine;
 import org.semanticwb.datamanager.SWBScriptUtils;
 import org.semanticwb.datamanager.script.ScriptObject;
 
+import com.mongodb.util.JSON;
+
 /**
  * REST endpoint for app services
  * @author Hasdai Pacheco
  */
 @Path("/services")
 public class AppServices {
-	private int expireMinutes = 30;
 	SWBScriptEngine engine;
 	SWBScriptUtils utils;
+	ExtractorManager extractorManager = ExtractorManager.getInstance();
 	@Context HttpServletRequest httpRequest;
 	private boolean useCookies = false;
+	private int expireMinutes = 30;
 	private final static String ERROR_FORBIDDEN = "{\"error\":\"Unauthorized\"}";
 	private final static String ERROR_BADREQUEST = "{\"error\":\"Bad request\"}";
+	
+	@GET
+	@Path("/encoding")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAvailableCharsets() {
+		HttpSession session = httpRequest.getSession();
+
+		if (null != session.getAttribute("_USER_")) {
+			SortedMap<String, Charset> map = Charset.availableCharsets();
+			JSONArray ret = new JSONArray();
+			for(String key : map.keySet()) {
+				ret.put(key);
+			}
+			
+			return Response.status(200).entity(ret.toString()).build();
+		}
+		
+		return Response.status(401).build();
+	}
 	
 	@POST
 	@Path("/apikey")
@@ -208,6 +236,54 @@ public class AppServices {
 		return ret;
 	}
 	
+	@GET
+	@Path("/extractor/status/{objId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getExtractorStatus(@PathParam("objId") String oId) {
+		HttpSession session = httpRequest.getSession();
+
+		if (null != session.getAttribute("_USER_")) {
+			if (null == oId || oId.isEmpty()) return Response.status(400).build();
+			String status = extractorManager.getStatus(oId);
+			
+			return Response.status(200).entity("{\"status\":\"" + status + "\"}").build();
+		}
+		
+		return Response.status(401).build();
+	}
+	
+	@POST
+	@Path("/extractor/start/{objId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response startExtractor(@PathParam("objId") String oId) {
+		HttpSession session = httpRequest.getSession();
+
+		if (null != session.getAttribute("_USER_")) {
+			if (null == oId || oId.isEmpty()) return Response.status(400).build();
+			extractorManager.startExtractor(oId);
+			
+			return Response.status(200).build();
+		}
+		
+		return Response.status(401).build();
+	}
+	
+	@POST
+	@Path("/extractor/load/{objId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response loadExtractor(@PathParam("objId") String oId) {
+		HttpSession session = httpRequest.getSession();
+
+		if (null != session.getAttribute("_USER_")) {
+			if (null == oId || oId.isEmpty()) return Response.status(400).build();
+			extractorManager.loadExtractor(oId);
+			
+			return Response.status(200).build();
+		}
+		
+		return Response.status(401).build();
+	}
+	
 	/**
 	 * Destroys a user session
 	 * @return Status code 200 on success
@@ -218,7 +294,6 @@ public class AppServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response logoutUser(@Context HttpHeaders headers) throws IOException {
-		DataObject res = new DataObject();
 		
 		//Check auth headers
 		String authorization = getAuthCredentials(httpRequest, useCookies);

@@ -1,8 +1,6 @@
 package org.fst2015pm.swbforms.api.v1;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -33,8 +31,6 @@ import org.semanticwb.datamanager.SWBDataSource;
 import org.semanticwb.datamanager.SWBScriptEngine;
 import org.semanticwb.datamanager.script.ScriptObject;
 
-import com.mongodb.BasicDBObject;
-
 /**
  * REST service to manage datasources from inside app.
  **/
@@ -45,7 +41,7 @@ public class DataSourceService {
 	@Context
 	HttpServletRequest httpRequest;
 	boolean checkSession = false;
-
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDataSourceList() throws IOException {
@@ -59,13 +55,15 @@ public class DataSourceService {
 			try {
 				ret = new JSONArray();
 				for (String name : dataSources) {
-					ret.put(name);
+					JSONObject ds = new JSONObject();
+					ds.put("name", name);
+					ret.put(ds);
 				}
 			} catch (JSONException jsex) {
 				return Response.status(500).build();
 			}
 
-			return Response.status(200).entity(ret).build();
+			return Response.status(200).entity(ret.toString()).build();
 		}
 
 		return Response.status(403).entity("forbidden").build();
@@ -103,7 +101,7 @@ public class DataSourceService {
 			for (String key : params.keySet()) {
 				String type = dsFields.get(key); 
 				if (null != type) {
-					Object typed = FSTUtils.DATA.getTypedObject(params.getFirst(key), type);
+					Object typed = FSTUtils.DATA.inferTypedValue(params.getFirst(key));//FSTUtils.DATA.getTypedObject(params.getFirst(key), type);
 					if (null != typed) {
 						queryObj.put(key, typed);
 					}
@@ -160,7 +158,7 @@ public class DataSourceService {
 
 				if (validateObject(obj)) {
 					DataObject objNew = ds.addObj(obj);
-					return Response.ok(objNew).status(200).build();
+					return Response.ok(objNew.getDataObject("response")).status(200).build();
 				} else {
 					return Response.status(400).build();
 				}

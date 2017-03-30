@@ -5,19 +5,28 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.fst2015pm.swbforms.utils.FSTUtils;
 import org.semanticwb.datamanager.DataMgr;
 import org.semanticwb.datamanager.DataObject;
+import org.semanticwb.datamanager.SWBDataSource;
+import org.semanticwb.datamanager.SWBScriptEngine;
 
 /**
  * Base class for extractors. Implements methods from PMExtractor interface.
  * @author Hasdai Pacheco
  */
 public class PMExtractorBase implements PMExtractor {
-	protected boolean extracting;
-	protected String status;
-	DataObject extractorDef;
+	static Logger log = Logger.getLogger(PMExtractorBase.class.getName());
+	
+	protected DataObject extractorDef;
+	private SWBDataSource ds;
+	private boolean extracting;
+	public static enum STATUS {
+		LOADED, STARTED, EXTRACTING, STOPPED, ABORTED, FAILLOAD
+	}
+	private STATUS status;
 	
 	/**
 	 * Constructor. Creates a new instance of PMExtractorBase.
@@ -25,7 +34,28 @@ public class PMExtractorBase implements PMExtractor {
 	public PMExtractorBase(DataObject def) {
 		extracting = false;
 		extractorDef = def;
-		status = "";
+
+		String dsName = def.getString("dataSource");
+		SWBScriptEngine eng = DataMgr.initPlatform(null);
+		
+		ds = eng.getDataSource(dsName);
+		if (null == ds) {
+			eng = DataMgr.initPlatform("/app/js/datasources/datasources.js", null);
+			ds = eng.getDataSource(dsName);
+		}
+		
+		
+		if (null == ds) { //try to load it from app datasources file
+			status = STATUS.FAILLOAD;
+		} else {
+			log.info("LOADED extractor "+getName());
+			status = STATUS.LOADED;
+		}
+	}
+	
+	@Override
+	public String getName() {
+		return null != extractorDef ? extractorDef.getString("name") : null;
 	}
 	
 	/**
@@ -36,7 +66,6 @@ public class PMExtractorBase implements PMExtractor {
 		extractorDef = def;
 	}
 	
-	
 	/**
 	 * Gets extractor definition.
 	 */
@@ -46,12 +75,13 @@ public class PMExtractorBase implements PMExtractor {
 	
 	@Override
 	public String getStatus() {
-		return status;
+		return status.toString();
 	}
 	
 	@Override
-	public void extract() throws IOException {
+	public void extract() throws IOException {		
 		if (this.extracting) return; //Prevent data overwrite
+		status = STATUS.EXTRACTING;
 		
 		this.extracting = true;
 		// Get scriptObject configuration parameters
@@ -62,6 +92,7 @@ public class PMExtractorBase implements PMExtractor {
 		
 		if (null == fileUrl || fileUrl.isEmpty()) {
 			this.extracting = false;
+			status = STATUS.STARTED;
 			return;
 		}
 		
@@ -80,7 +111,7 @@ public class PMExtractorBase implements PMExtractor {
 		
 		//Get local or remote file, store in localPath
 		if (remote) {
-			System.out.println("Downloading resource "+ url +"...");
+			log.info("PMExtractor :: Downloading resource "+ url +"...");
 			destDir = new File(destPath,"tempFile");
 			org.apache.commons.io.FileUtils.copyURLToFile(url, destDir, 5000, 5000);
 			fileUrl = destPath + "/tempFile";
@@ -91,35 +122,54 @@ public class PMExtractorBase implements PMExtractor {
 			if (null == zipPath || zipPath.isEmpty()) { //No relative path provided
 				this.extracting = false;
 				org.apache.commons.io.FileUtils.deleteQuietly(new File(destPath));
+				status = STATUS.STARTED;
 				return;
 			}
-			System.out.println("Inflating file...");
+			log.info("PMExtractor :: Inflating file...");
 			FSTUtils.ZIP.extractAll(fileUrl, destPath);
 			destPath += zipPath;
 		}
 		
 		//Store data
-		System.out.println("Storing data...");
+		log.info("PMExtractor :: Storing data...");
 		//store(base, destPath);
-		store();
-		System.out.println("Cleaning file system...");
-		org.apache.commons.io.FileUtils.deleteQuietly(new File(destPath).getParentFile());
+		store(destPath);
 		this.extracting = false;
+		status = STATUS.STARTED;
+	}
+	
+	public SWBDataSource getDataSource() {
+		return ds;
+	}
+	
+	@Override
+	public boolean canStart() {
+		return status != STATUS.FAILLOAD && (status == STATUS.STARTED || status == STATUS.STOPPED || status == STATUS.LOADED);
 	}
 
 	@Override
-	public void start() {
-		try {
-			extract();
-		} catch (IOException ioex) {
-			ioex.printStackTrace();
+	public synchronized void start() {
+		if (canStart()) {
+			log.info("PMExtractor :: Started extractor " + getName());
+			try {
+				extract();
+			} catch (IOException ioex) {
+				ioex.printStackTrace();
+			}
 		}
 	}
 
 	@Override
-	public void stop() { }
+	public synchronized void stop() {
+		status = STATUS.STOPPED;
+	}
 
-	public void store() {
+	/**
+	 * Stores data in extracting phase
+	 * @param filePath
+	 * @throws IOException
+	 */
+	public void store(String filePath) throws IOException {
 		throw new UnsupportedOperationException("Method not implemented");
 	}
 

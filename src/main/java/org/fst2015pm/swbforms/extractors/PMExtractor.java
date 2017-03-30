@@ -28,4 +28,16 @@ public interface PMExtractor {
 	 * @return STARTED | EXTRACTING | STOPPED
 	 */
 	public String getStatus();
+	
+	/**
+	 * Gets extractor name
+	 * @return Extractor name
+	 */
+	public String getName();
+	
+	/**
+	 * Checks whether extractor can be started
+	 * @return true if extractor can be started
+	 */
+	public boolean canStart();
 }

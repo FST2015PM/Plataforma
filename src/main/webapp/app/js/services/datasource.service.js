@@ -38,7 +38,7 @@
     List all objects from a given datasource
     */
     function listObjects(dsName, queryParams) {
-      var deferred = $q.defer();
+      let deferred = $q.defer();
 
       if (dsName && dsName.length) {
         let theUrl = `/api/v${apiVersion}/datasources/${dsName}`;
