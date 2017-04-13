@@ -40,4 +40,10 @@ public interface PMExtractor {
 	 * @return true if extractor can be started
 	 */
 	public boolean canStart();
+	
+	/**
+	 * Gets extractor type. Must correspond to a file extension.
+	 * @return Extractor type (CSV|DBF|KML).
+	 */
+	public String getType();
 }

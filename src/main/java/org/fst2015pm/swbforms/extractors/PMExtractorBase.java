@@ -85,7 +85,6 @@ public class PMExtractorBase implements PMExtractor {
 		
 		this.extracting = true;
 		// Get scriptObject configuration parameters
-		//ScriptObject extractorDef = base.getScriptObject();
 		String fileUrl = extractorDef.getString("fileLocation"); //Local path or URL of remote file
 		boolean zipped = Boolean.valueOf(extractorDef.getString("zipped")); //Zipped flag
 		boolean remote = false;
@@ -97,7 +96,8 @@ public class PMExtractorBase implements PMExtractor {
 		}
 		
 		//Prepare file system
-		String destPath = DataMgr.getApplicationPath() + "tempDir/" + UUID.randomUUID();
+		String uuid = UUID.randomUUID().toString().replace("-", "");
+		String destPath = org.apache.commons.io.FileUtils.getTempDirectoryPath() + uuid;
 		File destDir = new File(destPath);
 		
 		//Check if URL is provided
@@ -112,9 +112,9 @@ public class PMExtractorBase implements PMExtractor {
 		//Get local or remote file, store in localPath
 		if (remote) {
 			log.info("PMExtractor :: Downloading resource "+ url +"...");
-			destDir = new File(destPath,"tempFile");
+			destDir = new File(destPath,"tempFile"+(zipped ? "" : "." + getType().toLowerCase()));
 			org.apache.commons.io.FileUtils.copyURLToFile(url, destDir, 5000, 5000);
-			fileUrl = destPath + "/tempFile";
+			fileUrl = destPath + "/tempFile" + (zipped ? "" : "." + getType().toLowerCase());
 		}
 		
 		if (zipped) {
@@ -127,12 +127,11 @@ public class PMExtractorBase implements PMExtractor {
 			}
 			log.info("PMExtractor :: Inflating file...");
 			FSTUtils.ZIP.extractAll(fileUrl, destPath);
-			destPath += zipPath;
+			//destPath += zipPath;
 		}
 		
 		//Store data
 		log.info("PMExtractor :: Storing data...");
-		//store(base, destPath);
 		store(destPath);
 		this.extracting = false;
 		status = STATUS.STARTED;
@@ -170,6 +169,10 @@ public class PMExtractorBase implements PMExtractor {
 	 * @throws IOException
 	 */
 	public void store(String filePath) throws IOException {
+		throw new UnsupportedOperationException("Method not implemented");
+	}
+	
+	public String getType() {
 		throw new UnsupportedOperationException("Method not implemented");
 	}
 

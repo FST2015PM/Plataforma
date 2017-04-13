@@ -1,9 +1,9 @@
 let dataviz = window.dataviz || (function () {
   let mod = {version:"1.0.0"};
-  
-  mod.chartsFactory = new ChartsFactory();
-  mod.mapsFactory = new MapsFactory();
-  mod.dataTablesFactory = new DataTablesFactory();
+
+  if (typeof ChartsFactory === "function") mod.chartsFactory = new ChartsFactory();
+  if (typeof MapsFactory === "function") mod.mapsFactory = new MapsFactory();
+  if (typeof DataTablesFactory === "function") mod.dataTablesFactory = new DataTablesFactory();
 
   return mod;
 })();

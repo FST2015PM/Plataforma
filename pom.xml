@@ -97,12 +97,7 @@
           <artifactId>jersey-media-json-jackson</artifactId>
           <version>2.25.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.gdal/gdal -->
-        <dependency>
-          <groupId>org.gdal</groupId>
-          <artifactId>gdal</artifactId>
-          <version>2.1.0</version>
-        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.geotools/gt-data -->
         <dependency>
           <groupId>org.geotools</groupId>
@@ -132,6 +127,14 @@
           <artifactId>gt-geojson</artifactId>
           <version>16.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.geotools/gt-epsg-hsql -->
+		<dependency>
+		    <groupId>org.geotools</groupId>
+		    <artifactId>gt-epsg-hsql</artifactId>
+		    <version>16.1</version>
+		</dependency>
+
+
       </dependencies>
 
       <build>
@@ -284,12 +287,7 @@
           <artifactId>jersey-media-json-jackson</artifactId>
           <version>2.25.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.gdal/gdal -->
-        <dependency>
-          <groupId>org.gdal</groupId>
-          <artifactId>gdal</artifactId>
-          <version>2.1.0</version>
-        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.geotools/gt-data -->
         <dependency>
           <groupId>org.geotools</groupId>
@@ -319,6 +317,18 @@
           <artifactId>gt-geojson</artifactId>
           <version>16.1</version>
         </dependency>
+       <!-- https://mvnrepository.com/artifact/org.geotools/gt-epsg-hsql -->
+		<dependency>
+		    <groupId>org.geotools</groupId>
+		    <artifactId>gt-epsg-hsql</artifactId>
+		    <version>16.1</version>
+		</dependency>
+       <dependency>
+		    <groupId>org.geotools</groupId>
+		    <artifactId>gt-mongodb</artifactId>
+		    <version>16.1</version>
+		</dependency>
+        
       </dependencies>
 
       <build>

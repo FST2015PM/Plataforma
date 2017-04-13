@@ -14,11 +14,34 @@
                 <span ng-show="(pmForm.$submitted || pmForm.name.$touched) && pmForm.name.$invalid" class="help-block">El nombre es requerido</span>
               </div>
             </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Denominación</label>
+              <div class="col-sm-10">
+                <input type="text" name="denomination" class="form-control" ng-model="mtown.pmData.denomination"/>
+              </div>
+            </div>
             <div class="form-group" ng-class="{ 'has-error' : (pmForm.$submitted || pmForm.description.$touched) && pmForm.description.$invalid }">
               <label class="col-sm-2 control-label">Descripción</label>
               <div class="col-sm-10">
                 <textarea name="description" required class="form-control" rows="3" ng-model="mtown.pmData.description"></textarea>
                 <span ng-show="(pmForm.$submitted || pmForm.description.$touched) && pmForm.description.$invalid" class="help-block">La descripción es requerida</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Origen</label>
+              <div class="col-sm-10">
+                <textarea name="origin" class="form-control" rows="3" ng-model="mtown.pmData.origin"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Fecha de fundación</label>
+              <div class="col-sm-10">
+                <div class="input-group">
+									<input type="text" name="foundation_date" class="form-control" datetimepicker
+		                ng-model="mtown.pmData.foundation_date"
+						        datetimepicker-options="{useCurrent: false, format:'YYYY-MM-DD'}" />
+                   <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+								</div>
               </div>
             </div>
             <div class="form-group" ng-class="{ 'has-error' : (pmForm.$submitted || pmForm.CVE_ENT.$touched) && pmForm.CVE_ENT.$invalid }">
@@ -67,6 +90,18 @@
                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 								</div>
                 <span ng-show="(pmForm.$submitted || pmForm.inclusion_date.$touched) && pmForm.inclusion_date.$error.required" class="help-block">La fecha de inclusión es requerida</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Atractivos turísticos</label>
+              <div class="col-sm-10">
+                <textarea name="atractives" class="form-control" rows="3" ng-model="mtown.pmData.atractives"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Festividades</label>
+              <div class="col-sm-10">
+                <textarea name="festivities" class="form-control" rows="3" ng-model="mtown.pmData.festivities"></textarea>
               </div>
             </div>
             <!--div class="form-group">

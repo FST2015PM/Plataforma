@@ -114,6 +114,13 @@ class MapsFactory {
     return geoLayer;
   }
 
+  addKMLLayer(map, kml, engine) {
+    let parser = new DOMParser();
+    let dom = parser.parseFromString(kml, "text/xml");
+
+    this.addGeoJSONLayer(map, toGeoJSON.kml(dom), engine);
+  }
+
   addGeoJSONLayer(map, data, engine) {
     switch(engine) {
       case ENGINE_GOOGLEMAPS:

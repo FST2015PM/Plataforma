@@ -1,14 +1,14 @@
 package org.fst2015pm.swbforms.extractors;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.io.File;
+import java.io.IOException;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Properties;
 
+import org.fst2015pm.swbforms.utils.CSVDBFReader;
 import org.fst2015pm.swbforms.utils.FSTUtils;
 import org.semanticwb.datamanager.DataObject;
 
@@ -27,7 +27,66 @@ public class CSVExtractor extends PMExtractorBase {
 	
 	@Override
 	public void store(String filePath) {
-		HashMap<String, DataObject> colMapping = new HashMap<>();
+		boolean zipped = extractorDef.getBoolean("zipped", false);
+		String relPath = zipped ? extractorDef.getString("zipPath") : "tempFile.csv";
+		String charset = extractorDef.getString("charset");
+		String overwrite = extractorDef.getString("overwrite");
+		
+		boolean clearDS = true;
+		if (null == overwrite || overwrite.isEmpty()) {
+			clearDS = true;
+		} else {
+			clearDS = Boolean.valueOf(overwrite);
+		}
+		
+		CSVDBFReader reader;
+		if (null == charset || charset.isEmpty()) {
+			reader = new CSVDBFReader(filePath);
+		} else {
+			Properties props = new Properties();
+			props.setProperty("charset", charset);
+			reader = new CSVDBFReader(filePath, props);
+		}
+		
+		try {
+		    ResultSet results = reader.readResultSet(relPath, 0);
+		    ResultSetMetaData md = results.getMetaData();
+		    ArrayList<String> columNames = new ArrayList<String>();
+            
+            for (int i = 1; i <= md.getColumnCount(); i++) {
+                columNames.add(md.getColumnName(i));
+            }
+		    
+		    //Clear datasource
+		    if (clearDS) {
+		    	DataObject q = new DataObject();
+		    	q.addParam("removeByID", false);
+		    	q.addParam("data", new DataObject());
+		    	
+		    	getDataSource().remove(q);
+		    }
+		    
+		    while(results.next()) {
+		    	DataObject obj = new DataObject();
+		    	for (int i = 0; i < columNames.size(); i++) {
+                    String cname = columNames.get(i);
+                    
+                    obj.put(cname, FSTUtils.DATA.inferTypedValue(results.getString(cname)));
+                }
+		    	
+		    	getDataSource().addObj(obj);
+		    }
+		} catch (SQLException sqlex) {
+			sqlex.printStackTrace();
+		} catch (IOException ioex) {
+			ioex.printStackTrace();
+		} finally {
+			reader.closeConnection();
+			log.info("PMExtractor :: Cleaning file system...");
+			org.apache.commons.io.FileUtils.deleteQuietly(new File(filePath));
+		}
+		
+		/*HashMap<String, DataObject> colMapping = new HashMap<>();
 		Properties props = new Properties();
 		String dbPath = filePath.substring(0, filePath.lastIndexOf("/"));
 		String tblName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length());
@@ -36,10 +95,10 @@ public class CSVExtractor extends PMExtractorBase {
 		
 		tblName = tblName.substring(0, tblName.lastIndexOf("."));
 		props.put("charset", charset);
-		props.put("columnTypes", "");
+		props.put("columnTypes", "");*/
 		
 		//Get column mapping
-		DataObject columnMapping = extractorDef.getDataObject("columns");
+		/*DataObject columnMapping = extractorDef.getDataObject("columns");
 		if (null != columnMapping) {
 			//Iterator<ScriptObject> colMap = columnMapping.values().iterator();
 			Iterator<Object> colMap = columnMapping.values().iterator();
@@ -49,9 +108,9 @@ public class CSVExtractor extends PMExtractorBase {
 					colMapping.put(col.getString("src"), col);
 				}
 			}
-		}
+		}*/
 		
-		try {
+		/*try {
 			Class.forName("org.relique.jdbc.csv.CsvDriver");
 		} catch (ClassNotFoundException cnfex) {
 			cnfex.printStackTrace();
@@ -77,18 +136,20 @@ public class CSVExtractor extends PMExtractorBase {
 		    			obj.put(finalField, val);
 		    		}
 		    	}
-		    	//extractorDef.getDataSource().addObj(obj);
 		    }
 		} catch (SQLException sqlex) {
 			sqlex.printStackTrace();
-		//} catch (IOException ioex) {
-	//		ioex.printStackTrace();
 		} finally {
 			if (null != conn) {
 				try {
 					conn.close();
 				} catch(SQLException sqex) { }
 			}
-		}
+		}*/
+	}
+	
+	@Override
+	public String getType() {
+		return "CSV";
 	}
 }

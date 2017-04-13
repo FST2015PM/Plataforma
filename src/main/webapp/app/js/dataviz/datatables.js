@@ -4,14 +4,22 @@ class DataTablesFactory {
 
   //TODO: Place specific code from here
   //DATATABLES DE JQUERY
-  createDataTable(container, data, engine, options) {
-    //Sample code
-    $('#'+container).DataTable( {
-        data: data
-    } );
+
+  createDataTable(container, options = {asAjax: false, engine:"DataTables"}) {
+    let _opts = {};
+    if (typeof options === "object") {
+      _opts = options;
+    } else if (typeof options === "string") {
+      _opts.ajax = options;
+    } else {
+      _opts.data = options;
+    }
+
+    if (!_opts.dataURL && !_opts.data) return;
+    $('#'+container).DataTable(_opts);
   }
 
-  habilitarOpciones(container,data,paginacion,ordenar,informacion){
+  /*habilitarOpciones(container,data,paginacion,ordenar,informacion){
   $('#'+container).DataTable( {
         data: data,
         "paging": paginacion,
@@ -34,8 +42,9 @@ class DataTablesFactory {
       data: data,
       "scrollX": true
     } );
-  }
-  remoteData(container, data){
+  }*/
+
+  /*remoteData(container, data){
   $('#'+container).DataTable( {
     ajax: {
         url: '/api/myData', //archivo
@@ -43,7 +52,7 @@ class DataTablesFactory {
     },
     columns: [ ... ]
 } );
-  }
+  }*/
 
 /*En  gijgo para un archivo remoto
 

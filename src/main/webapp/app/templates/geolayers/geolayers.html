@@ -20,14 +20,12 @@
           <thead>
             <tr>
               <th>Nombre</th>
-              <th>Tipo</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="layer in geo.layerList | filter:geo.searchText | orderBy:'name'">
               <td>{{layer.name}}</td>
-              <td>{{layer.type}}</td>
               <td class="text-right">
                 <a class="btn btn-sm btn-primary" ui-sref="admin.previewgeolayer({id: '{{layer._id}}'})"><span class="fa fa-map-o"></span></a>
                 <a class="btn btn-sm btn-primary" ui-sref="admin.editgeolayer({id: '{{layer._id}}'})"><span class="fa fa-pencil"></span></a>

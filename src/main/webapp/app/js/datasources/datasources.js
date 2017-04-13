@@ -9,17 +9,24 @@ eng.dataSources["MagicTown"] = {
     modelid: DBModel,
     dataStore: "mongodb",
     displayField: "name",
+    ontCategory: "",
     fields: [
         {name:"CVE_ENT", title:"Clave de Estado", type:"string", required: true},
         {name:"CVE_MUN", title:"Clave de Municipio", type:"string", required: true},
         {name:"CVE_LOC", title:"Clave de Localidad", type:"string", required: true},
         {name:"CVE_MTW", title:"Clave Geo", type:"string", required: true},
         {name:"name", title: "Nombre", required: true, type: "string"},
-        {name:"description", title: "Descripción", type: "string"},
+        {name:"denomination", title: "Denominación", required: false, type: "string"},
+        {name:"description", title: "Descripción", required: true, type: "string"},
         {name:"accepted", title:"Incorporado", type:"boolean"},
         {name:"inclusion_date", title:"Fecha de incorporación", type: "date"},
-        {name:"origin", title: "Imagen", type: "string"},
-        {name:"picture", title: "Imagen", type: "string"}
+        {name:"foundation_date", title:"Fecha de fundación", type: "date"},
+        {name:"origin", title: "Origen", type: "string"},
+        {name:"location", title: "Ubicación", type: "string"},
+        {name:"ethnic_name", title: "Nombre indígena", type: "string"},
+        {name:"attractives", title: "Atractivos turísticos", required: true, type: "string"},
+        {name:"festivities", title: "Festividades", type: "string"},
+        {name:"picture", title: "Imagen", type: "image"}
     ]
 };
 eng.dataSources["State"] = {
@@ -27,6 +34,7 @@ eng.dataSources["State"] = {
     modelid: DBModel,
     dataStore: "mongodb",
     displayField: "NOM_ENT",
+    ontCategory: "",
     fields: [
         {name: "NOM_ENT", title: "Estado", required: true, type: "string"},
         {name: "CVE_ENT", title: "Clave", required: true, type: "string"},
@@ -41,6 +49,7 @@ eng.dataSources["Municipality"] = {
     modelid: DBModel,
     dataStore: "mongodb",
     displayField: "NOM_MUN",
+    ontCategory: "",
     fields: [
         {name: "NOM_MUN", title: "Municipio", required: true, type: "string"},
         {name: "CVE_MUN", title: "Clave", required: true, type: "string"},
@@ -55,6 +64,7 @@ eng.dataSources["Locality"] = {
     modelid: DBModel,
     dataStore: "mongodb",
     displayField: "NOM_LOC",
+    ontCategory: "",
     fields: [
         {name: "NOM_LOC", title: "Municipio", required: true, type: "string"},
         {name: "CVE_LOC", title: "Clave", required: true, type: "string"},
@@ -88,11 +98,14 @@ eng.dataSources["GeoLayer"] = {
     displayField: "name",
     fields: [
         {name:"name", title: "Nombre", required: true, type: "string"},
+        {name:"description", title: "Descripción", required: true, type: "string"},
         {name:"type", title: "Tipo", required: true, type: "string"},
-        {name:"file", title:"Archivo", type:"String", required: true}
+        {name:"fileLocation", title:"Ubicación", required: true, type:"string"}, //Ubicación remota del recurso
+        {name:"zipped", title:"ZIP", type:"boolean"}, //Indica si el recurso está comprimido
+        {name:"zipPath", title:"ruta", type:"string"}, //Ubicación del recurso dentro del ZIP
+        {name:"resourceURL", title:"URL del recurso", type:"string"}
     ]
 };
-
 eng.dataSources["Dashboard"] = {
     scls: "Dashboard",
     modelid: DBModel,
@@ -140,6 +153,138 @@ eng.dataSources["Widget"] = {
         {name:"sizeX", title: "Tamaño X", required: true, type: "int"},
         {name:"sizeY", title: "Tamaño Y", required: true, type: "int"}
     ]
+};
+
+eng.dataSources["Market"] = {
+  scls: "Market",
+  modelid: DBModel,
+  dataStore: "mongodb",
+  displayField: "name",
+  ontCategory: "",
+  fields: [
+    {name: "loc", title: "Ubicación", required: true, type: "boolean"},
+    {name: "name", title:"Nombre", required: true, type: "string"},
+    {name: "type", title: "Tipo", required: true, type : "string"},
+    {name: "description", title: "Descripción", required: true, type:"string"},
+    {name: "created", title:"Creado", required:false, type:"date"},
+    {name: "shopNumber", title: "Locales", required:false, type:"int"},
+    {name: "serviceDays", title: "Días de servicio", required: false, type:"boolean"},
+    {name: "serviceHours", title:"Horas de servicio", required:false, type:"boolean"},
+    {name: "image", title: "Fotografía", required: false, type:"boolean"}
+  ]
+};
+
+eng.dataSources["Parking"] = {
+  scls: "Parking",
+  modelid: DBModel,
+  dataStore: "mongodb",
+  displayField: "name",
+  ontCategory: "",
+  fields: [
+    {name: "loc", title: "Ubicación", required: true, type: "boolean"},
+    {name: "name", title:"Nombre", required: true, type: "string"},
+    {name: "fee", title:"Cuota", required:false, type:"double"},
+    {name: "freeTime", title: "Tiempo libre", required: false, type:"boolean"},
+    {name: "is24h", title: "24 horas", required: false, type:"boolean"},
+    {name: "isFormal", title: "Formal", required: false, type:"boolean"},
+    {name: "isSelfService", title: "Autoservicio", required: false, type:"boolean"},
+    {name: "carCapacity", title: "Capacidad", required:false, type:"int"},
+    {name: "contact", title:"Datos de contacto", required: true, type: "string"},
+    {name: "amenities", title:"Datos de contacto", required: false, type: "string"},
+    {name: "serviceDays", title: "Días de servicio", required: false, type:"boolean"},
+    {name: "serviceHours", title:"Horas de servicio", required:false, type:"boolean"},
+    {name: "image", title: "Fotografía", required: false, type:"boolean"}
+  ]
+};
+
+eng.dataSources["TourismSignal"] = {
+  scls: "TourismSignal",
+  modelid: DBModel,
+  dataStore: "mongodb",
+  displayField: "type",
+  ontCategory: "",
+  fields: [
+    {name: "loc", title: "Ubicación", required: true, type: "boolean"},
+    {name: "type", title: "Tipo", required: true, type : "string"},
+    {name: "position", title: "Posición", required: true, type : "string"},
+    {name: "visible", title: "Visible", required: true, type : "string"},
+    {name: "image", title: "Fotografía", required: false, type:"boolean"}
+  ]
+};
+
+eng.dataSources["ATM"] = {
+  scls: "ATM",
+  modelid: DBModel,
+  dataStore: "mongodb",
+  displayField: "bank",
+  ontCategory: "",
+  fields: [
+    {name: "loc", title: "Ubicación", required: true, type: "boolean"},
+    {name: "bank", title: "Banco", required: true, type : "string"},
+    {name: "atmUnits", title: "Unidades", required: true, type : "int"},
+    {name: "inService", title: "En servicio", required: false, type:"boolean"}
+  ]
+};
+
+eng.dataSources["TravelAgency"] = {
+  scls: "TravelAgency",
+  modelid: DBModel,
+  dataStore: "mongodb",
+  displayField: "name",
+  ontCategory: "",
+  fields: [
+    {name: "name", title: "Nombre", required: true, type : "string"},
+    {name: "loc", title: "Ubicación", required: true, type: "boolean"},
+    {name: "type", title: "Tipo", required: true, type : "string"},
+    {name: "address", title:"Dirección", required: true, type: "string"},
+    {name: "contact", title:"Datos de contacto", required: true, type: "string"},
+    {name: "products", title: "Productos", required: true, type : "string"},
+    {name: "serviceDays", title: "Días de servicio", required: false, type:"boolean"},
+    {name: "serviceHours", title:"Horas de servicio", required:false, type:"boolean"}
+  ]
+};
+
+eng.dataSources["ConferenceOffice"] = {
+  scls: "ConferenceOffice",
+  modelid: DBModel,
+  dataStore: "mongodb",
+  displayField: "name",
+  ontCategory: "",
+  fields: [
+    {name: "name", title: "Nombre", required: true, type : "string"},
+    {name: "loc", title: "Ubicación", required: true, type: "boolean"},
+    {name: "contact", title:"Datos de contacto", required: true, type: "string"},
+    {name: "manager", title: "Administrador", required: true, type : "string"},
+    {name: "image", title: "Fotografía", required: false, type:"boolean"}
+  ]
+};
+
+eng.dataSources["WifiHotSpot"] = {
+  scls: "WifiHotSpot",
+  modelid: DBModel,
+  dataStore: "mongodb",
+  displayField: "type",
+  ontCategory: "",
+  fields: [
+    {name: "loc", title: "Ubicación", required: true, type: "boolean"},
+    {name: "provider", title: "Banco", required: true, type : "string"},
+    {name: "upSpeed", title: "Unidades", required: true, type : "int"},
+    {name: "downSpeed", title: "Unidades", required: true, type : "int"},
+    {name: "accesType", title: "Banco", required: true, type : "string"},
+    {name: "inService", title: "En servicio", required: false, type:"boolean"}
+  ]
+};
+
+eng.dataSources["UndergroundWiring"] = {
+  scls: "UndergroundWiring",
+  modelid: DBModel,
+  dataStore: "mongodb",
+  displayField: "type",
+  ontCategory: "",
+  fields: [
+    {name: "loc", title: "Ubicación", required: true, type: "boolean"},
+    {name: "type", title: "Tipo", required: true, type : "string"}
+  ]
 };
 
 

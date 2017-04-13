@@ -268,32 +268,4 @@ public class DataSourceService {
 		// TODO: validate object before insert
 		return true;
 	}
-        
-	/*@GET
-	@Path("/{dsname}/{prop}/{objId}")
-	@Produces("application/json")
-	public Response getListObjectByProperty(@PathParam("dsname") String dataSourceId, @PathParam("prop") String prop,  @PathParam("objId") String oId)
-			throws IOException {
-		HttpSession session = httpRequest.getSession();
-		if ("User".equals(dataSourceId)) {
-			engine = DataMgr.initPlatform(session);
-		} else {
-			engine = DataMgr.initPlatform("/app/js/datasources/datasources.js", session);
-		}
-
-		if (!checkSession || (checkSession && null != session.getAttribute("_USER_"))) {
-			SWBDataSource ds = engine.getDataSource(dataSourceId);
-
-			if (null == ds) return Response.status(400).build();
-                        DataObject query = new DataObject();
-                        query.addSubObject("data").addParam(prop, oId);
-			DataObject dsFetch = ds.fetch(query);
-			if (null == dsFetch)
-				return Response.status(400).build();
-
-			return Response.status(200).entity(dsFetch).build();
-		}
-
-		return Response.status(403).entity("forbidden").build();
-	} */
 }

@@ -1,5 +1,5 @@
 {
-  "name": "FST2015",
+  "name": "fst2015",
   "version": "1.0.0",
   "authors": [
     "Hasdai Pacheco"
@@ -47,7 +47,11 @@
     "angular-gridster": "0.13.14",
     "leaflet.geoCSV": "https://github.com/joker-x/Leaflet.geoCSV.git",
     "underscore": "^1.8.3",
-    "eonasdan-bootstrap-datetimepicker": "^4.17.45"
+    "eonasdan-bootstrap-datetimepicker": "^4.17.45",
+    "togeojson": "https://github.com/mapbox/togeojson.git#v0.16.0",
+    "papaparse": "^4.2.0",
+    "datatables.net": "^2.1.1",
+    "datatables.net-bs": "^2.1.1"
   },
   "resolutions": {
     "jquery": "~2.1.4",

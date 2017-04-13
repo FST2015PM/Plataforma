@@ -16,6 +16,7 @@
     service.stopExtractor = stopExtractor;
     service.getStatus = getStatus;
     service.getEncodingList = getEncodingList;
+    service.downloadPreview = downloadPreview;
 
     return service;
 
@@ -97,6 +98,25 @@
           deferred.reject();
         }
       }).catch((error) => {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    };
+
+    function downloadPreview(fileLocation, zipped=false, charset="UTF-8", relPath) {
+      let deferred = $q.defer();
+
+      if (fileLocation === undefined) return;
+      let _url = `/api/v${apiVersion}/services/csvpreview`
+      let request = $http({
+        url: _url,
+        data: {fileLocation: fileLocation, zipped: zipped, charset: charset, zipPath: relPath},
+        method: "POST"
+      }).then((response) => {
+        deferred.resolve(response);
+      })
+      .catch((error) => {
         deferred.reject(error);
       });
 

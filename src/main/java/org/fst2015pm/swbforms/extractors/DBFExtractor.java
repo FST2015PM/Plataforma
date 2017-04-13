@@ -2,24 +2,15 @@ package org.fst2015pm.swbforms.extractors;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.fst2015pm.swbforms.servlet.PMExtractorsContextListener;
+import org.fst2015pm.swbforms.utils.CSVDBFReader;
 import org.fst2015pm.swbforms.utils.FSTUtils;
-import org.semanticwb.datamanager.DataList;
 import org.semanticwb.datamanager.DataObject;
 
 public class DBFExtractor extends PMExtractorBase {
@@ -33,25 +24,23 @@ public class DBFExtractor extends PMExtractorBase {
 	
 	@Override
 	public void store(String filePath) throws IOException {
-		HashMap<String, DataObject> colMapping = new HashMap<>();
-		Properties props = new Properties();
-		String dbPath = filePath.substring(0, filePath.lastIndexOf("/"));
-		String tblName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length());
+		//HashMap<String, DataObject> colMapping = new HashMap<>();
+		String relPath = extractorDef.getString("zipPath","tempFile");
 		String charset = extractorDef.getString("charset");
 		String overwrite = extractorDef.getString("overwrite");
 		boolean clearDS = true;
-		boolean mapColumns = false;
+		Properties props = new Properties();
+		props.setProperty("fileExtension", ".dbf");
+		
+		if (null != charset && !charset.isEmpty()) props.put("charset", charset); 
+		
 		if (null == overwrite || overwrite.isEmpty()) {
 			clearDS = true;
 		} else {
 			clearDS= Boolean.valueOf(overwrite);
 		}
 		
-		if (null == charset || charset.isEmpty()) charset = "UTF-8";
-		
-		tblName = tblName.substring(0, tblName.lastIndexOf("."));
-		props.put("fileExtension", ".dbf");
-		props.put("charset", charset);
+		CSVDBFReader reader = new CSVDBFReader(filePath, props);
 		
 		//Get column mapping
 		/*DataList columnMapping = extractorDef.getDataList("columns");
@@ -70,18 +59,10 @@ public class DBFExtractor extends PMExtractorBase {
 			}
 		}*/
 		
-		try {
-			Class.forName("org.relique.jdbc.csv.CsvDriver");
-		} catch (ClassNotFoundException cnfex) {
-			cnfex.printStackTrace();
-		}
 		
-		Connection conn = null;
+		
 		try {
-			conn = DriverManager.getConnection("jdbc:relique:csv:" + dbPath, props);
-		    Statement stmt = conn.createStatement();
-		    ResultSet results = stmt.executeQuery("SELECT * FROM "+tblName);
-		    
+		    ResultSet results = reader.readResultSet(relPath, 0);
 		    ResultSetMetaData md = results.getMetaData();
 		    ArrayList<String> columNames = new ArrayList<String>();
             
@@ -124,16 +105,15 @@ public class DBFExtractor extends PMExtractorBase {
 		    }
 		} catch (SQLException sqlex) {
 			sqlex.printStackTrace();
-		//} catch (IOException ioex) {
-		//	ioex.printStackTrace();
 		} finally {
-			if (null != conn) {
-				try {
-					conn.close();
-				} catch(SQLException sqex) { }
-			}
+			reader.closeConnection();
 			log.info("PMExtractor :: Cleaning file system...");
-			org.apache.commons.io.FileUtils.deleteQuietly(new File(filePath).getParentFile());
+			org.apache.commons.io.FileUtils.deleteQuietly(new File(filePath));
 		}
+	}
+	
+	@Override
+	public String getType() {
+		return "DBF";
 	}
 }
