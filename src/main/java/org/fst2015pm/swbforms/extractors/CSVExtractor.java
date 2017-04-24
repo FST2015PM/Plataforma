@@ -48,7 +48,12 @@ public class CSVExtractor extends PMExtractorBase {
 			reader = new CSVDBFReader(filePath, props);
 		}
 		
+		//File tempJson = new  File(FileUtils.getTempDirectory() + "/tempJSON.json");
+		//BufferedWriter w = null;
+		//System.out.println("Writing to "+tempJson.getAbsolutePath());
+		
 		try {
+			//w = new BufferedWriter(new FileWriter(tempJson));
 		    ResultSet results = reader.readResultSet(relPath, 0);
 		    ResultSetMetaData md = results.getMetaData();
 		    ArrayList<String> columNames = new ArrayList<String>();
@@ -73,16 +78,24 @@ public class CSVExtractor extends PMExtractorBase {
                     
                     obj.put(cname, FSTUtils.DATA.inferTypedValue(results.getString(cname)));
                 }
-		    	
+		    	//w.write(obj.toString());
 		    	getDataSource().addObj(obj);
 		    }
+		    //w.close();
 		} catch (SQLException sqlex) {
 			sqlex.printStackTrace();
+			setStatus(STATUS.ABORTED);
 		} catch (IOException ioex) {
+			setStatus(STATUS.ABORTED);
 			ioex.printStackTrace();
 		} finally {
 			reader.closeConnection();
 			log.info("PMExtractor :: Cleaning file system...");
+			/*try {
+				if (null != w) w.close();
+			} catch (IOException e) {
+				
+			}*/
 			org.apache.commons.io.FileUtils.deleteQuietly(new File(filePath));
 		}
 		

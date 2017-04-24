@@ -62,32 +62,36 @@ public class ExtractorTask extends TimerTask {
 	                		extractor.start();
 	                		extractorStarted = true;
 	                	} else {
-	                		long tiempo = dobj.getLong("timer");
-	                    	String unidad = dobj.getString("unit");
-	                    	long unitmilis = 0l;
-	                    	
-	                    	switch(unidad) {
-	                    		case "min":
-	                    			unitmilis = tiempo * 60 * 1000;
-	                    			break;
-	                    		case "h":
-	                    			unitmilis = tiempo * 60 * 60 * 1000;
-	                    			break;
-	                    		case "d":
-	                    			unitmilis = tiempo * 24 * 60 * 60 * 1000;
-	                    			break;
-	                    		case "m":
-	                    			unitmilis = tiempo * 30 * 24 * 60 * 60 * 1000;
-	                    			break;
-	                    	}
+	                		try {
+		                		long tiempo = dobj.getLong("timer");
+		                    	String unidad = dobj.getString("unit");
+		                    	long unitmilis = 0l;
 		                    	
-	                    	if (unitmilis > 0) {
-	                    		unitmilis = unitmilis + nextExecution.getTime();
-	                    		if(new Date().getTime() > unitmilis) {
-	                                extractor.start();
-	                                extractorStarted = true;
-	                            }
-	                    	}
+		                    	switch(unidad) {
+		                    		case "min":
+		                    			unitmilis = tiempo * 60 * 1000;
+		                    			break;
+		                    		case "h":
+		                    			unitmilis = tiempo * 60 * 60 * 1000;
+		                    			break;
+		                    		case "d":
+		                    			unitmilis = tiempo * 24 * 60 * 60 * 1000;
+		                    			break;
+		                    		case "m":
+		                    			unitmilis = tiempo * 30 * 24 * 60 * 60 * 1000;
+		                    			break;
+		                    	}
+			                    	
+		                    	if (unitmilis > 0) {
+		                    		unitmilis = unitmilis + nextExecution.getTime();
+		                    		if(new Date().getTime() > unitmilis) {
+		                                extractor.start();
+		                                extractorStarted = true;
+		                            }
+		                    	}
+	                		} catch (Exception ex) { //NFE
+	                			log.severe("Error getting extractor config data");
+	                		}
 	                	}
 	                	
 	                	if (extractorStarted) {

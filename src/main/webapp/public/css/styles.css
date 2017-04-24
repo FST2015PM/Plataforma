@@ -1,0 +1,134 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+@media only screen and (max-width : 320px) {
+
+    }
+@media only screen and (max-width : 480px) {
+
+    }
+@media only screen and (max-width : 768px) {
+
+    }
+@media only screen and (max-width : 992px) {
+
+    }
+header {
+    background: #2f4050 none repeat scroll 0 0;
+    height: 109px;
+}
+header h2 img {
+    margin-right: 5%;
+}
+header h2 {
+    margin-bottom: 0 !important;
+    margin-top: 10px;
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 220%;
+}
+@media only screen and (max-width : 992px) {
+     header h2 {
+        font-size: 160%;
+    }
+    }
+@media only screen and (max-width : 768px) {
+     header h2 {
+        font-size: 20px;
+    }
+    }
+@media only screen and (max-width : 480px) {
+    header h2 {
+        font-size: 13px;
+    line-height: 1px;
+    }
+    header h2 img {
+    max-width: 35px;
+}
+    header {
+        height: 60px;
+    }
+    }
+.content-back {
+    background: rgba(47, 64, 80, 0.65) none repeat scroll 0 0;
+    min-height: 300px;
+    margin-top: 10%;
+    color: #fff!important;
+}
+.carousel-control.right, .carousel-control.left {
+    background: transparent!important;
+}
+.full-width {
+    width: 100%;
+}
+.btn-primary {
+  background-color: #1ab394;
+  border-color: #1ab394;
+  color: #FFFFFF;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary:active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .btn-primary.active:focus {
+    background-color: #18a689;
+    border-color: #18a689;
+    color: #FFFFFF;
+}
+
+#carrusel, #login {
+    margin-top: 2%;
+}
+#login a, #login a:hover {
+    color: #fff;
+}
+.btn-reg {
+    background-color: #fff;
+    border-color: #fff;
+    color: #676a6c!important;
+}
+.btn-reg:hover {
+    background-color: #ececec;
+    border-color: #ececec;
+    color: #676a6c!important;
+}
+.morecontent span {
+    display: none;
+}
+.morelink {
+    display: block;
+}
+.carousel {
+    min-height: 300px;
+}
+.carousel-inner {
+    margin: 0 auto;
+    width: 90%;
+}
+.carousel-control {
+    width: 0!important;
+}
+.morelink, .morelink:hover {
+    color: #fff!important;
+    display: block;
+    font-style: italic;
+    font-weight: 100;
+    text-align: right;
+    font-size: 18px!important;
+}
+.more {
+    font-size: 22px;
+}
+@media only screen and (max-width : 480px) {
+    .more {
+    font-size: 18px;
+}
+    }
+.more h2 {
+    margin-top: 0!important;
+}
+.item {
+    text-align: justify;
+}
+.text-medium {
+    font-size: 13px;
+}
+.text-small {
+    font-size: 12px;
+}

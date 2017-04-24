@@ -2,9 +2,7 @@
 class DataTablesFactory {
   constructor() { }
 
-  //TODO: Place specific code from here
   //DATATABLES DE JQUERY
-
   createDataTable(container, options = {asAjax: false, engine:"DataTables"}) {
     let _opts = {};
     if (typeof options === "object") {
@@ -16,7 +14,7 @@ class DataTablesFactory {
     }
 
     if (!_opts.dataURL && !_opts.data) return;
-    $('#'+container).DataTable(_opts);
+    return $('#'+container).DataTable(_opts);
   }
 
   /*habilitarOpciones(container,data,paginacion,ordenar,informacion){

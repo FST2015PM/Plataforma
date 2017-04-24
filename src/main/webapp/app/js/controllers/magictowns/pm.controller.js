@@ -5,22 +5,21 @@
     .module('FST2015PM.controllers')
     .controller('PMCatalog', PMCatalog);
 
-  PMCatalog.$inject = ['$Datasource'];
-  function PMCatalog($Datasource) {
+  PMCatalog.$inject = ['$Datasource', '$timeout'];
+  function PMCatalog($Datasource, $timeout) {
     let cnt = this;
     cnt.pmList = [];
+
+    angular.element(document).ready(function () {
+      $timeout(() => {
+        $(".sameheight").matchHeight();
+      }, 2000);
+    });
 
     $Datasource.listObjects("MagicTown")
     .then((response) => {
       if (response.data.data && response.data.data.length) {
         cnt.pmList = response.data.data;
-        cnt.pmList.forEach(item => {
-          if (item.PICTURE) {
-            item.PICTURE = "../images/pm/"+item._id.substring(item._id.lastIndexOf(":") + 1) + "/" + item.PICTURE;
-          } else {
-            item.PICTURE = "../app/img/pmLogo.png";
-          }
-        });
       }
     });
 

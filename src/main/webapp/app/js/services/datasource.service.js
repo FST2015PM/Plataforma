@@ -16,11 +16,46 @@
     service.updateObject = updateObject;
     service.getObject = getObject;
     service.removeObject = removeObject;
-    //service.getListObjByProp = getListObjByProp;
+    service.updateDBSources = updateDBSources;
+    service.listEndpoints = listEndpoints;
 
     return service;
 
     //Service iplementation
+
+    function listEndpoints() {
+      let deferred = $q.defer();
+      let theUrl = `/api/v${apiVersion}/services/dsendpoint`;
+
+      let request = $http({
+        url: theUrl,
+        method: "GET"
+      }).then((response) => {
+        deferred.resolve(response);
+      })
+      .catch((error) => {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function updateDBSources() {
+      let deferred = $q.defer();
+      let theUrl = `/api/v${apiVersion}/services/updatedbsources`;
+
+      let request = $http({
+        url: theUrl,
+        method: "POST"
+      }).then((response) => {
+        deferred.resolve(response);
+      })
+      .catch((error) => {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
 
     /**
     Gets a list of all datasource names

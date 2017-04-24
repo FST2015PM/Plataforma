@@ -3,10 +3,10 @@
 
   angular
     .module("FST2015PM.controllers")
-    .controller("DashboardListCtrl", DashboardListCtrl);
+    .controller("DashboardCtrl", DashboardCtrl);
 
-  DashboardListCtrl.$inject = ["$Datasource", "$stateParams", "$state","$scope"];
-  function DashboardListCtrl($Datasource, $stateParams, $state, $scope) {
+  DashboardCtrl.$inject = ["$Datasource", "$stateParams", "$state","$scope"];
+  function DashboardCtrl($Datasource, $stateParams, $state, $scope) {
     let context = this;
     context.formTitle = "Agregar Dashboard";
     context.dashboardLsist = [];

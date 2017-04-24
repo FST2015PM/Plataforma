@@ -1,0 +1,71 @@
+<style type="text/css">
+  a, a:focus, a:hover { color: #fff; }
+
+  html, body {
+    background: url('{{pm.pmData.picture || ""}}') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+    height: 100%;
+    background-color: darkgray;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0,0,0,.5);
+  }
+
+  .vcenter {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    background: rgba(47, 64, 80, 0.65);
+    padding: 30px;
+  }
+
+  .button-holder {
+    margin-top:30px;
+  }
+
+  .pm-detail {
+    margin-top: 40px;
+  }
+
+  @media (min-width: 768px) {
+    .col-sm-6:nth-child(2) {
+      border-left: 1px solid white;
+    }
+
+    .pm-detail {
+      margin-top: auto;
+    }
+  }
+</style>
+<div>
+  <div class="vcenter">
+    <div class="row">
+      <div class="col-sm-6">
+        <h1>{{pm.pmData.name}}</h1>
+        <p class="lead">{{pm.pmData.denomination}}</p>
+        <p>{{pm.pmData.description}}</p>
+      </div>
+      <div class="col-sm-6 text-left pm-detail">
+        <h3>Origen</h3>
+        <p class="small">{{pm.pmData.origin}}</p>
+
+        <h3>Atractivos turísticos</h3>
+        <p class="small" ng-bind-html="pm.pmData.atractives"></p>
+
+        <h3>Festividades</h3>
+        <p class="small" ng-bind-html="pm.pmData.festivities"></p>
+      </div>
+    </div>
+    <div class="row text-center button-holder">
+      <div class="col-sm-12">
+        <button type="button" ui-sref="admin.pmcatalog" class="btn btn-primary">Volver al listado</button>
+      </div>
+    </div>
+  </div>
+</div>

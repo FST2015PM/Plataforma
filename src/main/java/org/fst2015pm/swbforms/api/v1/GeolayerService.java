@@ -19,6 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
 import org.fst2015pm.swbforms.utils.FSTUtils;
 import org.fst2015pm.swbforms.utils.ShapeFileConverter;
 import org.json.JSONException;
@@ -43,20 +44,20 @@ public class GeolayerService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listGeoLayers() {
 		HttpSession session = httpRequest.getSession();
-		SWBScriptEngine engine = DataMgr.initPlatform("/app/js/datasources/datasources.js", session);
+		SWBScriptEngine engine = DataMgr.initPlatform(session);
 		SWBDataSource ds = engine.getDataSource("GeoLayer");
-		
+
 		if (null != session.getAttribute("_USER_")) {
 			if (null == ds) {
 				return Response.status(500).build();
 			}
-			
+
 			DataObject dsFetch = null;
 			try {
 				DataObject wrapper = new DataObject();
 				wrapper.put("data", new DataObject());
 				dsFetch = ds.fetch(wrapper);
-				
+
 				if (null != dsFetch) {
 					DataObject response = dsFetch.getDataObject("response");
 					if (null != response) {
@@ -75,33 +76,33 @@ public class GeolayerService {
 				return Response.status(500).build();
 			}
 		}
-		
+
 		return Response.status(401).build();
 	}
-	
+
 	@POST
 	@Path("/geoLayers")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addGeoLayer(String content) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		engine = DataMgr.initPlatform("/app/js/datasources/datasources.js", session);
+		engine = DataMgr.initPlatform(session);
 
 		if (null != session.getAttribute("_USER_")) {
 			SWBDataSource ds = engine.getDataSource("GeoLayer");
 			if (null == ds) return Response.status(400).build();
-			
+
 			JSONObject objData = null;
 			try {
 				objData = new JSONObject(content);
 			} catch (JSONException jspex) {
 				return Response.status(500).build();
 			}
-			
+
 			if (null != objData) {
 				objData.remove("_id");
 				//Transform JSON to dataobject to avoid fail
-				DataObject obj = (DataObject) DataObject.parseJSON(content);									
+				DataObject obj = (DataObject) DataObject.parseJSON(content);
 				DataObject objNew = ds.addObj(obj);
 				DataObject response = objNew.getDataObject("response");
 
@@ -109,19 +110,20 @@ public class GeolayerService {
 				if (null != response && 0 == response.getInt("status")) {
 					DataObject dlist = response.getDataObject("data");
 					String oId = dlist.getId();
-					
+
 					if (null != oId) {
 						if (oId.lastIndexOf(":") > 0) oId = oId.substring(oId.lastIndexOf(":") + 1);
-						
-						//Try to update resource 
-			            if (updateLayerResource(obj)) {
-			            	String type = "." + obj.getString("type");
-			            	String requestUrl = httpRequest.getScheme() +
-								"://" + httpRequest.getServerName() + 
+
+						//Try to update resource
+			            if (updateLayerResource(dlist)) {
+			            	String type = "." + dlist.getString("type");
+
+			            	String requestUrl = ("production".equals(FSTUtils.getEnvConfig()) ? "https" : httpRequest.getScheme()) +
+								"://" + httpRequest.getServerName() +
 								(80 == httpRequest.getServerPort() ? "" : ":" + httpRequest.getServerPort()) +
 								"/public/geolayers/" + oId + (".shp".equals(type) ? ".geojson" : type);
-			            	obj.put("resourceURL", requestUrl);
-			            	ds.updateObj(obj);
+			            	dlist.put("resourceURL", requestUrl);
+			            	ds.updateObj(dlist);
 			            }
 					}
 				}
@@ -131,13 +133,13 @@ public class GeolayerService {
 
 		return Response.status(403).entity(ERROR_FORBIDDEN).build();
 	}
-	
+
 	@GET
 	@Path("/geoLayers/{objId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGeoLayer(@PathParam("objId") String oId) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		engine = DataMgr.initPlatform("/app/js/datasources/datasources.js", session);
+		engine = DataMgr.initPlatform(session);
 
 		if (null != session.getAttribute("_USER_")) {
 			SWBDataSource ds = engine.getDataSource("GeoLayer");
@@ -152,45 +154,46 @@ public class GeolayerService {
 
 		return Response.status(403).entity(ERROR_FORBIDDEN).build();
 	}
-	
+
 	@PUT
 	@Path("/geoLayers/{objId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateDataSourceObject(@PathParam("objId") String oId, String content) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		engine = DataMgr.initPlatform("/app/js/datasources/datasources.js", session);
+		engine = DataMgr.initPlatform(session);
 
 		if (null != session.getAttribute("_USER_")) {
 			SWBDataSource ds = engine.getDataSource("GeoLayer");
             DataObject updateObj = null;
-            
+
 			if (null == ds) return Response.status(400).build();
-			
+
 			JSONObject objData = null;
 			try {
 				objData = new JSONObject(content);
 			} catch (JSONException jspex) {
 				return Response.status(500).build();
 			}
-			
+
 			if (null != objData) {
 				//Transform JSON to dataobject to avoid fail
 				DataObject obj = (DataObject) DataObject.parseJSON(content);
 				updateObj = ds.updateObj(obj);
-				
-				//Try to update resource 
+
+				//Try to update resource
 	            if (updateLayerResource(obj)) {
 	            	if (oId.lastIndexOf(":") > 0) oId = oId.substring(oId.lastIndexOf(":") + 1);
 	            	String type = "." + obj.getString("type");
-	            	String requestUrl = httpRequest.getScheme() +
-						"://" + httpRequest.getServerName() + 
+
+	            	String requestUrl = ("production".equals(FSTUtils.getEnvConfig()) ? "https" : httpRequest.getScheme()) +
+						"://" + httpRequest.getServerName() +
 						(80 == httpRequest.getServerPort() ? "" : ":" + httpRequest.getServerPort()) +
 						"/public/geolayers/" + oId + (".shp".equals(type) ? ".geojson" : type);
 	            	obj.put("resourceURL", requestUrl);
 	            	ds.updateObj(obj);
 	            }
-				
+
 				return Response.status(200).entity(updateObj).build();
 			}
 		}
@@ -203,7 +206,7 @@ public class GeolayerService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeDataSourceObject(@PathParam("objId") String oId) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		engine = DataMgr.initPlatform("/app/js/datasources/datasources.js", session);
+		engine = DataMgr.initPlatform(session);
 
 		if (null != session.getAttribute("_USER_")) {
 			SWBDataSource ds = engine.getDataSource("GeoLayer");
@@ -219,7 +222,7 @@ public class GeolayerService {
 
 		return Response.status(403).entity(ERROR_FORBIDDEN).build();
 	}
-	
+
 	/**
 	 * Updates resource associated to dataobject.
 	 * @param obj
@@ -234,18 +237,22 @@ public class GeolayerService {
 		if (oId.lastIndexOf(":") > 0) {
             oId = oId.substring(oId.lastIndexOf(":") + 1);
         }
-		
+
+		File layersDir = new File(context.getRealPath("/") + "public/geolayers/");
+		if (!layersDir.exists()) layersDir.mkdir();
+
 		boolean zipped = Boolean.valueOf(obj.getString("zipped"));
-		String destFileName = context.getRealPath("/") + "public/geolayers/" + oId;		
+		String destFileName = context.getRealPath("/") + "public/geolayers/" + oId;
+
 		String fName = "/tempFile";
 		if (!zipped) {
 			fName += "." + layerType.toLowerCase();
 		}
-		
+
 		String resPath = FSTUtils.FILE.downloadResource(fileUrl, fName, zipped);
 		if (null != resPath && !resPath.isEmpty()) {
 			if ("shp".equals(layerType)) {
-				System.out.println("Must convert shape "+ resPath + (zipped ? relPath : fName) + " to geojson " + destFileName);
+				//System.out.println("Must convert shape "+ resPath + (zipped ? relPath : fName) + " to geojson " + destFileName);
 				try {
 					ShapeFileConverter c = new ShapeFileConverter();
 					c.shapeToGeoJSON(destFileName, resPath + (zipped ? relPath : fName));
@@ -254,14 +261,15 @@ public class GeolayerService {
 					ex.printStackTrace();
 				}
 			} else {
-				System.out.println("Must copy "+ resPath + (zipped ? relPath : fName) + " to " + destFileName + fName);
+				//System.out.println("Must copy "+ resPath + (zipped ? relPath : fName) + " to " + destFileName + layerType.toLowerCase());
 				try {
-					org.apache.commons.io.FileUtils.copyFile(new File(resPath + (zipped ? relPath : fName)), new File(destFileName + fName));
+					org.apache.commons.io.FileUtils.copyFile(new File(resPath + (zipped ? relPath : fName)), new File(destFileName + "." + layerType.toLowerCase()));
 					ret = true;
 				} catch (Exception ioex) {
 					ioex.printStackTrace();
 				}
 			}
+			FileUtils.deleteQuietly(new File(resPath));
 		}
 		return ret;
 	}

@@ -1,0 +1,40 @@
+<div>
+  <div class="row title-ribbon">
+    <h3 class="pull-left">Conjuntos de datos</h3>
+    <div class="pull-right">
+      <a ui-sref="admin.adddatasource" class="btn btn-primary btn-minw">Agregar conjunto</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group has-feedback pull-right">
+      <input type="text" class="form-control" ng-model="ds.searchText">
+      <span class="form-control-feedback" aria-hidden="true">
+        <i class="fa fa-search"></i>
+      </span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="dsource in ds.dsList | filter:ds.searchText | orderBy:'name'">
+              <td><span ng-show="{{dsource.restricted}}" class="fa fa-lock fa-fw"></span>{{dsource.name}}</td>
+              <td class="text-right">
+                <a class="btn btn-sm btn-primary" ui-sref="admin.previewdatasource({id: '{{dsource.name}}'})"><span class="fa fa-eye"></span></a>
+                <a class="btn btn-sm btn-primary" ui-sref="admin.datasourceedit({id: '{{dsource._id}}'})"><span class="fa fa-pencil"></span></a>
+                <a class="btn btn-sm btn-primary" ng-click="ds.deleteDS(dsource._id)"><span class="fa fa-trash-o"></span></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

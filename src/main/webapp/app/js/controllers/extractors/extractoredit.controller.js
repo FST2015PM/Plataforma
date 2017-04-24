@@ -12,6 +12,7 @@
     cnt.extractorData = {};
     cnt.dsList = [];
     cnt.charsetList = [];
+    cnt.processing = false;
 
     if ($stateParams.extractordef) {
       cnt.formTitle = "Previsualización";
@@ -45,7 +46,7 @@
       .then(res => {
         if (res.data && res.data.length) {
           cnt.dsList = res.data;
-          cnt.dsList.forEach(item => { item.id = item.name});
+          cnt.dsList.map(item => { return {id: item, name: item} });
 
           $Datasource.listObjects("Extractor").then(res => {
             if(res.data.data && res.data.data.length) {
@@ -81,6 +82,7 @@
       if (form) valid = form.$valid;
 
       if (valid) {
+        cnt.processing = true;
         if (!cnt.extractorData._id) {
           $Datasource.addObject(cnt.extractorData, "Extractor")
           .then(response => {

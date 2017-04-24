@@ -28,7 +28,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body ng-controller="MainCtrl as main">
+  <body ng-controller="MainCtrl as main" ng-cloak>
     <div ui-view></div>
     <script src="lib/jquery/dist/jquery.min.js"></script>
     <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -37,6 +37,8 @@
 
     <!-- Angular scripts-->
     <script src="lib/angular/angular.min.js"></script>
+
+    <!-- Third party angular modules and directives -->
     <script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
     <script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="lib/angular-animate/angular-animate.min.js"></script>
@@ -44,6 +46,8 @@
     <script src="lib/angular-bootstrap/ui-bootstrap.min.js"></script>
     <script src="lib/oclazyload/dist/ocLazyLoad.min.js"></script>
     <script src="lib/angular-ui-codemirror/ui-codemirror.min.js"></script>
+    <script src="lib/angular-base64-upload/dist/angular-base64-upload.min.js"></script>
+    <script src="lib/angular-uuid/angular-uuid.js"></script>
 
     <!-- App services -->
     <script src="js/modules/services.module.js"></script>
@@ -68,13 +72,16 @@
     <script src="js/controllers/app.controller.js"></script>
     <script src="js/controllers/addwidget.controller.js"></script>
     <script src="js/controllers/gridster.controller.js"></script>
-    <script src="js/controllers/datasourcelist.controller.js"></script>
+    <script src="js/controllers/datasources/datasource.controller.js"></script>
+    <script src="js/controllers/datasources/datasourceedit.controller.js"></script>
+    <script src="js/controllers/datasources/datasourcepreview.controller.js"></script>
     <script src="js/controllers/codeeditor.controller.js"></script>
     <script src="js/controllers/maps.controller.js"></script>
     <script src="js/controllers/charts.controller.js"></script>
     <script src="js/controllers/datatables.controller.js"></script>
     <script src="js/controllers/magictowns/pm.controller.js"></script>
     <script src="js/controllers/magictowns/pmedit.controller.js"></script>
+    <script src="js/controllers/magictowns/pminfo.controller.js"></script>
     <script src="js/controllers/users/user.controller.js"></script>
     <script src="js/controllers/users/useredit.controller.js"></script>
     <script src="js/controllers/roles/role.controller.js"></script>
@@ -86,8 +93,9 @@
     <script src="js/controllers/geolayers/geolayer.controller.js"></script>
     <script src="js/controllers/geolayers/geolayeredit.controller.js"></script>
     <script src="js/controllers/geolayers/geolayerpreview.controller.js"></script>
-    <script src="js/controllers/dashboards/dashboardlist.controller.js"></script>
-    <script src="js/controllers/dashboards/editdashboard.controller.js"></script>
+    <script src="js/controllers/dashboards/dashboards.controller.js"></script>
+    <script src="js/controllers/dashboards/dashboardedit.controller.js"></script>
+    <script src="js/controllers/dashboards/dashboardpreview.controller.js"></script>
     <script src="js/controllers/extractors/extractor.controller.js"></script>
     <script src="js/controllers/extractors/extractoredit.controller.js"></script>
 

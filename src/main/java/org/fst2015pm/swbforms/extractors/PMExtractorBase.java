@@ -19,7 +19,7 @@ import org.semanticwb.datamanager.SWBScriptEngine;
  */
 public class PMExtractorBase implements PMExtractor {
 	static Logger log = Logger.getLogger(PMExtractorBase.class.getName());
-	
+
 	protected DataObject extractorDef;
 	private SWBDataSource ds;
 	private boolean extracting;
@@ -27,7 +27,7 @@ public class PMExtractorBase implements PMExtractor {
 		LOADED, STARTED, EXTRACTING, STOPPED, ABORTED, FAILLOAD
 	}
 	private STATUS status;
-	
+
 	/**
 	 * Constructor. Creates a new instance of PMExtractorBase.
 	 */
@@ -36,15 +36,10 @@ public class PMExtractorBase implements PMExtractor {
 		extractorDef = def;
 
 		String dsName = def.getString("dataSource");
-		SWBScriptEngine eng = DataMgr.initPlatform(null);
-		
+		SWBScriptEngine eng = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", null);
+
 		ds = eng.getDataSource(dsName);
-		if (null == ds) {
-			eng = DataMgr.initPlatform("/app/js/datasources/datasources.js", null);
-			ds = eng.getDataSource(dsName);
-		}
-		
-		
+
 		if (null == ds) { //try to load it from app datasources file
 			status = STATUS.FAILLOAD;
 		} else {
@@ -52,12 +47,12 @@ public class PMExtractorBase implements PMExtractor {
 			status = STATUS.LOADED;
 		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return null != extractorDef ? extractorDef.getString("name") : null;
 	}
-	
+
 	/**
 	 * Sets extractor definition.
 	 * @param def Extractor definition.
@@ -65,50 +60,53 @@ public class PMExtractorBase implements PMExtractor {
 	public void setExtractorDef(DataObject def) {
 		extractorDef = def;
 	}
-	
+
 	/**
 	 * Gets extractor definition.
 	 */
 	public DataObject getExtractorDef() {
 		return extractorDef;
 	}
-	
+
 	@Override
 	public String getStatus() {
 		return status.toString();
 	}
-	
+
 	@Override
-	public void extract() throws IOException {		
+	public void extract() throws IOException {
 		if (this.extracting) return; //Prevent data overwrite
 		status = STATUS.EXTRACTING;
-		
+
 		this.extracting = true;
 		// Get scriptObject configuration parameters
 		String fileUrl = extractorDef.getString("fileLocation"); //Local path or URL of remote file
 		boolean zipped = Boolean.valueOf(extractorDef.getString("zipped")); //Zipped flag
 		boolean remote = false;
-		
+
 		if (null == fileUrl || fileUrl.isEmpty()) {
 			this.extracting = false;
 			status = STATUS.STARTED;
 			return;
 		}
-		
+
 		//Prepare file system
 		String uuid = UUID.randomUUID().toString().replace("-", "");
-		String destPath = org.apache.commons.io.FileUtils.getTempDirectoryPath() + uuid;
-		File destDir = new File(destPath);
+		String destPath = org.apache.commons.io.FileUtils.getTempDirectoryPath();
+		if (!destPath.endsWith("/")) destPath += "/";
+		destPath += uuid;
 		
+		File destDir = new File(destPath);
+
 		//Check if URL is provided
 		URL url = null;
 		try {
 			url = new URL(fileUrl);
 			remote = true;
 		} catch (MalformedURLException muex) { }
-		
+
 		fileUrl = remote ? fileUrl : DataMgr.getApplicationPath() + fileUrl;
-		
+
 		//Get local or remote file, store in localPath
 		if (remote) {
 			log.info("PMExtractor :: Downloading resource "+ url +"...");
@@ -116,7 +114,7 @@ public class PMExtractorBase implements PMExtractor {
 			org.apache.commons.io.FileUtils.copyURLToFile(url, destDir, 5000, 5000);
 			fileUrl = destPath + "/tempFile" + (zipped ? "" : "." + getType().toLowerCase());
 		}
-		
+
 		if (zipped) {
 			String zipPath = extractorDef.getString("zipPath");
 			if (null == zipPath || zipPath.isEmpty()) { //No relative path provided
@@ -129,18 +127,18 @@ public class PMExtractorBase implements PMExtractor {
 			FSTUtils.ZIP.extractAll(fileUrl, destPath);
 			//destPath += zipPath;
 		}
-		
+
 		//Store data
 		log.info("PMExtractor :: Storing data...");
 		store(destPath);
 		this.extracting = false;
 		status = STATUS.STARTED;
 	}
-	
+
 	public SWBDataSource getDataSource() {
 		return ds;
 	}
-	
+
 	@Override
 	public boolean canStart() {
 		return status != STATUS.FAILLOAD && (status == STATUS.STARTED || status == STATUS.STOPPED || status == STATUS.LOADED);
@@ -162,6 +160,14 @@ public class PMExtractorBase implements PMExtractor {
 	public synchronized void stop() {
 		status = STATUS.STOPPED;
 	}
+	
+	/**
+	 * Sets extractor status flag.
+	 * @param st Status flag.
+	 */
+	public synchronized void setStatus(STATUS st) {
+		status = st;
+	}
 
 	/**
 	 * Stores data in extracting phase
@@ -171,7 +177,7 @@ public class PMExtractorBase implements PMExtractor {
 	public void store(String filePath) throws IOException {
 		throw new UnsupportedOperationException("Method not implemented");
 	}
-	
+
 	public String getType() {
 		throw new UnsupportedOperationException("Method not implemented");
 	}

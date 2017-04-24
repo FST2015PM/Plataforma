@@ -7,9 +7,10 @@
 
   ExtractorCtrl.$inject = ["$Datasource", "$interval", "$Extractor", "$scope"];
   function ExtractorCtrl($Datasource, $interval, $Extractor, $scope) {
-    let cnt = this,
-        interval = undefined,
-        extractorsLoaded = false;
+    let cnt = this;
+    let extractorsLoaded = false;
+    cnt.interval = undefined,
+
     cnt.extractorList = [];
 
     $Datasource.listObjects("Extractor")
@@ -22,7 +23,7 @@
         });
         extractorsLoaded = true;
 
-        interval = $interval(function () {
+        cnt.interval = $interval(function () {
           if (extractorsLoaded) {
             cnt.extractorList.forEach(item => {
               $Extractor.getStatus(item._id)
@@ -62,9 +63,9 @@
     };
 
     $scope.$on('$destroy', () => {
-      if (angular.isDefined(interval)) {
-        $interval.cancel(interval);
-        interval = undefined;
+      if (angular.isDefined(cnt.interval)) {
+        $interval.cancel(cnt.interval);
+        cnt.interval = undefined;
       }
     });
 

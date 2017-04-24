@@ -1,7 +1,24 @@
 /** Class to encapsulate maps creation */
 class MapsFactory {
 
-  constructor() { }
+  constructor() {
+    //Create PM watermark on map
+    L.Control.Watermark = L.Control.extend({
+  		onAdd: function(map) {
+  			let img = L.DomUtil.create('img');
+  			img.src = '/android-chrome-512x512.png';
+  			img.style.width = '50px';
+  			return img;
+  		},
+  		onRemove: function(map) { }
+  	});
+
+  	L.control.watermark = function(opts) {
+  		return new L.Control.Watermark(opts);
+  	};
+
+    this.watermark = L.control.watermark({ position: 'bottomleft' });//.addTo(map);
+  }
 
   getColor(d) {
     return d > 1000 ? '#800026' :
@@ -54,11 +71,13 @@ class MapsFactory {
     switch(engine){
       case ENGINE_LEAFLET:
         if (!L) return;
-          let mapLeft = L.map(container).setView([firstPoint[0], firstPoint[1]], setZoom);
-          L.tileLayer(mbUrl, {
-            attribution: mbAttr,
-            maxZoom: 20,
-          }).addTo(mapLeft);
+        let mapLeft = L.map(container).setView([firstPoint[0], firstPoint[1]], setZoom);
+        L.tileLayer(mbUrl, {
+          attribution: mbAttr,
+          maxZoom: 20,
+        }).addTo(mapLeft);
+
+        this.watermark && mapLeft.addControl(this.watermark);
         return mapLeft;
       break;
       case ENGINE_LEAFLET_DUAL:
@@ -73,6 +92,8 @@ class MapsFactory {
           zoom: setZoom,
           layers: [grayscale, streets]
         });
+
+        this.watermark && ret.addControl(this.watermark);
 
         let baseLayers = {
           "Grayscale": grayscale,
@@ -114,14 +135,14 @@ class MapsFactory {
     return geoLayer;
   }
 
-  addKMLLayer(map, kml, engine) {
+  addKMLLayer(map, kml, engine, clustered=false) {
     let parser = new DOMParser();
     let dom = parser.parseFromString(kml, "text/xml");
 
-    this.addGeoJSONLayer(map, toGeoJSON.kml(dom), engine);
+    this.addGeoJSONLayer(map, toGeoJSON.kml(dom), engine, clustered);
   }
 
-  addGeoJSONLayer(map, data, engine) {
+  addGeoJSONLayer(map, data, engine, clustered=false) {
     switch(engine) {
       case ENGINE_GOOGLEMAPS:
       if (map) {
@@ -129,10 +150,23 @@ class MapsFactory {
       };
       break;
       case ENGINE_LEAFLET:
-       let dataOnMap = L.geoJSON(data, {
+        let dataOnMap = L.geoJSON(data, {
           onEachFeature: this._onEachFeatureAll,
           style: this._onEachStyle
-        }).addTo(map);
+        });
+
+        if (!clustered) {
+          map.addLayer(dataOnMap);
+          map.fitBounds(dataOnMap.getBounds());
+        } else {
+          let cmarkers = L.markerClusterGroup({
+            showCoverageOnHover: false
+          });
+          cmarkers.addLayer(dataOnMap);
+          map.addLayer(cmarkers);
+          map.fitBounds(cmarkers.getBounds());
+        }
+        //.addTo(map);
         return dataOnMap;
       break;
       case ENGINE_D3:

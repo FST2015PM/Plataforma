@@ -35,9 +35,9 @@ public class ExtractorService {
 			String status = extractorManager.getStatus(oId);
 			
 			return Response.status(200).entity("{\"status\":\"" + status + "\"}").build();
+		} else {
+			return Response.status(403).build();
 		}
-		
-		return Response.status(401).build();
 	}
 	
 	@POST

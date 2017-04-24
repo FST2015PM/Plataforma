@@ -7,7 +7,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import org.fst2015pm.swbforms.servlet.PMExtractorsContextListener;
 import org.semanticwb.datamanager.DataList;
 import org.semanticwb.datamanager.DataMgr;
 import org.semanticwb.datamanager.DataObject;
@@ -21,7 +20,7 @@ import org.semanticwb.datamanager.SWBScriptEngine;
  * @modified juan.fernandez
  */
 public class ExtractorManager {
-	private static Logger log = Logger.getLogger(PMExtractorsContextListener.class.getName());
+	private static Logger log = Logger.getLogger(ExtractorManager.class.getName());
     protected static ConcurrentHashMap<String, PMExtractor> hmExtractor = new ConcurrentHashMap<>(); //id del DataObject, instancia del extractor
     protected static SWBDataSource datasource = null;
     private static SWBScriptEngine engine = null;
@@ -42,12 +41,7 @@ public class ExtractorManager {
     	log.info("Starting PM extractor manager");
         engine = DataMgr.initPlatform(null);
         datasource = engine.getDataSource("Extractor");
-        
-        if (null == datasource) {
-        	engine = DataMgr.initPlatform("/app/js/datasources/datasources.js", null);
-        	datasource = engine.getDataSource("Extractor");
-        }
-        
+
         try {
             DataObject r = new DataObject();
             DataObject data = new DataObject();
@@ -73,7 +67,7 @@ public class ExtractorManager {
                         	} catch (Exception e) {
                         		e.printStackTrace();
                         	}
-                        	
+
                             /*if (className.endsWith("CSVExtractor")) {
                                 extractor = new CSVExtractor(dobj);
                             } else if (className.endsWith("DBFExtractor")) {
@@ -88,7 +82,7 @@ public class ExtractorManager {
             System.out.println("Error al cargar el DataSource. ");
             e.printStackTrace();
         }
-        
+
         // Inicializando el Timer para que empiece a ejecutar los extractores con periodicidad
         TimerTask timerTask = new ExtractorTask();
         //Corriendo el  TimerTask como daemon thread
@@ -99,7 +93,7 @@ public class ExtractorManager {
 
     /**
      * Loads an extractor into extractorManager using a DataObject ID.
-     * 
+     *
      * @param extractorDefID DataObject containing definition of Extractor.
      */
     public void loadExtractor(String extractorDefID) {
@@ -110,10 +104,10 @@ public class ExtractorManager {
     		System.out.println("Error al cargar definición del extractor");
     	}
     }
-    
+
     /**
      * Loads an extractor from its configuration object.
-     * 
+     *
      * @param extractorConfig
      */
     public void loadExtractor(DataObject extractorConfig) {
@@ -121,12 +115,12 @@ public class ExtractorManager {
             String className = extractorConfig.getString("class");
             PMExtractor extractor = hmExtractor.get(extractorConfig.getId());
             String status = null;
-            if ((null != extractor)) {  //Revisando el tipo de extractor para saber su estaus.
+            if (null != extractor) {  //Revisando el tipo de extractor para saber su estaus.
             	status = extractor.getStatus();
-                if (null == status && status.equals("EXTRACTING")) {
+                //if (null == status && status.equals("EXTRACTING")) {
                     // el extractor tiene el status de EXTRACTING, se detiene o que se debería de hacer ??
-                    extractor.stop();
-                }
+                    //extractor.stop();
+                //}
             }
 
             if (null != status && extractor.canStart() || null == extractor) {
@@ -175,7 +169,7 @@ public class ExtractorManager {
         PMExtractor ret;
         if (null != extractorId) {
             ret = hmExtractor.get(extractorId);
-            if (ret.canStart()) {//revisando si se puede inicializar el extractor
+            if (null != ret && ret.canStart()) {//revisando si se puede inicializar el extractor
                 ret.start();
                 return true;
             }

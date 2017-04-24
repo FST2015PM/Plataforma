@@ -34,7 +34,7 @@ public class FileUpload extends HttpServlet {
             throws ServletException, IOException {
         //PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
-        SWBScriptEngine engine = DataMgr.initPlatform("/app/js/datasources/datasources.js", session);
+        SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
         SWBDataSource ds = engine.getDataSource("MagicTown");
 
         String _oldImage = "";
@@ -57,7 +57,7 @@ public class FileUpload extends HttpServlet {
             pm = ds.addObj(data).getDataObject("response").getDataObject("data");
             strParameter = pm.getString("_id");
         }
-        
+
         Part filePart = request.getPart("file");
         if (filePart != null && filePart.getSize() > 0) {
             filename = getFileName(filePart);

@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -34,6 +33,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class FSTUtils {
 	/** Buffer size */
 	static int BUFFER = 2048;
+	static String envConfig = null;
 	
 	public static class DATA {
 		public static Object inferTypedValue(String val) {
@@ -202,7 +202,9 @@ public class FSTUtils {
 		}
 		
 		public static String downloadResource(String urlString, String fileName, boolean zipped) {
-			String destPath = org.apache.commons.io.FileUtils.getTempDirectoryPath() + UUID.randomUUID().toString().replace("-", "");
+			String destPath = org.apache.commons.io.FileUtils.getTempDirectoryPath();
+			if (!destPath.endsWith("/")) destPath += "/";
+			destPath += UUID.randomUUID().toString().replace("-", "");
 			return downloadResource(urlString, destPath, fileName, zipped);
 		}
 		
@@ -311,5 +313,11 @@ public class FSTUtils {
 			
 			return ret;
 		}
+	}
+	
+	public static String getEnvConfig() {
+		if (null == envConfig) envConfig = System.getenv().get("FST2015PM_ENV");
+		if (null == envConfig) envConfig = "development";
+		return envConfig;
 	}
 }

@@ -5,8 +5,8 @@
     .module('FST2015PM.controllers')
     .controller('PMEditCatalog', PMEditCatalog);
 
-  PMEditCatalog.$inject = ["$Datasource", "Upload", "$stateParams", "$state"];
-  function PMEditCatalog($Datasource, Upload, $stateParams, $state) {
+  PMEditCatalog.$inject = ["$Datasource", "$stateParams", "$state"];
+  function PMEditCatalog($Datasource, $stateParams, $state) {
     let cnt = this;
     cnt.formTitle = "Agregar Pueblo Mágico";
     cnt.pmData = {};
@@ -15,6 +15,10 @@
     cnt.locList = [];
     cnt.municipalities = [];
     cnt.localities = [];
+    cnt.pictureData = {};
+    cnt.validMime = true;
+    cnt.canSend = true;
+    cnt.processing = false;
 
     $Datasource.listObjects("State")
     .then(response => {
@@ -63,6 +67,20 @@
 
     cnt.submitForm = function(form) {
       if (form.$valid) {
+        cnt.processing = true;
+        
+        if (cnt.validMime && cnt.pictureData && cnt.pictureData.base64) {
+          cnt.pmData.picture = {
+            fileName: cnt.pictureData.filename,
+            type: cnt.pictureData.filetype,
+            content: cnt.pictureData.base64
+          };
+        } else {
+          if (cnt.pmData.picture) {
+            delete cnt.pmData.picture;
+          }
+        }
+
         if (cnt.pmData._id) {
           $Datasource.updateObject(cnt.pmData, "MagicTown")
           .then(response => {
@@ -77,63 +95,20 @@
       }
     };
 
-/*
-  cnt.formPM = function (file) {
-    if (file != null || file != undefined) {
-      cnt.dbPM.file = file;
-      file.upload = Upload.upload({
-        url: 'fileupload',
-        data: $scope.dbPM,
-      });
+    cnt.disableSend = function(e, fReader, file, rawFiles, fileObjects, fileObject) {
+      cnt.canSend = false;
+    };
 
-      file.upload.then(function (response) {
-        $timeout(function () {
-          file.result = response.data;
-        });
-      }, function (response) {
-        if (response.status > 0)
-        cnt.errorMsg = response.status + ': ' + response.data;
-      }, function (evt) {
-        // Math.min is to fix IE which reports 200% sometimes
-        file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-      });
-    } else {
-      if ($scope.show == 'add') {
-        $PMCatalogService.savePM('/servicespm?action=add', $scope.dbPM).then(function () {
+    cnt.enableSend = function(e, fReader, file, rawFiles, fileObjects, fileObject) {
+      cnt.canSend = true;
+    };
 
-        });
-      } else if ($scope.show == 'update') {
-        $PMCatalogService.savePM('/servicespm?action=update', $scope.dbPM).then(function () {
-          $scope.show = "all";
-          $scope.listPM();
-        });
-      }
-    }
+    cnt.processPicture = function() {
+      let mimes = "image/jpg|image/jpeg|image/png";
+      cnt.validMime = cnt.pictureData.filetype.length && mimes.includes(cnt.pictureData.filetype);
+      if (!cnt.validMime) cnt.pictureData = null;
+    };
+
   };
-
-  $scope.configAdd = function () {
-    $scope.dbPM = {nombre: "", descripcion: "", imagen: "", claveEstado: "", claveMunicipio: "", claveGeo: "", incorporado: false};
-    $scope.show = "add";
-    $scope.picFile = null;
-  }
-
-  $scope.configUpdate = function (_id) {
-    $PMCatalogService.getById('/servicespm?action=detail&_id=' + _id).then(function (pm) {
-      $scope.dbPM._id = pm._id;
-      $scope.dbPM.nombre = pm.nombre;
-      $scope.dbPM.descripcion = pm.descripcion;
-      $scope.picFile = null;
-      if (pm.imagen) {
-        $scope.picFile = "/images/pm/" + pm._id.substring(pm._id.lastIndexOf(":") + 1) + "/" + pm.imagen;
-      }
-      $scope.dbPM.claveEstado = pm.claveEstado;
-      $scope.dbPM.claveMunicipio = pm.claveMunicipio;
-      $scope.dbPM.claveGeo = pm.claveGeo;
-      $scope.dbPM.incorporado = pm.incorporado;
-      $scope.show = "update";
-    });
-  }
-  */
-}
 
 })();

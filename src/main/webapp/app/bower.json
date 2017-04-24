@@ -28,7 +28,7 @@
     "angular": "~1.6.1",
     "pace": "~1.0.2",
     "metisMenu": "~2.0.2",
-    "fontawesome": "~4.5.0",
+    "fontawesome": "~4.7.0",
     "slimScroll": "git://github.com/rochal/jQuery-slimScroll.git",
     "jquery-ui": "1.10.4",
     "gridster": "https://github.com/dsmorse/gridster.js.git#v0.7.0",
@@ -50,11 +50,17 @@
     "eonasdan-bootstrap-datetimepicker": "^4.17.45",
     "togeojson": "https://github.com/mapbox/togeojson.git#v0.16.0",
     "papaparse": "^4.2.0",
-    "datatables.net": "^2.1.1",
-    "datatables.net-bs": "^2.1.1"
+    "datatables.net": "^1.10.15",
+    "datatables.net-bs": "^1.10.15",
+    "leaflet-markercluster": "https://github.com/Leaflet/Leaflet.markercluster.git#v1.0.4",
+    "leaflet-spin": "^1.1.0",
+    "angular-base64-upload": "https://github.com/adonespitogo/angular-base64-upload.git#master",
+    "matchheight": "matchheight#^0.7.2",
+    "angular-uuid": "https://github.com/munkychop/angular-uuid.git#0.0.4"
   },
   "resolutions": {
     "jquery": "~2.1.4",
-    "angular": "~1.5.0"
+    "angular": "~1.5.0",
+    "leaflet": "^1.0.2"
   }
 }

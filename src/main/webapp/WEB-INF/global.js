@@ -1,6 +1,10 @@
 //******* DataStores ***************
 var DBModel = "FST2015PM";
 
+eng.userSessionConfig = {
+  sessTime: 21600 //Session time for App services (15 days)
+};
+
 eng.config={
     baseDatasource:"/WEB-INF/global.js",
     mail:{
@@ -27,7 +31,15 @@ eng.dataStores["ts_leveldb"]={
     class: "org.semanticwb.datamanager.datastore.SemDataStore",
 };
 */
-//******* DataSorices ************
+//******* DataSources ************
+
+eng.dataSources["DBDataSource"]={
+    scls: "DBDataSource",
+    modelid: DBModel,
+    dataStore: "mongodb",
+    secure: true
+};
+
 eng.dataSources["User"]={
     scls: "User",
     modelid: DBModel,
@@ -98,6 +110,74 @@ eng.dataSources["APIKey"] = {
         //{name:"roles",title:"Roles",stype:"select", valueMap:{director:"Director",gerente:"Gerente",subgerente:"Subgerente"},multiple:true},
         //{name:"groups",title:"Grupos",stype:"select", valueMap:{infotec:"INFOTEC",dac:"DAC",gdnps:"GDNPS",dads:"DADS"},multiple:true},
     ]
+};
+
+eng.dataSources["DSEndpoint"] = {
+    scls: "DSEndpoint",
+    modelid: DBModel,
+    dataStore: "mongodb",
+    displayField: "name",
+    secure: true,
+    fields: [
+        {name: "name", title: "Nombre", required: true, type: "string"},
+        {name:"resourceName", title:"Recurso", type:"String", required: true},
+        {name:"datasourceName", title:"DataSource", type:"String", required: true},
+        {name:"enabled", title:"Habilitado", type:"boolean", required: false},
+        {name:"restrictionType", title:"Restricción", type:"string", required: true}
+    ]
+};
+
+eng.dataSources["GeoLayer"] = {
+    scls: "GeoLayer",
+    modelid: DBModel,
+    dataStore: "mongodb",
+    displayField: "name",
+    secure: true,
+    fields: [
+        {name:"name", title: "Nombre", required: true, type: "string"},
+        {name:"description", title: "Descripción", required: true, type: "string"},
+        {name:"type", title: "Tipo", required: true, type: "string"},
+        {name:"fileLocation", title:"Ubicación", required: true, type:"string"}, //Ubicación remota del recurso
+        {name:"zipped", title:"ZIP", type:"boolean"}, //Indica si el recurso está comprimido
+        {name:"zipPath", title:"ruta", type:"string"}, //Ubicación del recurso dentro del ZIP
+        {name:"resourceURL", title:"URL del recurso", type:"string"}
+    ]
+};
+
+eng.dataSources["Dashboard"] = {
+    scls: "Dashboard",
+    modelid: DBModel,
+    dataStore: "mongodb",
+    displayField: "name",
+    secure: true,
+    fields: [
+        {name:"name", title: "Nombre", required: true, type: "string"}
+        //{name:"widgets", title:"Widgets", type:"boolean", required: false}
+    ]
+};
+
+eng.dataSources["Extractor"] = {
+  scls: "Extractor",
+  modelid: DBModel,
+  dataStore: "mongodb",
+  displayField: "name",
+  secure: true,
+  fields: [
+      {name:"name", title: "Nombre", required: true, type: "string"}, //Nombre descriptivo
+      {name:"description", title: "Descripción", required: true, type: "string"}, //Descripción del extractor
+      {name:"class", title: "Tipo", required: true, type: "string"}, //Nombre de la clase a instanciar
+      {name:"periodic", title:"Periodico", type:"boolean"}, //Indica si es periódica su ejecución
+      {name:"timer", title:"Tiempo", type:"int"}, //Tiempo para la ejecución, ej. 30
+      {name:"unit", title:"Unidad de tiempo", type:"string"}, //Unidad de tiempo: h|d|m (horas, días, meses)
+      {name:"dataSource", title:"DataSource", required: true, type:"string"}, //Nombre del datasource a escribir
+      {name:"fileLocation", title:"Ubicación", required: true, type:"string"}, //Ubicación remota del recurso
+      {name:"zipped", title:"ZIP", type:"boolean"}, //Indica si el recurso está comprimido
+      {name:"zipPath", title:"ruta", type:"string"}, //Ubicación del recurso dentro del ZIP
+      {name:"charset", title:"charset", required: true, type:"string"}, //Codificación de caracteres del recurso
+      {name:"columns", title:"mapeo", type:"boolean"}, //Mapeo de columnas del datasource
+      {name:"overwrite", title:"sobreescribir", type:"boolean"}, //Indica si se sobreescribirán los datos
+      {name:"lastExecution", title:"Ultima ejecución", type:"string"} //Fecha de última ejecución
+  ]
 };
 
 /******* DataProcessors ************/

@@ -9,6 +9,7 @@
     function GeolayerEditCtrl($GeoLayer, $stateParams, $state) {
       let cnt = this;
       cnt.formTitle = "Agregar capa";
+      cnt.processing = false;
 
       if ($stateParams.id && $stateParams.id.length) {
         cnt.formTitle = "Editar capa";
@@ -19,6 +20,7 @@
 
       cnt.submitForm = function(form) {
         if (form.$valid) {
+          cnt.processing = true;
           if (!cnt.layerData._id) {
             //Invoke service to get file and transform it to geoJSON
             $GeoLayer.addGeoLayer(cnt.layerData)

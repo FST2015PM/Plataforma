@@ -5,9 +5,10 @@
     .module('FST2015PM.controllers')
     .controller('UsersEditCtrl', UsersEditCtrl);
 
-  UsersEditCtrl.$inject = ["$Datasource", "$stateParams", "$state"];
-  function UsersEditCtrl($Datasource, $stateParams, $state) {
+  UsersEditCtrl.$inject = ["$rootScope", "$Datasource", "$stateParams", "$state", "$http", "$window"];
+  function UsersEditCtrl($rootScope, $Datasource, $stateParams, $state, $http, $window) {
     let cnt = this;
+    let apiVersion = 1;
     cnt.userData = {};
     cnt.userRoles = [];
     cnt.selectedRoles = [];
@@ -15,6 +16,7 @@
     cnt.password1 = "";
     cnt.password2 = "";
     cnt.formTitle = "Agregar usuario";
+    cnt.processing = false;
 
     $Datasource.listObjects("MagicTown")
     .then((res) => {
@@ -44,17 +46,35 @@
 
     cnt.submitForm = function(form) {
       if (form.$valid && cnt.isPasswordEqual()) {
+        cnt.processing = true;
+        
         cnt.userData.roles = cnt.selectedRoles;
         if (!cnt.userData.magictown) cnt.userData.magictown = "";
         if ($stateParams.id && $stateParams.id.length) {
           $Datasource.updateObject(cnt.userData, "User")
           .then(response => {
+            $http({
+              url: `/api/v${apiVersion}/services/login/me`,
+              method: "GET"
+            }).then((response) => {
+              $rootScope.userInfo = response.data;
+            }).catch((error) => {
+              $window.location.href = "/login"
+            });
             $state.go('admin.users', {});
           });
         } else {
           cnt.userData.password = cnt.password1;
           $Datasource.addObject(cnt.userData, "User")
           .then(response => {
+            $http({
+              url: `/api/v${apiVersion}/services/login/me`,
+              method: "GET"
+            }).then((response) => {
+              $rootScope.userInfo = response.data;
+            }).catch((error) => {
+              $window.location.href = "/login"
+            });
             $state.go('admin.users', {});
           });
         }
