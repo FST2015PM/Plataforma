@@ -18,16 +18,15 @@
     "angular-sanitize": "~1.5.0",
     "angular-messages": "~1.5.0",
     "angular-aria": "~1.5.0",
-    "jquery": "^3.1.1",
+    "jquery": ">=1.6",
     "angular-resource": "~1.5.0",
     "angular-ui-router": "~0.2.15",
     "bootstrap": "~3.3.7",
-    "angular-bootstrap": "~1.1.2",
+    "angular-bootstrap": "~2.5.0",
     "moment": "~2.10.6",
     "animate.css": "~3.4.0",
     "angular": "~1.6.1",
     "pace": "~1.0.2",
-    "metisMenu": "~2.0.2",
     "fontawesome": "~4.7.0",
     "slimScroll": "git://github.com/rochal/jQuery-slimScroll.git",
     "jquery-ui": "1.10.4",
@@ -56,11 +55,12 @@
     "leaflet-spin": "^1.1.0",
     "angular-base64-upload": "https://github.com/adonespitogo/angular-base64-upload.git#master",
     "matchheight": "matchheight#^0.7.2",
-    "angular-uuid": "https://github.com/munkychop/angular-uuid.git#0.0.4"
+    "angular-uuid": "https://github.com/munkychop/angular-uuid.git#0.0.4",
+    "metisMenu": "metismenu#^2.7.0"
   },
   "resolutions": {
-    "jquery": "~2.1.4",
     "angular": "~1.5.0",
-    "leaflet": "^1.0.2"
+    "leaflet": "^1.0.2",
+    "jquery": ">=1.6"
   }
 }

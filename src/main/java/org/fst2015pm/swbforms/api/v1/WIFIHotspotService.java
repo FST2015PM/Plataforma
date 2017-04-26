@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
+import org.fst2015pm.swbforms.utils.DBLogger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,9 +35,8 @@ public class WIFIHotspotService {
 	@Context ServletContext context;
 
 	boolean useCookies = false;
-	final static String ERROR_FORBIDDEN = "{\"error\":\"Unauthorized\"}";
-	final static String ERROR_BADREQUEST = "{\"error\":\"Bad request\"}";
 	PMCredentialsManager mgr;
+	DBLogger logger = DBLogger.getInstance();
 
 	public WIFIHotspotService() {
 		//Create credentials manager
@@ -93,7 +93,7 @@ public class WIFIHotspotService {
 		SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 
 		if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
-			return Response.status(401).entity(ERROR_FORBIDDEN).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		
 		SWBDataSource ds = engine.getDataSource("WifiHotSpot");
@@ -127,6 +127,8 @@ public class WIFIHotspotService {
 		
 		if (null == ds) return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 
+		DataObject usr = mgr.getUser(httpRequest, false);
+		
 		try {
 			JSONArray objArray = new JSONArray(content);
 			JSONArray retArray = new JSONArray();
@@ -148,6 +150,7 @@ public class WIFIHotspotService {
 					retArray.put(el);
 				}
 			}
+			logger.logActivity(usr.getString("fullname"), usr.getId(), true, "ADD", "Punto de acceso Wi-Fi");
 			return Response.ok(retArray.toString()).build();
 		} catch (JSONException jspex) {
 			return Response.status(Status.BAD_REQUEST).build();

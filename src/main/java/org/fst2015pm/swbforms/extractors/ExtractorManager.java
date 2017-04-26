@@ -157,6 +157,22 @@ public class ExtractorManager {
         }
         return null!=ret?ret.getStatus():null;
     }
+    
+    /**
+     * Gets name of an extractor
+     * @param extractorId
+     * @return
+     */
+    public String getExtractorName(String extractorId) {
+    	PMExtractor ret;
+        if (null != extractorId) {
+            ret = hmExtractor.get(extractorId);
+            if (null != ret) {
+                return ret.getName();
+            }
+        }
+        return null;
+    }
 
     /**
      * Calls start method on a particular extractor

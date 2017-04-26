@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
+import org.fst2015pm.swbforms.utils.DBLogger;
 import org.fst2015pm.swbforms.utils.FSTUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,9 +36,8 @@ public class ConferenceOfficeService {
 	@Context ServletContext context;
 
 	boolean useCookies = false;
-	final static String ERROR_FORBIDDEN = "{\"error\":\"Unauthorized\"}";
-	final static String ERROR_BADREQUEST = "{\"error\":\"Bad request\"}";
 	PMCredentialsManager mgr;
+	DBLogger logger = DBLogger.getInstance();
 
 	public ConferenceOfficeService() {
 		//Create credentials manager
@@ -128,6 +128,12 @@ public class ConferenceOfficeService {
 		
 		if (null == ds) return Response.status(500).build();
 
+		DataObject usr = null;
+		String []authorization = mgr.getAuthCredentials(httpRequest, false);
+		if (authorization.length == 2) {
+			usr = mgr.getUserSessionObjectByToken(authorization[1]);
+		}
+		
 		try {
 			JSONArray objArray = new JSONArray(content);
 			JSONArray retArray = new JSONArray();
@@ -179,9 +185,10 @@ public class ConferenceOfficeService {
 					retArray.put(el);
 				}
 			}
-			return Response.status(200).entity(retArray.toString()).build();
+			logger.logActivity(usr.getString("fullname"), usr.getId(), true, "ADD", "Oficinas de congresos");
+			return Response.ok(retArray.toString()).build();
 		} catch (JSONException jspex) {
-			return Response.status(400).entity(ERROR_BADREQUEST).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 	}
 }

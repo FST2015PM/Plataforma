@@ -70,13 +70,12 @@
                      <div class="item active">
                         <span class="more">
                            <h2>Bienvenido</h2>
-                           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum enim tortor, aliquet nec commodo ac, finibus id ligula. Aliquam a viverra eros. Sed tincidunt blandit massa, ac placerat arcu euismod vitae. Nam ut mauris vel dolor venenatis vehicula. Quisque porta sem a est ullamcorper mollis in eu eros. Cras mattis lorem sed facilisis ultricies. Donec vitae bibendum massa. Ut in convallis quam. Cras ultrices metus erat, nec mollis quam dignissim nec. Curabitur vel lorem eget dolor facilisis vehicula. Suspendisse vel suscipit ante. Aenean aliquam at lorem ac bibendum. Nulla vel fermentum nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.<br><br>
-                           Donec sagittis interdum risus, sed placerat sapien iaculis quis. Integer ut lorem eu odio iaculis pretium nec et arcu. Cras elementum nisi interdum vulputate vulputate. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla id diam et tortor ultrices tincidunt. Vivamus vitae elementum diam. Sed lacinia, enim non consectetur placerat, ex felis viverra nisl, a pharetra ante odio id libero. Vivamus ac eros laoreet, pharetra felis ut, lacinia lectus. Sed vitae quam cursus, tempus nisl at, tincidunt lacus. Phasellus ultrices efficitur nibh, bibendum maximus sapien sodales vel. Maecenas ultricies ullamcorper velit eget bibendum. In eget semper erat, id vulputate risus. Maecenas eu nisi non nunc gravida semper. Etiam at turpis maximus, semper arcu pretium, feugiat magna. Integer molestie sollicitudin condimentum. Donec vel placerat justo.
+                           La PLATAFORMA DE INTEGRACIÓN DE INFORMACIÓN HETEROGÉNEA ASOCIADA A DESTINOS TURÍSTICOS provee mecanismos para acelerar la captura e integración de información de fuentes diversas, asociadas al sector turístico, mediante su estructuración y explotación para apoyar en la caracterización y análisis de los destinos.
                         </span>
                         <div class="clear">&nbsp;</div>
                         <div class="clear">&nbsp;</div>
                      </div>
-                     <div class="item">
+                     <!--div class="item">
                         <span class="more">
                            <h2>Bienvenido</h2>
                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum enim tortor, aliquet nec commodo ac, finibus id ligula. Aliquam a viverra eros. Sed tincidunt blandit massa, ac placerat arcu euismod vitae. Nam ut mauris vel dolor venenatis vehicula. Quisque porta sem a est ullamcorper mollis in eu eros. Cras mattis lorem sed facilisis ultricies. Donec vitae bibendum massa. Ut in convallis quam. Cras ultrices metus erat, nec mollis quam dignissim nec. Curabitur vel lorem eget dolor facilisis vehicula. Suspendisse vel suscipit ante. Aenean aliquam at lorem ac bibendum. Nulla vel fermentum nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.<br><br>
@@ -84,7 +83,7 @@
                         </span>
                         <div class="clear">&nbsp;</div>
                         <div class="clear">&nbsp;</div>
-                     </div>
+                     </div-->
                   </div>
                   <!-- Left and right controls -->
                   <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">

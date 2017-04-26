@@ -10,19 +10,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.fst2015pm.swbforms.extractors.ExtractorManager;
+import org.fst2015pm.swbforms.utils.DBLogger;
+import org.semanticwb.datamanager.DataObject;
 import org.semanticwb.datamanager.SWBScriptEngine;
 import org.semanticwb.datamanager.SWBScriptUtils;
 
 @Path("/services/extractor")
 public class ExtractorService {
+	@Context HttpServletRequest httpRequest;
 	SWBScriptEngine engine;
 	SWBScriptUtils utils;
 	ExtractorManager extractorManager = ExtractorManager.getInstance();
-	@Context HttpServletRequest httpRequest;
-	private final static String ERROR_FORBIDDEN = "{\"error\":\"Unauthorized\"}";
-	private final static String ERROR_BADREQUEST = "{\"error\":\"Bad request\"}";
+	DBLogger logger = DBLogger.getInstance();
+	
 	
 	@GET
 	@Path("/status/{objId}")
@@ -34,9 +37,9 @@ public class ExtractorService {
 			if (null == oId || oId.isEmpty()) return Response.status(400).build();
 			String status = extractorManager.getStatus(oId);
 			
-			return Response.status(200).entity("{\"status\":\"" + status + "\"}").build();
+			return Response.ok("{\"status\":\"" + status + "\"}").build();
 		} else {
-			return Response.status(403).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 	}
 	
@@ -47,13 +50,16 @@ public class ExtractorService {
 		HttpSession session = httpRequest.getSession();
 
 		if (null != session.getAttribute("_USER_")) {
+			DataObject usr = (DataObject)session.getAttribute("_USER_");
 			if (null == oId || oId.isEmpty()) return Response.status(400).build();
-			extractorManager.startExtractor(oId);
-			
-			return Response.status(200).build();
+			if (extractorManager.startExtractor(oId)) {
+				logger.logActivity(usr.getString("fullname"), usr.getId(), false, "EXTRACTORSTART", extractorManager.getExtractorName(oId));
+			}
+
+			return Response.ok().build();
 		}
 		
-		return Response.status(401).build();
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	@POST
@@ -66,9 +72,9 @@ public class ExtractorService {
 			if (null == oId || oId.isEmpty()) return Response.status(400).build();
 			extractorManager.loadExtractor(oId);
 			
-			return Response.status(200).build();
+			return Response.ok().build();
 		}
 		
-		return Response.status(401).build();
+		return Response.status(Status.FORBIDDEN).build();
 	}
 }

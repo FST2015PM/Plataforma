@@ -7,189 +7,21 @@
     .run(run);
 
   config.$inject = ["$stateProvider", "$urlRouterProvider"];
-  function config($stateProvider, $urlRouterProvider) {
+  function config($stateProvider, $urlRouterProvider, $rootScope) {
     $stateProvider
-      /*.state('dashboard', {
-        abstract: true,
-        url: "/dashboard",
-        templateUrl: "templates/container.html"
-      })
-      .state('dashboard.main', {
-        url: "/",
-        views: {
-          'sidenav': {
-            templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
-          },
-          'content': {
-
-          }
-        },
-        resolve: {
-          menuItems: function() {
-            return dashboardMenuItems;
-          }
-        }
-      })*/
       .state('pminfo', {
         url: "/pminfo/:id",
         templateUrl: 'templates/magictowns/pmInfo.html',
         controller: 'PMInformation',
         controllerAs: "pm"
       })
-      /*.state('dashboard.maps', {
-        url: "/maps",
-        views: {
-          'sidenav': {
-            templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
-          },
-          'content': {
-            templateUrl: 'templates/maps.html',
-            controller: "MapsCtrl as maps"
-          }
-        },
-        resolve: {
-          menuItems: function() {
-            return dashboardMenuItems;
-          },
-          loadDependencies: function($ocLazyLoad, $stateParams) {
-            return $ocLazyLoad.load([
-              {
-                  serie: true,
-                  files: [
-                    'lib/leaflet/dist/leaflet.css',
-                    'lib/leaflet/dist/leaflet.js',
-                    'lib/leaflet.geoCSV/leaflet.geocsv-src.js',
-                    'lib/leaflet.geoCSV/leaflet.geocsv.js',
-                    'lib/google-maps/lib/Google.min.js',
-                    'js/dataviz/constants.js',
-                    'js/dataviz/charts.js',
-                    'js/dataviz/maps.js',
-                    'js/dataviz/datatables.js',
-                    'js/dataviz/dataviz.js',
-                    'lib/d3/d3.min.js',
-                  ]
-              }
-            ]);
-          }
-        }
-      })
-      .state('dashboard.charts', {
-        url: "/charts",
-        views: {
-          'sidenav': {
-            templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
-          },
-          'content': {
-            templateUrl: 'templates/charts.html',
-            controller: "ChartsCtrl as charts"
-          }
-        },
-        resolve: {
-          menuItems: function() {
-            return dashboardMenuItems;
-          },
-          loadDependencies: function($ocLazyLoad, $stateParams) {
-            return $ocLazyLoad.load([
-              {
-                  serie: true,
-                  files: [
-                    'lib/d3/d3.min.js',
-                    'js/dataviz/constants.js',
-                    'js/dataviz/charts.js',
-                    'js/dataviz/maps.js',
-                    'js/dataviz/datatables.js',
-                    'js/dataviz/dataviz.js'
-                  ]
-              }
-            ]);
-          }
-        }
-      })
-      .state('dashboard.datatables', {
-        url: "/datatables",
-        views: {
-          'sidenav': {
-            templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
-          },
-          'content': {
-            templateUrl: 'templates/datatables.html',
-            controller: "DataTablesCtrl as datatables"
-          }
-        },
-        resolve: {
-          menuItems: function() {
-            return dashboardMenuItems;
-          },
-          loadDependencies: function($ocLazyLoad, $stateParams) {
-            return $ocLazyLoad.load([
-              {   serie: true,
-                  files: [
-                    'lib/datatables.net/js/jquery.dataTables.min.js',
-                    'lib/gijgo/dist/combined/js/gijgo.min.js',
-                    'lib/gijgo/dist/combined/js/gijgo.js',
-                    'js/dataviz/constants.js',
-                    'js/dataviz/charts.js',
-                    'js/dataviz/maps.js',
-                    'js/dataviz/datatables.js',
-                    'js/dataviz/dataviz.js'
-                  ]
-              }
-            ]);
-          }
-        }
-      })
-      .state('dashboard.gridster', {
-        url: "/gridster",
-        views: {
-          'sidenav': {
-            templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
-          },
-          'content': {
-            templateUrl: 'templates/gridster.html',
-            controller: "GridsterCtrl as gridster"
-          }
-        }
-      })
-      .state('dashboard.gridsterAngular', {
-        url: "/gridsterAngular",
-        views: {
-          'sidenav': {
-            templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
-          },
-          'content': {
-            templateUrl: 'templates/gridsterAngular.html',
-            controller: "GridsterAngularCtrl as gristerAngular"
-          }
-        },
-        resolve: {
-          menuItems: function() {
-            return dashboardMenuItems;
-          },
-          loadDependencies: function($ocLazyLoad, $stateParams) {
-            return $ocLazyLoad.load([
-              {
-                  serie: true,
-                  files: [
-                    'lib/angular-gridster/dist/angular-gridster.min.css',
-                    'lib/angular-gridster/dist/angular-gridster.min.js',
-                  ]
-              }
-            ]);
-          }
-        }
-      })*/
       .state('admin.endpoints', {
         url: '/endpoints',
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl',
+            controllerAs: 'nav'
           },
           'content': {
             templateUrl: 'templates/endpoints/endpoints.html',
@@ -198,9 +30,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -217,14 +64,34 @@
       .state('admin', {
         abstract: true,
         url: "/admin",
-        templateUrl: "templates/container.html"
+        templateUrl: "templates/container.html",
+        resolve: {
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }]
+        }
       })
       .state('admin.dashboards', {
         url: '/dashboard',
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/dashboards/dashboards.html',
@@ -233,9 +100,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -254,7 +136,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/dashboards/editDashboard.html',
@@ -263,9 +145,88 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
+          loadDependencies: function($ocLazyLoad, $stateParams) {
+            return $ocLazyLoad.load([
+              {
+                  serie: true,
+                  files: [
+                    'lib/AngularJS-Toaster/toaster.min.css',
+                    'lib/bootbox/bootbox.js',
+                    'lib/angular-bootstrap/ui-bootstrap.min.js',
+                    'lib/d3/d3.min.js',
+                    'lib/datatables.net/js/jquery.dataTables.min.js',
+                    'lib/gridster/dist/jquery.gridster.min.js',
+                    'lib/angular-gridster/dist/angular-gridster.min.css',
+                    'lib/angular-gridster/dist/angular-gridster.min.js',
+                    'lib/leaflet-markercluster/dist/MarkerCluster.css',
+                    'lib/leaflet-markercluster/dist/MarkerCluster.Default.css',
+                    'lib/leaflet/dist/leaflet.css',
+                    'lib/leaflet/dist/leaflet.js',
+                    'lib/leaflet-markercluster/dist/leaflet.markercluster.js',
+                    'lib/spin.js/spin.min.js',
+                    'lib/leaflet-spin/leaflet.spin.min.js',
+                    'lib/google-maps/lib/Google.min.js',
+                    'js/dataviz/constants.js',
+                    'js/dataviz/charts.js',
+                    'js/dataviz/maps.js',
+                    'js/dataviz/datatables.js',
+                    'js/dataviz/dataviz.js'
+                  ]
+              }
+            ]);
+          }
+        }
+      })
+      .state('admin.editmapdwidget', {
+        url: '/dashboard/edit/:id/map/:wid',
+        views: {
+          'sidenav': {
+            templateUrl: 'templates/includes/sidenav.html',
+            controller: 'SideNavCtrl as nav'
           },
+          'content': {
+            templateUrl: 'templates/dashboards/mapWidgetEditForm.html',
+            controller: 'MapEditWidgetCtrl',
+            controllerAs: "widget"
+          }
+        },
+        resolve: {
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -303,7 +264,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/dashboards/previewDashboard.html',
@@ -312,9 +273,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -352,15 +328,10 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/admin.html'
-          }
-        },
-        resolve: {
-          menuItems: function() {
-            return adminMenuItems;
           }
         }
       })
@@ -369,7 +340,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/magictowns/pmcatalog.html',
@@ -378,9 +349,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -404,7 +390,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/magictowns/pmEdit.html',
@@ -413,9 +399,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -442,7 +443,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/magictowns/pmEdit.html',
@@ -451,9 +452,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -482,7 +498,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/datasources/datasources.html',
@@ -491,9 +507,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -511,18 +542,32 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/datasources/datasourceEdit.html',
             controller: 'DSEditCtrl',
             controllerAs: "ds"
           }
-        },
-        resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          }
+        }, resolve: {
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }]
         }
       })
       .state('admin.datasourceedit', {
@@ -530,7 +575,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/datasources/datasourceEdit.html',
@@ -539,9 +584,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          }
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }]
         }
       })
       .state('admin.previewdatasource', {
@@ -549,7 +609,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/datasources/datasourcePreview.html',
@@ -558,9 +618,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -583,61 +658,12 @@
           }
         }
       })
-      /*.state('admin.datasourceedit', {
-        url: '/datasources/:id',
-        views: {
-          'sidenav': {
-            templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
-          },
-          'content': {
-            templateUrl: 'templates/codeeditor.html',
-            controller: 'CodeEditorCtrl'
-          }
-        },
-        resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
-          loadDependencies: function($ocLazyLoad, $stateParams) {
-            var fname = $stateParams.id, mode;
-            if (fname.endsWith(".js")) mode = "javascript";
-            if (fname.endsWith(".html")) mode = "html";
-
-            return $ocLazyLoad.load([
-              {
-                  serie: true,
-                  insertBefore: "#mainStyles", //Otherwise app styles will be overridem
-                  files: [
-                    'lib/codemirror/lib/codemirror.css',
-                    'lib/codemirror/theme/ambiance.css',
-                    'lib/codemirror/addon/hint/show-hint.css',
-                    'lib/codemirror/addon/lint/lint.css',
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/codemirror/lib/codemirror.js',
-                    'lib/codemirror/mode/'+mode+'/'+mode+'.js',
-                    'lib/codemirror/addon/edit/matchbrackets.js',
-                    'lib/codemirror/addon/edit/closebrackets.js',
-                    'lib/codemirror/addon/selection/active-line.js',
-                    'lib/codemirror/addon/comment/continuecomment.js',
-                    'lib/codemirror/addon/hint/show-hint.js',
-                    'lib/codemirror/addon/lint/lint.js',
-                    'lib/codemirror/addon/hint/javascript-hint.js',
-                    'lib/codemirror/addon/lint/javascript-lint.js',
-                    'lib/jshint/dist/jshint.js',
-                    'lib/AngularJS-Toaster/toaster.min.js'
-                  ]
-              }
-            ]);
-          }
-        }
-      })*/
       .state('admin.users', {
         url: '/users',
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/users/users.html',
@@ -646,9 +672,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -670,7 +711,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/users/userEdit.html',
@@ -679,9 +720,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -701,7 +757,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
             'content': {
             templateUrl: 'templates/users/userEdit.html',
@@ -710,9 +766,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -733,7 +804,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/extractors/extractors.html',
@@ -742,9 +813,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -766,7 +852,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/extractors/extractorEdit.html',
@@ -775,9 +861,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -802,7 +903,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/extractors/extractorPreview.html',
@@ -811,9 +912,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -841,7 +957,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/extractors/extractorEdit.html',
@@ -850,9 +966,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -874,7 +1005,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/roles/roles.html',
@@ -883,9 +1014,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -907,7 +1053,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/roles/roleEdit.html',
@@ -916,9 +1062,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -938,7 +1099,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/roles/roleEdit.html',
@@ -947,9 +1108,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -970,7 +1146,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/endpoints/endpointEdit.html',
@@ -979,9 +1155,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -1003,7 +1194,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/endpoints/endpointEdit.html',
@@ -1012,9 +1203,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -1036,7 +1242,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/geolayers/geolayers.html',
@@ -1045,9 +1251,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -1069,7 +1290,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/geolayers/geolayerEdit.html',
@@ -1078,9 +1299,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -1102,7 +1338,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/geolayers/geolayerEdit.html',
@@ -1111,9 +1347,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -1135,7 +1386,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/geolayers/geolayerPreview.html',
@@ -1144,9 +1395,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -1178,7 +1444,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/endpoints/apikeys.html',
@@ -1187,9 +1453,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -1211,7 +1492,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/endpoints/apikeyEdit.html',
@@ -1220,9 +1501,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -1244,7 +1540,7 @@
         views: {
           'sidenav': {
             templateUrl: 'templates/includes/sidenav.html',
-            controller: 'SideNavCtrl'
+            controller: 'SideNavCtrl as nav'
           },
           'content': {
             templateUrl: 'templates/endpoints/apikeyEdit.html',
@@ -1253,9 +1549,24 @@
           }
         },
         resolve: {
-          menuItems: function() {
-            return adminMenuItems;
-          },
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
           loadDependencies: function($ocLazyLoad, $stateParams) {
             return $ocLazyLoad.load([
               {
@@ -1271,138 +1582,61 @@
             ]);
           }
         }
+      })
+      .state('admin.activity', {
+        url: '/activity',
+        views: {
+          'sidenav': {
+            templateUrl: 'templates/includes/sidenav.html',
+            controller: 'SideNavCtrl',
+            controllerAs: 'nav'
+          },
+          'content': {
+            templateUrl: 'templates/activityfeed/activityFeed.html',
+            controller: 'ActivityFeedCtrl as activity'
+          }
+        },
+        resolve: {
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }]
+        }
       });
 
     $urlRouterProvider.otherwise("/admin/");
 
-    var adminMenuItems = [
-      {
-        label: "Usuarios y permisos",
-        roles: ["Admin"],
-        menuItems: [
-          {
-            label:"Usuarios",
-            stateLink: 'admin.users'
-          },
-          {
-            label:"Roles",
-            stateLink: 'admin.roles'
-          }
-        ]
-      },
-      {
-        label: "Fuentes de datos",
-        menuItems: [
-          {
-            label:"Extractores",
-            stateLink: 'admin.extractors'
-          },
-          {
-            label:"Conjuntos",
-            stateLink: 'admin.datasources'
-          },
-          {
-            label:"Capas",
-            stateLink: 'admin.geolayers'
-          }
-        ]
-      },
-      {
-        label: "Pueblos Mágicos",
-        stateLink: 'admin.pmcatalog'
-      },
-      {
-        label: "Tableros",
-        stateLink: 'admin.dashboards'
-      },
-      {
-        label: "Puntos de acceso",
-        roles: ["Admin"],
-        menuItems: [
-          {
-            label:"End Points",
-            stateLink: "admin.endpoints"
-          },
-          {
-            label:"Llaves API",
-            stateLink:"admin.apikeys"
-          }
-        ]
-      },
-      {
-        label: "Bitácora",
-        link: '#'
-      },
-    ];
-
-    var dashboardMenuItems = [
-      {
-        label: "Visualizaciones",
-        link: "#",
-        menuItems: [
-          {
-            label: "Mapas",
-            stateLink: 'dashboard.maps'
-          },
-          {
-            label: "Gráficas dinámicas",
-            stateLink: 'dashboard.charts'
-          }
-        ]
-      },
-      {
-        label: "Estadísticas",
-        link: "#",
-        stateLink: 'dashboard.datatables'
-      },
-      {
-        label: "Consultas",
-        link: "#",
-        menuItems: [
-          {
-            label:"Desagregada",
-            link:"#"
-          },
-          {
-            label:"Predefinida",
-            link:"#"
-          }
-        ]
-      },
-      {
-        label: "Indicadores",
-        link: "#",
-        menuItems: [
-          {
-            label:"Ambientales",
-            link:"#"
-          },
-          {
-            label:"Culturales",
-            link:"#"
-          },
-          {
-            label:"Demográficos",
-            link:"#"
-          }
-        ]
-      }
-    ];
   };
 
-  run.$inject = ["$rootScope", "$state", "$stateParams", "$templateCache", "$http", "$window"];
-  function run($rootScope, $state, $stateParams, $templateCache, $http, $window) {
+  run.$inject = ["$rootScope", "$state", "$stateParams", "$templateCache", "$http", "$window", "$LoginService"];
+  function run($rootScope, $state, $stateParams, $templateCache, $http, $window, $LoginService) {
     let apiVersion = 1;
-    $http({
-      url: `/api/v${apiVersion}/services/login/me`,
-      method: "GET"
-    }).then((response) => {
-      $rootScope.userInfo = response.data;
-    }).catch((error) => {
-      $window.location.href = "/"
+
+    $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, eventObj) {
+      if (eventObj.notLoggedIn) {
+        $window.location.href = "/login";
+      }
     });
 
-    //$rootScope.$state = $state;
+    $LoginService.me()
+    .then(function(response) {
+      if (response.data) $rootScope.userInfo = response.data;
+    }).catch(function(error) {
+      $window.location.href = "/";
+    });
   };
-
 })();

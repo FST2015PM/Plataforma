@@ -68,6 +68,22 @@ eng.dataSources["Role"] = {
     ]
 };
 
+eng.dataSources["PMLog"]={
+    scls: "PMLog",
+    modelid: DBModel,
+    dataStore: "mongodb",
+    secure: true,
+    displayField: "user",
+    fields:[
+        {name:"date",title:"Fecha",type:"date"},
+        {name:"userFullName",title:"Nombre de usuario",type:"string"},
+        {name:"userID",title:"ID de usuario",type:"string"},
+        {name:"action",title:"Acción",type:"string"},
+        {name:"fromApp",title:"App",type:"boolean"},
+        {name:"target",title:"Objetivo",type:"string"}
+    ]
+};
+
 eng.dataSources["UserSession"]={
     scls: "UserSession",
     modelid: DBModel,

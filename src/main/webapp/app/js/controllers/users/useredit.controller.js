@@ -47,7 +47,8 @@
     cnt.submitForm = function(form) {
       if (form.$valid && cnt.isPasswordEqual()) {
         cnt.processing = true;
-        
+
+        cnt.userData.password = cnt.password1;
         cnt.userData.roles = cnt.selectedRoles;
         if (!cnt.userData.magictown) cnt.userData.magictown = "";
         if ($stateParams.id && $stateParams.id.length) {
@@ -64,7 +65,6 @@
             $state.go('admin.users', {});
           });
         } else {
-          cnt.userData.password = cnt.password1;
           $Datasource.addObject(cnt.userData, "User")
           .then(response => {
             $http({

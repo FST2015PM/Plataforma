@@ -26,6 +26,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.FileUtils;
+import org.fst2015pm.swbforms.utils.DBLogger;
 import org.fst2015pm.swbforms.utils.FSTUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +44,7 @@ import org.semanticwb.datamanager.script.ScriptObject;
 public class DataSourceService {
 	@Context ServletContext context;
 	@Context HttpServletRequest httpRequest;
+	DBLogger logger = DBLogger.getInstance();
 	
 	SWBScriptEngine engine;
 	boolean checkSession = false;
@@ -148,6 +150,7 @@ public class DataSourceService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addDataSourceObject(@PathParam("dsname") String dataSourceId, String content) throws IOException {
 		HttpSession session = httpRequest.getSession();
+		
 		if ("User".equals(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
@@ -155,6 +158,7 @@ public class DataSourceService {
 		}
 
 		if (!checkSession || (checkSession && null != session.getAttribute("_USER_"))) {
+			DataObject usr = (DataObject) session.getAttribute("_USER_");
 			SWBDataSource ds = engine.getDataSource(dataSourceId);
 			if (null == ds) return Response.status(Status.BAD_REQUEST).build();
 
@@ -193,6 +197,7 @@ public class DataSourceService {
 					if (null != response && 0 == response.getInt("status")) {
 						objNew = processImages(ds, imgFields, response.getDataObject("data"));
 					}
+					logger.logActivity(usr.getString("fullname"), usr.getId(), false, "ADD", dataSourceId);
 					return Response.ok().entity(objNew.getDataObject("response")).build();
 				} else {
 					return Response.status(Status.BAD_REQUEST).build();
@@ -206,8 +211,7 @@ public class DataSourceService {
 	@GET
 	@Path("/{dsname}/{objId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId)
-			throws IOException {
+	public Response getDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId) throws IOException {
 		HttpSession session = httpRequest.getSession();
 		if ("User".equals(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
@@ -233,8 +237,7 @@ public class DataSourceService {
 	@Path("/{dsname}/{objId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId,
-			String content) throws IOException {
+	public Response updateDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId, String content) throws IOException {
 		HttpSession session = httpRequest.getSession();
 		if ("User".equals(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
@@ -243,6 +246,7 @@ public class DataSourceService {
 		}
 
 		if (!checkSession || (checkSession && null != session.getAttribute("_USER_"))) {
+			DataObject usr = (DataObject) session.getAttribute("_USER_");
 			SWBDataSource ds = engine.getDataSource(dataSourceId);
             DataObject updateObj = null;
 
@@ -282,6 +286,7 @@ public class DataSourceService {
 					if (null != response && 0 == response.getInt("status")) {
 						objNew = processImages(ds, imgFields, response.getDataObject("data"));
 					}
+					logger.logActivity(usr.getString("fullname"), usr.getId(), false, "EDIT", dataSourceId);
 					return Response.ok().entity(objNew.getDataObject("response")).build();
 				} else {
 					return Response.status(Status.BAD_REQUEST).build();
@@ -295,8 +300,7 @@ public class DataSourceService {
 	@DELETE
 	@Path("/{dsname}/{objId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId)
-			throws IOException {
+	public Response removeDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId) throws IOException {
 		HttpSession session = httpRequest.getSession();
 		if ("User".equals(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
@@ -306,6 +310,7 @@ public class DataSourceService {
 
 		//TODO: Remove associated images
 		if (!checkSession || (checkSession && null != session.getAttribute("_USER_"))) {
+			DataObject usr = (DataObject) session.getAttribute("_USER_");
 			SWBDataSource ds = engine.getDataSource(dataSourceId);
 
 			if (null == ds) return Response.status(Status.BAD_REQUEST).build();
@@ -329,6 +334,7 @@ public class DataSourceService {
 					FileUtils.deleteQuietly(new File(fName));
 				}
 			}
+			logger.logActivity(usr.getString("fullname"), usr.getId(), false, "DELETE", dataSourceId);
 			return Response.ok().entity(ret).build();
 		}
 

@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
+import org.fst2015pm.swbforms.utils.DBLogger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,9 +35,8 @@ public class TravelAgencyService {
 	@Context ServletContext context;
 
 	boolean useCookies = false;
-	final static String ERROR_FORBIDDEN = "{\"error\":\"Unauthorized\"}";
-	final static String ERROR_BADREQUEST = "{\"error\":\"Bad request\"}";
 	PMCredentialsManager mgr;
+	DBLogger logger = DBLogger.getInstance();
 
 	public TravelAgencyService() {
 		//Create credentials manager
@@ -50,7 +50,7 @@ public class TravelAgencyService {
 		SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 
 		if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
-			return Response.status(401).entity(ERROR_FORBIDDEN).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		
 		SWBDataSource ds = engine.getDataSource("TravelAgency");
@@ -122,11 +122,13 @@ public class TravelAgencyService {
 		SWBDataSource ds = engine.getDataSource("TravelAgency");
 
 		if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
-			return Response.status(401).entity(ERROR_FORBIDDEN).build();
+			return Response.status(Status.FORBIDDEN).build();
 		} else {
 			if (null == ds) {
 				return Response.status(500).build();
 			}
+			
+			DataObject usr = mgr.getUser(httpRequest, false);
 
 			try {
 				JSONArray objArray = new JSONArray(content);
@@ -150,9 +152,10 @@ public class TravelAgencyService {
 						retArray.put(el);
 					}
 				}
-				return Response.status(200).entity(retArray.toString()).build();
+				logger.logActivity(usr.getString("fullname"), usr.getId(), true, "ADD", "Agencia de viajes");
+				return Response.ok(retArray.toString()).build();
 			} catch (JSONException jspex) {
-				return Response.status(400).entity(ERROR_BADREQUEST).build();
+				return Response.status(Status.BAD_REQUEST).build();
 			}
 		}
 	}

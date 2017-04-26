@@ -70,6 +70,30 @@ public class PMCredentialsManager {
 	}
 	
 	/**
+	 * Gets session user if session is valid and active
+	 * @param request HTTPServletRequest
+	 * @param checkCookies Whether to check additional cookies
+	 * @return Active Session User or null
+	 */
+	public DataObject getUser(HttpServletRequest request, boolean checkCookies) {
+		DataObject ret = null;
+		if(validateCredentials(request, checkCookies, true)) {
+			String []authorization = getAuthCredentials(request, checkCookies);
+			DataObject sessObj = getUserSessionObjectByToken(authorization[1]);
+			
+			if (null != sessObj) {
+				try {
+					ret = userDS.fetchObjById(sessObj.getString("user"));
+				} catch (IOException ioex) {
+					ioex.printStackTrace();
+				}
+			}
+		}
+		
+		return ret;
+	}
+	
+	/**
 	 * Gets user session token from authorization headers or session cookie
 	 * @param request Request object
 	 * @param checkCookies whether to check session cookie

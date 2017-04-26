@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
+import org.fst2015pm.swbforms.utils.DBLogger;
 import org.fst2015pm.swbforms.utils.FSTUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,9 +36,8 @@ public class ParkingService {
 	@Context ServletContext context;
 
 	boolean useCookies = false;
-	final static String ERROR_FORBIDDEN = "{\"error\":\"Unauthorized\"}";
-	final static String ERROR_BADREQUEST = "{\"error\":\"Bad request\"}";
 	PMCredentialsManager mgr;
+	DBLogger logger = DBLogger.getInstance();
 
 	public ParkingService() {
 		//Create credentials manager
@@ -51,7 +51,7 @@ public class ParkingService {
 		SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 
 		if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
-			return Response.status(401).entity(ERROR_FORBIDDEN).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		
 		SWBDataSource ds = engine.getDataSource("Parking");
@@ -95,7 +95,7 @@ public class ParkingService {
 		SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 
 		if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
-			return Response.status(401).entity(ERROR_FORBIDDEN).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		SWBDataSource ds = engine.getDataSource("Parking");
 		DataObject dsFetch = null;
@@ -123,10 +123,16 @@ public class ParkingService {
 		SWBDataSource ds = engine.getDataSource("Parking");
 
 		if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
-			return Response.status(401).entity(ERROR_FORBIDDEN).build();
+			return Response.status(Status.FORBIDDEN).build();
 		} else {
 			if (null == ds) {
-				return Response.status(500).build();
+				return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+			}
+			
+			DataObject usr = null;
+			String []authorization = mgr.getAuthCredentials(httpRequest, false);
+			if (authorization.length == 2) {
+				usr = mgr.getUserSessionObjectByToken(authorization[1]);
 			}
 
 			try {
@@ -180,9 +186,10 @@ public class ParkingService {
 						retArray.put(el);
 					}
 				}
-				return Response.status(200).entity(retArray.toString()).build();
+				logger.logActivity(usr.getString("fullname"), usr.getId(), true, "ADD", "Estacionamientos");
+				return Response.ok(retArray.toString()).build();
 			} catch (JSONException jspex) {
-				return Response.status(400).entity(ERROR_BADREQUEST).build();
+				return Response.status(Status.BAD_REQUEST).build();
 			}
 		}
 	}

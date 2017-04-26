@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
+import org.fst2015pm.swbforms.utils.DBLogger;
 import org.fst2015pm.swbforms.utils.FSTUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +39,7 @@ public class SignalService {
 	final static String ERROR_FORBIDDEN = "{\"error\":\"Unauthorized\"}";
 	final static String ERROR_BADREQUEST = "{\"error\":\"Bad request\"}";
 	PMCredentialsManager mgr;
+	DBLogger logger = DBLogger.getInstance();
 
 	public SignalService() {
 		//Create credentials manager
@@ -126,6 +128,8 @@ public class SignalService {
 		
 		if (null == ds) return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 
+		DataObject usr = mgr.getUser(httpRequest, false);
+		
 		try {
 			JSONArray objArray = new JSONArray(content);
 			JSONArray retArray = new JSONArray();
@@ -177,6 +181,7 @@ public class SignalService {
 					retArray.put(el);
 				}
 			}
+			logger.logActivity(usr.getString("fullname"), usr.getId(), true, "ADD", "Señalamientos");
 			return Response.ok(retArray.toString()).build();
 		} catch (JSONException jspex) {
 			return Response.status(Status.BAD_REQUEST).build();

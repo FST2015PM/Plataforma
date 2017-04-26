@@ -1,0 +1,13 @@
+<div class="row title-ribbon">
+  <h3 class="pull-left">Actividad</h3>
+</div>
+<div class="row">
+  <div class="col-sm-12 col-lg-12">
+    <ul class="list-group activity-feed">
+      <li ng-repeat="entry in activity.activityList | orderBy: '-date'" class="list-group-item">
+        <small class="pull-right text-muted"><span class="fa fa-clock-o fa-fw"></span>{{entry.date | date:'medium'}}</small>
+          <span ng-class="{'fa fa-desktop fa-fw' : !entry.fromApp, 'fa fa-mobile fa-fw' : entry.fromApp}"></span> <strong>{{entry.userFullName}}</strong> {{entry.actionDescription}} <strong>{{entry.target}}</strong>
+      </li>
+    </ul>
+  </div>
+</div>
