@@ -64,6 +64,7 @@
     {
       label: "Usuarios y permisos",
       roles: ["Admin"],
+      menuTab :"users",
       menuItems: [
         {
           label:"Usuarios",
@@ -72,11 +73,16 @@
         {
           label:"Roles",
           stateLink: 'admin.roles'
+        }, 
+        {
+          label:"Permisos",
+          stateLink: 'admin.permission'
         }
       ]
     },
     {
       label: "Fuentes de datos",
+      menuTab :"sources",
       menuItems: [
         {
           label:"Extractores",
@@ -103,6 +109,7 @@
     {
       label: "Puntos de acceso",
       roles: ["Admin"],
+      menuTab :"accesspoint",
       menuItems: [
         {
           label:"End Points",

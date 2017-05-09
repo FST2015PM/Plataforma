@@ -1616,14 +1616,158 @@
             });
           }]
         }
-      });
+      }).state('admin.permission', {
+            url: '/permission',
+            views: {
+                'sidenav': {
+                    templateUrl: 'templates/includes/sidenav.html',
+                    controller: 'SideNavCtrl'//,
+                 //   controllerAs: 'nav'
+                },
+                'content': {
+                    templateUrl: 'templates/permission/permissionPage.html',
+                    controller: 'PermissionCtrl',
+                    controllerAs: "permission"
+                }
+            },
+            resolve: {
+                userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+                        var deferred = $q.defer();
+                        $LoginService.me()
+                        .then(function(response) {
+                            deferred.resolve(response);
+                        }).catch(function(err) {
+                            deferred.reject({notLoggedIn: true});
+                        });
+                        return deferred.promise;
+                    }],
+                menuItems: ['$ACLService', function($ACLService) {
+                        return $ACLService.getUserActions()
+                        .then(function(result) {
+                            return result.data || [];
+                        }).catch(function(err) {
+                            return [];
+                        });
+                    }],
+                loadDependencies: function($ocLazyLoad, $stateParams) {
+                    return $ocLazyLoad.load([
+                        {
+                            serie: true,
+                            //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
+                            files: [
+                                'lib/AngularJS-Toaster/toaster.min.css',
+                                'lib/AngularJS-Toaster/toaster.min.js',
+                                'lib/datatables.net/js/jquery.dataTables.min.js',
+                                'lib/bootbox/bootbox.js'
+                            ]
+                        }
+                    ]);
+                }
+            }
+        }).state('admin.addpermission', {
+            url: '/permission/add',
+            views: {
+                'sidenav': {
+                    templateUrl: 'templates/includes/sidenav.html',
+                    controller: 'SideNavCtrl'//,
+                    //controllerAs: 'nav'
+                },
+                'content': {
+                    templateUrl: 'templates/permission/permissionEdit.html',
+                    controller: 'PermissionEditCtrl',
+                    controllerAs: "permission"
+                }
+            },
+            resolve: {
+                userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+                        var deferred = $q.defer();
+                        $LoginService.me()
+                        .then(function(response) {
+                            deferred.resolve(response);
+                        }).catch(function(err) {
+                            deferred.reject({notLoggedIn: true});
+                        });
+                        return deferred.promise;
+                    }],
+                menuItems: ['$ACLService', function($ACLService) {
+                        return $ACLService.getUserActions()
+                        .then(function(result) {
+                            return result.data || [];
+                        }).catch(function(err) {
+                            return [];
+                        });
+                    }],
+                loadDependencies: function($ocLazyLoad, $stateParams) {
+                    return $ocLazyLoad.load([
+                        {
+                            serie: true,
+                            //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
+                            files: [
+                                'lib/AngularJS-Toaster/toaster.min.css',
+                                'lib/AngularJS-Toaster/toaster.min.js',
+                                'lib/datatables.net/js/jquery.dataTables.min.js',
+                                'lib/bootbox/bootbox.js'
+                            ]
+                        }
+                    ]);
+                }
+            }
+        }).state('admin.editpermissionpage', {
+            url: '/permission/edit/:id',
+            views: {
+                'sidenav': {
+                    templateUrl: 'templates/includes/sidenav.html',
+                    controller: 'SideNavCtrl'//,
+                    //controllerAs: 'nav'
+                },
+                'content': {
+                    templateUrl: 'templates/permission/permissionEdit.html',
+                    controller: 'PermissionEditCtrl',
+                    controllerAs: "permission"
+                }
+            },
+            resolve: {
+                userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+                        var deferred = $q.defer();
+                        $LoginService.me()
+                        .then(function(response) {
+                            deferred.resolve(response);
+                        }).catch(function(err) {
+                            deferred.reject({notLoggedIn: true});
+                        });
+                        return deferred.promise;
+                    }],
+                menuItems: ['$ACLService', function($ACLService) {
+                        return $ACLService.getUserActions()
+                        .then(function(result) {
+                            return result.data || [];
+                        }).catch(function(err) {
+                            return [];
+                        });
+                    }],
+                loadDependencies: function($ocLazyLoad, $stateParams) {
+                    return $ocLazyLoad.load([
+                        {
+                            serie: true,
+                            //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
+                            files: [
+                                'lib/AngularJS-Toaster/toaster.min.css',
+                                'lib/AngularJS-Toaster/toaster.min.js',
+                                'lib/datatables.net/js/jquery.dataTables.min.js',
+                                'lib/bootbox/bootbox.js'
+                            ]
+                        }
+                    ]);
+                }
+            }
+        });
 
     $urlRouterProvider.otherwise("/admin/");
 
   };
 
-  run.$inject = ["$rootScope", "$state", "$stateParams", "$templateCache", "$http", "$window", "$LoginService"];
-  function run($rootScope, $state, $stateParams, $templateCache, $http, $window, $LoginService) {
+  run.$inject = ["$rootScope", "$state", "$stateParams", "$templateCache", "$http", "$window", "$LoginService","$location","$q"];
+  function run($rootScope, $state, $stateParams, $templateCache, $http, $window, $LoginService, $location, $q) {
     let apiVersion = 1;
 
     $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, eventObj) {
@@ -1638,5 +1782,45 @@
     }).catch(function(error) {
       $window.location.href = "/";
     });
+    
+    $rootScope.mapPages = {};
+    $rootScope.isFirst = false;
+
+            $rootScope.$on('$stateChangeStart', function (event, next) {
+            if(!$rootScope.isFirst) {
+                $rootScope.isFirst = true;
+                $rootScope.loadMap($q, $http).then(function(response) {
+                    $rootScope.mapPages = response;
+                    angular.forEach($rootScope.mapPages, function(page, index){
+                        if (next.name == page.id){
+                            event.preventDefault();
+                            $location.path("/app/#/admin/");
+                        }                        
+                    });
+                });
+                
+            } else {
+                angular.forEach($rootScope.mapPages, function(page, index){
+                    if (next.name == page.id){
+                        event.preventDefault();
+                        $location.path("/app/#/admin/");
+                    }                        
+                });
+            }
+        });
+        
+        $rootScope.loadMap = function($q, $http){
+            var deferred = $q.defer();
+            $http.get("/role?action=mapRoles").then(
+                function (response) { // Success callback
+                    deferred.resolve(response.data);
+                },
+                function (response) { // Error callback
+                    deferred.reject(response);
+                }
+            );
+            return deferred.promise;
+        };
+      
   };
 })();

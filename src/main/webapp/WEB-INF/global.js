@@ -68,6 +68,19 @@ eng.dataSources["Role"] = {
     ]
 };
 
+eng.dataSources["Permission"]={
+    scls: "Permission",
+    modelid: DBModel,
+    dataStore: "mongodb",
+    secure: true,
+    displayField: "name",
+    fields:[
+        {name:"name",title:"Nombre",type:"string"},
+        {name:"id",title:"ID",type:"string"},
+        {name: "roles", title: "Roles", stype: "select", multiple:true , dataSource:"Role"},
+    ]
+};
+
 eng.dataSources["PMLog"]={
     scls: "PMLog",
     modelid: DBModel,

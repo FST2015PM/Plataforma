@@ -1,0 +1,39 @@
+<div class="animate fadeIn">
+  <div class="row title-ribbon">
+    <h3>{{permission.formTitle}}</h3>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <div class="panel-body">
+        <div class="col-sm-8 col-sm-offset-2">
+          <form name="editForm" novalidate class="form-horizontal" ng-submit="permission.submitForm(editForm)">
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid }">
+              <label class="col-sm-2 control-label">Nombre</label>
+              <div class="col-sm-10">
+                <input type="text" name="name" required class="form-control" ng-model="permission.pageData.name"/>
+                <span ng-show="(editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid" class="help-block">El nombre es requerido</span>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.id.$touched) && editForm.id.$invalid }">
+              <label class="col-sm-2 control-label">StateLink / MenuTab </label>
+              <div class="col-sm-10">
+                <input type="text" name="id" required class="form-control" ng-model="permission.pageData.id"/>
+                <span ng-show="(editForm.$submitted || editForm.id.$touched) && editForm.id.$invalid" class="help-block">El ID es requerido</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Roles</label>
+              <div class="col-sm-10">
+                <select multiple name="role" ng-model="permission.selectedRoles" ng-options="item._id as item.title for item in permission.pagesRoles | orderBy : 'title'" class="form-control" size="5"></select>
+              </div>
+            </div>
+            <div class="text-right">
+              <button type="submit" class="btn btn-primary btn-minw">Guardar</button>
+              <button ui-sref="admin.permission" class="btn btn-default btn-minw">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

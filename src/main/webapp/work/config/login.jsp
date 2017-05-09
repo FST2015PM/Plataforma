@@ -1,4 +1,4 @@
-<%@page import="org.semanticwb.datamanager.*"%><%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%><%@page import="java.util.ArrayList"%><%@page import="org.semanticwb.datamanager.*"%><%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
 String logoutAction=request.getParameter("logout");
 String email=request.getParameter("email");
@@ -22,6 +22,16 @@ if (null != logoutAction && "true".equals(logoutAction)) {
 
     if(!rdata.isEmpty())
     {
+        DataObject data1 = rdata.getDataObject(0);
+
+        if (data1.containsKey("roles")) {
+           List rolesUsr = new ArrayList();
+           for (int i = 0; i < data1.getDataList("roles").size(); i++) {
+              rolesUsr.add(data1.getDataList("roles").getString(i));
+           }
+            session.setAttribute("role", rolesUsr);
+        }
+        
       session.setAttribute("_USER_", rdata.get(0));
       response.sendRedirect("/app/#/admin/");
       return;
