@@ -23,7 +23,7 @@ eng.config={
 eng.dataStores["mongodb"]={
     host:"localhost",
     port:27017,
-    class: "org.semanticwb.datamanager.datastore.DataStoreMongo",
+    class: "org.semanticwb.datamanager.datastore.DataStoreMongo"
 };
 /*
 eng.dataStores["ts_leveldb"]={
@@ -37,7 +37,12 @@ eng.dataSources["DBDataSource"]={
     scls: "DBDataSource",
     modelid: DBModel,
     dataStore: "mongodb",
-    secure: true
+    secure: true,
+    fields: [
+      {name:"name", title:"Nombre", type:"string", required:true},
+      {name:"description", title:"Descripción", type:"string", required:true},
+      {name:"columns", title:"Columnas", type:"boolean", required:true}
+    ]
 };
 
 eng.dataSources["User"]={

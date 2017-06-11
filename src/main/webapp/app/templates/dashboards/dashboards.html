@@ -4,7 +4,16 @@
     <div class="pull-right">
       <a ui-sref="admin.editdashboard({mode:'new'})" class="btn btn-primary btn-minw">Agregar tablero</a>
     </div>
-  </div>  <div class="row">
+  </div>
+  <div class="row">
+    <div class="form-group has-feedback pull-right">
+      <input type="text" class="form-control" ng-model="dashboards.searchText">
+      <span class="form-control-feedback" aria-hidden="true">
+        <i class="fa fa-search"></i>
+      </span>
+    </div>
+  </div>
+  <div class="row">
     <div class="panel panel-default box-panel">
       <div class="panel-body">
         <table class="table">
@@ -15,7 +24,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="dashboard in dashboards.dashboardList">
+            <tr ng-repeat="dashboard in dashboards.dashboardList | filter:dashboards.searchText">
               <td>{{dashboard.name}}</td>
               <td class="text-right">
                 <a class="btn btn-sm btn-primary" ui-sref="admin.previewdashboard({id: '{{dashboard._id}}'})"><span class="fa fa-eye"></span></a>

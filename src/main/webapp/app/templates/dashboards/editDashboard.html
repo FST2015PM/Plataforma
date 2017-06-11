@@ -12,17 +12,18 @@
 </style>
 <div>
   <div class="row title-ribbon">
-    <h3>{{ ds.formTitle }} - {{ds.dashboardData.name}}</h3>
+    <h3>{{ ds.formTitle }}</h3>
   </div>
   <div class="row">
     <div class="panel panel-default box-panel">
       <form name="editForm" novalidate class="form-horizontal" ng-submit="ds.submitForm(editForm)">
         <div class="panel-body">
           <div class="col-sm-8 col-sm-offset-2">
-            <div class="form-group">
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid }">
               <label class="col-sm-2 control-label">Nombre</label>
               <div class="col-sm-10">
                 <input type="text" name="name" required class="form-control" ng-model="ds.dashboardData.name"/>
+                <span ng-show="(editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid" class="help-block">El nombre es requerido</span>
               </div>
             </div>
           </div>
@@ -51,12 +52,12 @@
                   <div class="panel-heading">
                     {{item.name}}
                     <div class="pull-right">
-                      <a ng-click="ds.configWidget()" class="btn btn-xs btn-default"><span class="fa fa-wrench fa-fw"></span></a>
-                      <a ng-click="ds.removeWidget(item.id)" class="btn btn-xs btn-default"><span class="fa fa-trash-o fa-fw"></span></a>
+                      <a ng-click="ds.configWidget(item)" class="btn btn-xs"><span class="fa fa-cog"></span></a>
+                      <a ng-click="ds.removeWidget(item.id)" class="btn btn-xs"><span class="fa fa-trash-o"></span></a>
                     </div>
                   </div>
-                  <div class="panel-body" ng-attr-id="{{widget.id}}">
-                    hey there!
+                  <div class="panel-body" style="height:100%; padding:5px;">
+                    <div ng-attr-id="{{item.id}}" style="position:relative; width:100%; height:90%;"></div>
                   </div>
                 </div>
               </div>

@@ -259,6 +259,53 @@
           }
         }
       })
+      .state('admin.editchartwidget', {
+        url: '/dashboard/edit/:id/chart/:wid',
+        views: {
+          'sidenav': {
+            templateUrl: 'templates/includes/sidenav.html',
+            controller: 'SideNavCtrl as nav'
+          },
+          'content': {
+            templateUrl: 'templates/dashboards/chartWidgetEditForm.html',
+            controller: 'ChartEditWidgetCtrl',
+            controllerAs: "widget"
+          }
+        },
+        resolve: {
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
+          loadDependencies: function($ocLazyLoad, $stateParams) {
+            return $ocLazyLoad.load([
+              {
+                  serie: true,
+                  files: [
+                    'lib/highcharts/highcharts.js',
+                    'js/dataviz/constants.js',
+                    'js/dataviz/charts.js',
+                    'js/dataviz/dataviz.js'
+                  ]
+              }
+            ]);
+          }
+        }
+      })
       .state('admin.previewdashboard', {
         url: '/dashboard/preview/:id',
         views: {

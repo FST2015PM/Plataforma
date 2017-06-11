@@ -56,7 +56,8 @@
     "angular-base64-upload": "https://github.com/adonespitogo/angular-base64-upload.git#master",
     "matchheight": "matchheight#^0.7.2",
     "angular-uuid": "https://github.com/munkychop/angular-uuid.git#0.0.4",
-    "metisMenu": "metismenu#^2.7.0"
+    "metisMenu": "metismenu#^2.7.0",
+    "highcharts": "^5.0.10"
   },
   "resolutions": {
     "angular": "~1.5.0",

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -45,7 +46,7 @@ public class DataSourceService {
 	@Context ServletContext context;
 	@Context HttpServletRequest httpRequest;
 	DBLogger logger = DBLogger.getInstance();
-	
+
 	SWBScriptEngine engine;
 	boolean checkSession = false;
 
@@ -64,7 +65,7 @@ public class DataSourceService {
 				for (String name : dataSources) {
 					SWBDataSource dsource = engine.getDataSource(name);
 					ScriptObject dsourceDef = dsource.getDataSourceScript();
-					
+
 					if (null != dsource && null != dsourceDef && !Boolean.valueOf(dsourceDef.getString("secure"))) {
 						//JSONObject ds = new JSONObject();
 						//ds.put("name", name);
@@ -102,27 +103,26 @@ public class DataSourceService {
 			if (null == ds) return Response.status(Status.BAD_REQUEST).build();
 
 			//Get datasource fields
-			HashMap<String, String> dsFields = new HashMap<>();
-			ScriptObject fieldsDef = ds.getDataSourceScript().get("fields");
+			boolean hasFields = false;
+			HashMap<String, String> fieldNames = new HashMap<>();
+			ScriptObject fieldsDef = ds.getDataSourceScript();
+			hasFields = null != fieldsDef.get("fields");
 
-			if (null != fieldsDef) {
-				Iterator<ScriptObject> itFields = fieldsDef.values().iterator();
-				while (itFields.hasNext()) {
-					ScriptObject col = itFields.next();
-					dsFields.put(col.getString("name"), col.getString("type"));
-				}
-
-				//Build query object
-				for (String key : params.keySet()) {
-					String type = dsFields.get(key);
-					if (null != type) {
-						Object typed = FSTUtils.DATA.inferTypedValue(params.getFirst(key));//FSTUtils.DATA.getTypedObject(params.getFirst(key), type);
-						if (null != typed) {
-							queryObj.put(key, typed);
-						}
-					}
-				}
+			if (hasFields) {
+				Iterator<ScriptObject> fields = fieldsDef.get("fields").values().iterator();
+	            while(fields.hasNext()) {
+	            	ScriptObject field = fields.next();
+	            	fieldNames.put(field.getString("name"), field.getString("type"));
+	            }
 			}
+
+            for (String key : params.keySet()) {
+            	if (!hasFields) { //No fields defined, all passes
+            		queryObj.put(key, params.getFirst(key));
+            	} else if (null != fieldNames.get(key)) {
+            		queryObj.put(key, params.getFirst(key));
+            	}
+            }
 
 			//Execute fetch query
 			DataObject dsFetch = null;
@@ -150,7 +150,7 @@ public class DataSourceService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addDataSourceObject(@PathParam("dsname") String dataSourceId, String content) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		
+
 		if ("User".equals(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
@@ -166,7 +166,7 @@ public class DataSourceService {
 			HashMap<String, JSONObject> imgFields = new HashMap<>();
 			try {
 				objData = new JSONObject(content);
-				
+
 				//Check fields in search of image | photo | picture
 				String keys [] = JSONObject.getNames(objData);
 				for (String key : keys) {
@@ -256,7 +256,7 @@ public class DataSourceService {
 			HashMap<String, JSONObject> imgFields = new HashMap<>();
 			try {
 				objData = new JSONObject(content);
-				
+
 				//Check fields in search of image | photo | picture
 				String keys [] = JSONObject.getNames(objData);
 				for (String key : keys) {
@@ -316,7 +316,7 @@ public class DataSourceService {
 			if (null == ds) return Response.status(Status.BAD_REQUEST).build();
 			DataObject obj = ds.fetchObjById(oId);
 			if (null == obj) return Response.status(Status.BAD_REQUEST).build();
-			
+
 			ArrayList<String> imgFields = new ArrayList<>();
 			for (String key : obj.keySet()) {
 				if ("image".equalsIgnoreCase(key) || "picture".equalsIgnoreCase(key) || "photo".equalsIgnoreCase(key)) {
@@ -340,7 +340,7 @@ public class DataSourceService {
 
 		return Response.status(Status.FORBIDDEN).build();
 	}
-	
+
 	private DataObject processImages(SWBDataSource ds, HashMap<String, JSONObject> imgFields, DataObject dob) {
 		String oId = dob.getId();
 		if (oId.lastIndexOf(":") > 0) {
@@ -351,12 +351,12 @@ public class DataSourceService {
 				"://" + httpRequest.getServerName() +
 				(80 == httpRequest.getServerPort() ? "" : ":" + httpRequest.getServerPort()) +
 				"/public/images/"+ ds.getName() +"/";
-		
+
 		HashMap<String, String> fields = new HashMap<>();
 		for (String key : imgFields.keySet()) {
 			JSONObject imgObj = imgFields.get(key);
 			String imgName = imgObj.getString("fileName").replaceAll("[/\\\\]+", "");
-			
+
 			if (imgName.lastIndexOf(".") > -1) {
 				imgName = oId + imgName.substring(imgName.lastIndexOf("."), imgName.length());
 				if (FSTUtils.FILE.storeBase64File(destPath, imgName, imgObj.getString("content"))) {
@@ -364,11 +364,11 @@ public class DataSourceService {
 				}
 			}
 		}
-		
+
 		for (String key : fields.keySet()) {
 			dob.put(key, fields.get(key));
 		}
-		
+
 		try {
 			return ds.updateObj(dob);
 		} catch (IOException ioex) {

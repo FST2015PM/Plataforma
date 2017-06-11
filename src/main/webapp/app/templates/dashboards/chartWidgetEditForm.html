@@ -1,0 +1,81 @@
+<div>
+  <div class="row title-ribbon">
+    <h3>Configurar Gráfica</h3>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <form name="editForm" novalidate class="form-horizontal" ng-submit="widget.submitForm(editForm)">
+        <div class="panel-body">
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid }" >
+              <label class="col-sm-2 control-label">Nombre</label>
+              <div class="col-sm-10">
+                <input type="text" name="name" required class="form-control" ng-model="widget.widget.name" />
+                <span ng-show="(editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid" class="help-block">El nombre es requerido</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Tipo de gráfica</label>
+              <div class="col-sm-10">
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-sm btn-default active" ng-click="widget.setChartType('pie')">
+                    <input type="radio" autocomplete="off" checked> <span class="fa fa-pie-chart"></span>
+                  </label>
+                  <label class="btn btn-sm btn-default" ng-click="widget.setChartType('bar')">
+                    <input type="radio" autocomplete="off"> <span class="fa fa-bar-chart"></span>
+                  </label>
+                  <label class="btn btn-sm btn-default" ng-click="widget.setChartType('line')">
+                    <input type="radio" autocomplete="off"> <span class="fa fa-line-chart"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid }">
+              <label class="col-sm-2 control-label">DataSource</label>
+              <div class="col-sm-10">
+                <select name="dataSourceName" required class="form-control" ng-model="widget.widget.dataSourceName" ng-options="option for option in widget.dsList" ng-change="widget.updateDSDefinition()">
+                  <option value="">Seleccione un datasource</option>
+                </select>
+                <span ng-show="(editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid" class="help-block">El datasource es requerido</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1">
+            <h4>Configuración</h4>
+            <hr/>
+          </div>
+          <div id="pieForm" ng-show="widget.widget.chartType === 'pie'">
+            <div class="col-sm-8 col-sm-offset-2">
+              <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.groupField.$touched) && editForm.groupField.$invalid }">
+                <label class="col-sm-2 control-label">Agrupar por</label>
+                <div class="col-sm-10">
+                  <select name="groupField" required class="form-control" ng-model="widget.widget.groupField" ng-options="option.title for option in widget.dsColumns | orderBy: 'title'">
+                    <option value="">Seleccione una columna</option>
+                  </select>
+                  <span ng-show="(editForm.$submitted || editForm.groupField.$touched) && editForm.groupField.$invalid" class="help-block">El grupo es requerido</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8 col-sm-offset-2">
+              <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.showValue.$touched) && editForm.showValue.$invalid }">
+                <label class="col-sm-2 control-label">Mostrar</label>
+                <div class="col-sm-10">
+                  <select name="showValue" required class="form-control" ng-model="widget.widget.showValue">
+                    <option value="total">Total</option>
+                    <option value="mean">Promedio</option>
+                    <option value="percentage">Porcentaje</option>
+                  </select>
+                  <span ng-show="(editForm.$submitted || editForm.showValue.$touched) && editForm.showValue.$invalid" class="help-block">El valor es requerido</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-footer text-right">
+          <button type="submit" ng-disabled="widget.processing" class="btn btn-primary btn-minw"><span ng-show="widget.processing" class="fa fa-cog fa-spin fa-lg fa-fw"></span>Guardar</button>
+          <button ui-sref="admin.editdashboard({id: widget.dashboardData._id})" ng-disabled="widget.processing" class="btn btn-default btn-minw">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
