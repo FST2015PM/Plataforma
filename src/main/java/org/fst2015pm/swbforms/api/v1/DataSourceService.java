@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -23,8 +22,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.FileUtils;
 import org.fst2015pm.swbforms.utils.DBLogger;
@@ -32,6 +31,7 @@ import org.fst2015pm.swbforms.utils.FSTUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.semanticwb.datamanager.DataList;
 import org.semanticwb.datamanager.DataMgr;
 import org.semanticwb.datamanager.DataObject;
 import org.semanticwb.datamanager.SWBDataSource;
@@ -48,7 +48,10 @@ public class DataSourceService {
 	DBLogger logger = DBLogger.getInstance();
 
 	SWBScriptEngine engine;
-	boolean checkSession = false;
+	PMCredentialsManager mgr = new PMCredentialsManager();;
+	
+	private enum AccessType { DISABLED, OPEN, APIKEY, SESSION };
+	private final String restrictedDS = "DBDataSource|User|Role|PMLog|UserSession|ResetPasswordToken|APIKey|DSEndpoint|GeoLayer|Dashboard|Extractor";
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -66,10 +69,7 @@ public class DataSourceService {
 					SWBDataSource dsource = engine.getDataSource(name);
 					ScriptObject dsourceDef = dsource.getDataSourceScript();
 
-					if (null != dsource && null != dsourceDef && !Boolean.valueOf(dsourceDef.getString("secure"))) {
-						//JSONObject ds = new JSONObject();
-						//ds.put("name", name);
-						//ret.put(ds);
+					if (null != dsource && null != dsourceDef && !Boolean.valueOf(dsourceDef.getString("secure"))) {//Filter secured datasources
 						ret.put(name);
 					}
 				}
@@ -90,18 +90,19 @@ public class DataSourceService {
 		HttpSession session = httpRequest.getSession();
 		MultivaluedMap<String, String> params = info.getQueryParameters();
 		DataObject queryObj = new DataObject();
-
-		//Init SWBForms engine
-		if ("User".equals(dataSourceId)) {
+		
+		//Init platform
+		if (restrictedDS.contains(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
 			engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		}
-
-		if (!checkSession || (checkSession && null != session.getAttribute("_USER_"))) {
-			SWBDataSource ds = engine.getDataSource(dataSourceId);
-			if (null == ds) return Response.status(Status.BAD_REQUEST).build();
-
+		
+		//Get DataSource
+		SWBDataSource ds = engine.getDataSource(dataSourceId);
+		if (null == ds) return Response.status(Status.NOT_FOUND).build();
+		
+		if (hasAccess(ds, httpRequest)) {
 			//Get datasource fields
 			boolean hasFields = false;
 			HashMap<String, String> fieldNames = new HashMap<>();
@@ -139,9 +140,9 @@ public class DataSourceService {
 			} else {
 				return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 			}
+		} else {
+			return Response.status(Status.FORBIDDEN).build();
 		}
-
-		return Response.status(Status.FORBIDDEN).entity("forbidden").build();
 	}
 
 	@POST
@@ -150,18 +151,19 @@ public class DataSourceService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addDataSourceObject(@PathParam("dsname") String dataSourceId, String content) throws IOException {
 		HttpSession session = httpRequest.getSession();
-
-		if ("User".equals(dataSourceId)) {
+		
+		if (restrictedDS.contains(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
 			engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		}
-
-		if (!checkSession || (checkSession && null != session.getAttribute("_USER_"))) {
+		
+		//Get DataSource
+		SWBDataSource ds = engine.getDataSource(dataSourceId);
+		if (null == ds) return Response.status(Status.NOT_FOUND).build();
+		
+		if (hasAccess(false, true, httpRequest)) {
 			DataObject usr = (DataObject) session.getAttribute("_USER_");
-			SWBDataSource ds = engine.getDataSource(dataSourceId);
-			if (null == ds) return Response.status(Status.BAD_REQUEST).build();
-
 			JSONObject objData = null;
 			HashMap<String, JSONObject> imgFields = new HashMap<>();
 			try {
@@ -204,7 +206,6 @@ public class DataSourceService {
 				}
 			}
 		}
-
 		return Response.status(Status.FORBIDDEN).build();
 	}
 
@@ -213,16 +214,18 @@ public class DataSourceService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		if ("User".equals(dataSourceId)) {
+		
+		if (restrictedDS.contains(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
 			engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		}
+		
+		//Get DataSource
+		SWBDataSource ds = engine.getDataSource(dataSourceId);
+		if (null == ds) return Response.status(Status.NOT_FOUND).build();
 
-		if (!checkSession || (checkSession && null != session.getAttribute("_USER_"))) {
-			SWBDataSource ds = engine.getDataSource(dataSourceId);
-
-			if (null == ds) return Response.status(Status.BAD_REQUEST).build();
+		if (hasAccess(ds, httpRequest)) {
 			DataObject dsFetch = ds.fetchObjById(oId);
 			if (null == dsFetch)
 				return Response.status(Status.BAD_REQUEST).build();
@@ -239,19 +242,18 @@ public class DataSourceService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId, String content) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		if ("User".equals(dataSourceId)) {
+		if (restrictedDS.contains(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
 			engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		}
-
-		if (!checkSession || (checkSession && null != session.getAttribute("_USER_"))) {
+		
+		//Get DataSource
+		SWBDataSource ds = engine.getDataSource(dataSourceId);
+		if (null == ds) return Response.status(Status.NOT_FOUND).build();
+		
+		if (hasAccess(false, true, httpRequest)) {
 			DataObject usr = (DataObject) session.getAttribute("_USER_");
-			SWBDataSource ds = engine.getDataSource(dataSourceId);
-            DataObject updateObj = null;
-
-			if (null == ds) return Response.status(Status.FORBIDDEN).build();
-
 			JSONObject objData = null;
 			HashMap<String, JSONObject> imgFields = new HashMap<>();
 			try {
@@ -302,18 +304,19 @@ public class DataSourceService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		if ("User".equals(dataSourceId)) {
+		if (restrictedDS.contains(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
 			engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		}
 
 		//TODO: Remove associated images
-		if (!checkSession || (checkSession && null != session.getAttribute("_USER_"))) {
+		//Get DataSource
+		SWBDataSource ds = engine.getDataSource(dataSourceId);
+		if (null == ds) return Response.status(Status.NOT_FOUND).build();
+		
+		if (hasAccess(false, true, httpRequest)) {
 			DataObject usr = (DataObject) session.getAttribute("_USER_");
-			SWBDataSource ds = engine.getDataSource(dataSourceId);
-
-			if (null == ds) return Response.status(Status.BAD_REQUEST).build();
 			DataObject obj = ds.fetchObjById(oId);
 			if (null == obj) return Response.status(Status.BAD_REQUEST).build();
 
@@ -375,6 +378,112 @@ public class DataSourceService {
 			ioex.printStackTrace();
 			return null;
 		}
+	}
+	
+	private boolean isSecureDataSource(SWBDataSource ds) {
+		ScriptObject dsourceDef = ds.getDataSourceScript();
+		return (null != ds && null != dsourceDef && Boolean.valueOf(dsourceDef.getString("secure")));
+	}
+	
+	private boolean hasAccess(SWBDataSource ds, HttpServletRequest request) {
+		//Check if it is secured and enable checksession flag
+		boolean cs = false;
+		boolean ca = false;
+		boolean hasAccess = false;
+		
+		if (isSecureDataSource(ds)) {
+			cs = true;
+		} else {
+			AccessType at = getDSAPIAccessType(ds.getName());
+			
+			switch (at) {
+				case DISABLED: {
+					return false;
+				}
+				case OPEN: {
+					hasAccess = true;
+					break;
+				}
+				case SESSION: {
+					cs = true;
+					ca = false;
+					break;
+				}
+				case APIKEY: {
+					cs = false;
+					ca = true;
+					break;
+				}
+			};
+		}
+		
+		if (!hasAccess) {
+			hasAccess = hasAccess(ca, cs, request);
+		}
+		
+		return hasAccess;
+	}
+	
+	private boolean hasAccess(boolean checkAPIKey, boolean checkSession, HttpServletRequest request) {
+		boolean ret = false;
+		if (checkSession) {
+			if (null != request.getSession().getAttribute("_USER_")) {//TODO: Check also user in DB
+				ret = true;
+			}
+		} else if (checkAPIKey) {
+			ret = mgr.validateCredentials(request, false, true);
+		} else {
+			return true;
+		}
+		
+		return ret;
+	}
+	
+	private AccessType getDSAPIAccessType(String dsName) {
+		//Find datasource in DSEndpoint configurations and return restriction type
+		engine = DataMgr.initPlatform(null);
+		
+		SWBDataSource ds = engine.getDataSource("DSEndpoint");
+		DataObject dsFetch = null;
+		DataList dlist = null;
+
+		try {
+			DataObject wrapper = new DataObject();
+			DataObject q = new DataObject();
+			q.put("dataSourceName", dsName);
+			wrapper.put("data", q);
+			dsFetch = ds.fetch(wrapper);
+
+			if (null != dsFetch) {
+				DataObject response = dsFetch.getDataObject("response");
+				if (null != response) {					
+					dlist = response.getDataList("data");
+					if (!dlist.isEmpty()) {
+						DataObject dse = dlist.getDataObject(0);
+						if (dse.getBoolean("enabled", false) == false) {
+							return AccessType.DISABLED;
+						}
+						
+						String at = dse.getString("restrictionType");
+						switch (at) {
+							case "OPEN": {
+								return AccessType.OPEN;
+							}
+							case "APIKEY": {
+								return AccessType.APIKEY;
+							}
+							case "SESSION": {
+								return AccessType.SESSION;
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return AccessType.DISABLED;
 	}
 
 	private boolean validateObject(DataObject obj) {

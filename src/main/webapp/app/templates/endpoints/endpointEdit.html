@@ -21,8 +21,9 @@
               <div class="col-sm-10">
                 <select name="restrictionType" required class="form-control" ng-model="endpoint.endpointData.restrictionType">
                   <option value="">Seleccione un tipo de restricción</option>
-                  <option value="1">Ninguna</option>
-                  <option value="2">Session Token</option>
+                  <option value="OPEN">Ninguna</option>
+                  <option value="SESSION">Inicio de sesión</option>
+                  <option value="APIKEY">Llave API</option>
                 </select>
                 <span ng-show="(editForm.$submitted || editForm.restrictionType.$touched) && editForm.restrictionType.$invalid" class="help-block">El tipo de restricción es requerido</span>
               </div>
