@@ -6,11 +6,16 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.fst2015pm.swbforms.utils.CSVDBFReader;
 import org.fst2015pm.swbforms.utils.FSTUtils;
+import org.semanticwb.datamanager.DataList;
+import org.semanticwb.datamanager.DataMgr;
 import org.semanticwb.datamanager.DataObject;
+import org.semanticwb.datamanager.SWBDataSource;
+import org.semanticwb.datamanager.SWBScriptEngine;
 
 /**
  * CSV Extractor implementation.
@@ -54,13 +59,31 @@ public class CSVExtractor extends PMExtractorBase {
 		
 		try {
 			//w = new BufferedWriter(new FileWriter(tempJson));
+			boolean hasMapping = false;
 		    ResultSet results = reader.readResultSet(relPath, 0);
 		    ResultSetMetaData md = results.getMetaData();
-		    ArrayList<String> columNames = new ArrayList<String>();
-            
-            for (int i = 1; i <= md.getColumnCount(); i++) {
-                columNames.add(md.getColumnName(i));
-            }
+		    ArrayList<String> cids = new ArrayList<>();
+		    ArrayList<String> ctypes = new ArrayList<>();
+		    
+		    //Try to get column mapping
+		    DataList cols = getDataSourceColumns();
+		    if (null != cols) {
+		    	Iterator<DataObject> colMap = cols.iterator();
+				while (colMap.hasNext()) {
+					DataObject col = colMap.next();
+					cids.add(col.getString("name"));
+					ctypes.add(col.getString("type"));
+				}
+				
+				if (!cids.isEmpty()) hasMapping = true;
+		    }
+		    
+		    //If no mapping get column names from metadata
+		    if (!hasMapping) {
+	            for (int i = 1; i <= md.getColumnCount(); i++) {
+	                cids.add(md.getColumnName(i));
+	            }
+		    }
 		    
 		    //Clear datasource
 		    if (clearDS) {
@@ -73,15 +96,25 @@ public class CSVExtractor extends PMExtractorBase {
 		    
 		    while(results.next()) {
 		    	DataObject obj = new DataObject();
-		    	for (int i = 0; i < columNames.size(); i++) {
-                    String cname = columNames.get(i);
+		    	for (int i = 0; i < cids.size(); i++) {
+                    String cname = cids.get(i);
                     
-                    obj.put(cname, FSTUtils.DATA.inferTypedValue(results.getString(cname)));
+                    try {
+                    	String cval = results.getString(cname);
+                    	Object val = null;
+                    	if (hasMapping) {
+                        	String ctype = ctypes.get(i).toUpperCase();
+                        	val = getTypedValue(ctype, cval);
+                        } else {
+                        	val = FSTUtils.DATA.inferTypedValue(cval);
+                        }
+                    	obj.put(cname, val);
+                    } catch (SQLException sqex) {
+                    	
+                    }
                 }
-		    	//w.write(obj.toString());
 		    	getDataSource().addObj(obj);
 		    }
-		    //w.close();
 		} catch (SQLException sqlex) {
 			sqlex.printStackTrace();
 			setStatus(STATUS.ABORTED);
@@ -159,6 +192,59 @@ public class CSVExtractor extends PMExtractorBase {
 				} catch(SQLException sqex) { }
 			}
 		}*/
+	}
+	
+	private DataList getDataSourceColumns() {
+		SWBScriptEngine engine = getDataSource().getScriptEngine();
+		SWBDataSource ds = engine.getDataSource("DBDataSource");
+		DataObject dsFetch = null;
+		DataList dlist = null;
+
+		try {
+			DataObject wrapper = new DataObject();
+			DataObject q = new DataObject();
+			q.put("name", getDataSource().getName());
+			wrapper.put("data", q);
+			dsFetch = ds.fetch(wrapper);
+
+			if (null != dsFetch) {
+				DataObject response = dsFetch.getDataObject("response");
+				if (null != response) {					
+					dlist = response.getDataList("data");
+					if (!dlist.isEmpty()) {
+						DataObject dse = dlist.getDataObject(0);
+						return dse.getDataList("columns");
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	private Object getTypedValue(String type, String source) {
+		switch(type) {
+			case "FLOAT": {
+				return FSTUtils.DATA.parseFloat(source);
+			}
+			case "INTEGER": {
+				return FSTUtils.DATA.parseInt(source);
+			}
+			case "DOUBLE": {
+				return FSTUtils.DATA.parseDouble(source);
+			}
+			case "LONG": {
+				return FSTUtils.DATA.parseLong(source);
+			}
+			case "BOOLEAN": {
+				return FSTUtils.DATA.parseBoolean(source);
+			}
+			default: {
+				return source;
+			}
+		}
 	}
 	
 	@Override
