@@ -252,6 +252,11 @@
       </properties>
 
       <dependencies>
+		<dependency>
+		    <groupId>com.ibm.icu</groupId>
+		    <artifactId>icu4j</artifactId>
+		    <version>59.1</version>
+		</dependency>
         <dependency>
           <groupId>com.github.DANS-KNAW</groupId>
           <artifactId>dans-dbf-lib</artifactId>
