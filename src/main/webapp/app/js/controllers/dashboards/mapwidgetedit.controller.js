@@ -17,14 +17,16 @@
     $GeoLayer.listGeoLayers()
     .then(res => {
       if (res.data && res.data.length) {
-        cnt.layerList = res.data;
+        cnt.layerList = res.data.filter(function(layer) {
+          return layer.type === "geojson" || layer.type === "shp";
+        });
       }
     });
 
     if($stateParams.id && $stateParams.id.length && $stateParams.wid && $stateParams.wid.length) {
       $Datasource.getObject($stateParams.id, "Dashboard").then(ds => {
         cnt.dashboardData = ds.data;
-        
+
         let widgetIdx;
         let addedIds = [];
         cnt.dashboardData.widgets.forEach((item, idx) => {

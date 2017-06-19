@@ -63,7 +63,7 @@ class MapsFactory {
   }
 
 
-  createMap(container, engine, firstPoint, setZoom, callbackGoogle) {
+  createMap(container, engine, firstPoint, setZoom, overlayed, callbackGoogle) {
     let mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
                         '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
                         'Imagery © <a href="http://mapbox.com">Mapbox</a>';
@@ -78,6 +78,10 @@ class MapsFactory {
         }).addTo(mapLeft);
 
         this.watermark && mapLeft.addControl(this.watermark);
+        if (overlayed) {
+          mapLeft.overLayControl = L.control.layers().addTo(mapLeft);
+        }
+
         return mapLeft;
       break;
       case ENGINE_LEAFLET_DUAL:
@@ -135,14 +139,14 @@ class MapsFactory {
     return geoLayer;
   }
 
-  addKMLLayer(map, kml, engine, clustered=false) {
+  addKMLLayer(map, kml, engine, clustered=false, asOverlay=false, title) {
     let parser = new DOMParser();
     let dom = parser.parseFromString(kml, "text/xml");
 
-    this.addGeoJSONLayer(map, toGeoJSON.kml(dom), engine, clustered);
+    this.addGeoJSONLayer(map, toGeoJSON.kml(dom), engine, clustered, asOverlay, title);
   }
 
-  addGeoJSONLayer(map, data, engine, clustered=false) {
+  addGeoJSONLayer(map, data, engine, clustered=false, asOverlay=false, title) {
     switch(engine) {
       case ENGINE_GOOGLEMAPS:
       if (map) {
@@ -157,6 +161,9 @@ class MapsFactory {
 
         if (!clustered) {
           map.addLayer(dataOnMap);
+          if (asOverlay) {
+            map.overLayControl && map.overLayControl.addOverlay(dataOnMap, title);
+          }
           map.fitBounds(dataOnMap.getBounds());
         } else {
           let cmarkers = L.markerClusterGroup({

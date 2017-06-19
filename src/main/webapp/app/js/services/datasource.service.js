@@ -18,10 +18,31 @@
     service.removeObject = removeObject;
     service.updateDBSources = updateDBSources;
     service.listEndpoints = listEndpoints;
+    service.aggregate = aggregate;
 
     return service;
 
     //Service iplementation
+
+    function aggregate(dsName, field, oper, group, matchField, matchVal) {
+      let deferred = $q.defer();
+      let theUrl = `/api/v${apiVersion}/services/aggregate/${dsName}`;
+      theUrl += `?field=${field}&operation=${oper}`;
+
+      if (group && group.length) theUrl += `&group=${group}`;
+
+      let request = $http({
+        url: theUrl,
+        method: "GET"
+      }).then((response) => {
+        deferred.resolve(response.data);
+      })
+      .catch((error) => {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    };
 
     function listEndpoints() {
       let deferred = $q.defer();

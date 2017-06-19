@@ -3,16 +3,15 @@
 
   angular
     .module('FST2015PM.controllers')
-    .controller('ChartEditWidgetCtrl', ChartEditWidgetCtrl);
+    .controller('IndicatorEditWidgetCtrl', IndicatorEditWidgetCtrl);
 
-  ChartEditWidgetCtrl.$inject = ["$state","$stateParams", "$Datasource", "$GeoLayer"];
-  function ChartEditWidgetCtrl($state, $stateParams, $Datasource, $GeoLayer) {
+  IndicatorEditWidgetCtrl.$inject = ["$state","$stateParams", "$Datasource", "$GeoLayer"];
+  function IndicatorEditWidgetCtrl($state, $stateParams, $Datasource, $GeoLayer) {
     let cnt = this;
     cnt.dashboardData = {};
     cnt.widget = {};
     cnt.dsList = {};
     cnt.dsColumns = [];
-    cnt.dsYColumns = [];
 
     $Datasource.listDatasources()
     .then(function(res) {
@@ -35,7 +34,7 @@
         });
 
         cnt.widget = cnt.dashboardData.widgets.splice(widgetIdx, 1)[0];
-        cnt.widget.chartType = cnt.widget.chartType || "bar";
+        cnt.widget.indicatorType = cnt.widget.indicatorType || "label";
 
         cnt.updateDSDefinition();
       });
@@ -45,23 +44,19 @@
       $Datasource.listObjects("DBDataSource", [{name:'name', value: cnt.widget.dataSourceName}])
       .then(function(result) {
         if (result.data && result.data.data) {
-          var cols = result.data.data[0].columns || [];
-          //cnt.dsColumns = result.data.data[0].columns || [];
-
-          cnt.dsYColumns = cols.filter(function(item) {
+          cnt.dsColumns = result.data.data[0].columns || [];
+          cnt.dsColumns = cnt.dsColumns.filter(function(item) {
             return item.type === "integer" || item.type === "float" || item.type === "double" || item.type === "long";
           }).map(function(item) {
-            return item.name;
-          });
-          cnt.dsColumns = cols.map(function(item) {
             return item.name;
           });
         }
       });
     };
 
-    cnt.setChartType = function(type) {
-      cnt.widget.chartType = type;
+    cnt.setIndicatorType = function(type) {
+      //console.log(type);
+      cnt.widget.indicatorType = type;
     };
 
     cnt.submitForm = function(form) {
