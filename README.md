@@ -4,6 +4,28 @@ La **Plataforma de Integración de Información Heterogénea Asociada a Destinos
 
 Para lograr lo anterior, la plataforma proporciona componentes para la extracción e integración de datos en formatos abiertos estructurados (JSON, CSV, DBF, KML, SHP, GEOJSON), con la finalidad de generar colecciones de datos que sean visualizables a través de gráficos y mapas con información geolocalizada. La información contenida en la plataforma puede ser también expuesta en formato JSON mediante un endpoint de servicios REST para permitir la integración de aplicaciones externas.
 
+## Capturas de pantalla
+### Login
+<img src="https://github.com/FST2015PM/documentacion/raw/gh-pages/images/app-preview/screenshot1.png" />
+
+### Conjuntos de datos
+<img src="https://github.com/FST2015PM/documentacion/raw/gh-pages/images/app-preview/screenshot2.png" />
+
+### Ficha de pueblo mágico
+<img src="https://github.com/FST2015PM/documentacion/raw/gh-pages/images/app-preview/screenshot3.png" />
+
+### Tableros de análisis
+<img src="https://github.com/FST2015PM/documentacion/raw/gh-pages/images/app-preview/screenshot4.png" />
+
+### Gestión de puntos de acceso
+<img src="https://github.com/FST2015PM/documentacion/raw/gh-pages/images/app-preview/screenshot5.png" />
+
+### Gestión de capas geográficas
+<img src="https://github.com/FST2015PM/documentacion/raw/gh-pages/images/app-preview/screenshot6.png" />
+
+### Previsualización de capas
+<img src="https://github.com/FST2015PM/documentacion/raw/gh-pages/images/app-preview/screenshot7.png" />
+
 ## Instalación
 ### Pre-requisitos
 
