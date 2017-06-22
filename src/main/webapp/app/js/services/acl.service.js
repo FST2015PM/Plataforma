@@ -79,16 +79,16 @@
       label: "Fuentes de datos",
       menuItems: [
         {
-          label:"Extractores",
-          stateLink: 'admin.extractors'
-        },
-        {
           label:"Conjuntos",
           stateLink: 'admin.datasources'
         },
         {
           label:"Capas",
           stateLink: 'admin.geolayers'
+        },
+        {
+          label:"Extractores",
+          stateLink: 'admin.extractors'
         }
       ]
     },
