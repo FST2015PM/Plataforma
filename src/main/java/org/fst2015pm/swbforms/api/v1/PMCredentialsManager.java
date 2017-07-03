@@ -104,7 +104,7 @@ public class PMCredentialsManager {
 		String[] ret = {};
 		
 		//Find session token in authorization headers
-		if (null != auth) auth = auth.replace("Basic ", "");
+		if (null != auth) auth = auth.replace("Basic ", "").trim();
 		
 		//Check for user session token in header string
 		if (null != auth) {
@@ -115,7 +115,6 @@ public class PMCredentialsManager {
 				ret [0] = auth;
 			}
 		}
-		
 		return ret;
 	}
 	
