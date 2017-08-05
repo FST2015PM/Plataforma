@@ -39,11 +39,17 @@
               m.chart.reflow();
             }
           }
+
+          cnt.saveDashboard();
         }
       },
       draggable: {
         enabled: true,
-        handles: ['n', 'e', 's', 'w', 'ne', 'se', 'sw', 'nw']
+        handle: '.panel-heading',
+        handles: ['n', 'e', 's', 'w', 'ne', 'se', 'sw', 'nw'],
+        stop: function(event, $element, widget) {
+          cnt.saveDashboard();
+        }
       }
     };
 
@@ -59,7 +65,6 @@
               var mp = dataviz.mapsFactory.createMap(item.id, ENGINE_LEAFLET, [40.46, -100.715], 3, true);
 
               item.layers && item.layers.forEach(function(layer) {
-                console.log("Rendering layer "+layer.name);
                 $.getJSON(layer.resourceURL, function (geojson) {
                   dataviz.mapsFactory.addGeoJSONLayer(mp, geojson, ENGINE_LEAFLET, false, true, layer.name);
                 });
@@ -77,7 +82,6 @@
                 }
               });
             } else if (item.type === "chart") {
-              console.log(item);
               var data = {};
 
               if (!item.groupValues) {
@@ -133,12 +137,16 @@
         sizeX: minX,
         sizeY: minY
       });
+
+      cnt.saveDashboard();
     };
 
     cnt.removeWidget = function(widgetId) {
       cnt.widgets = cnt.widgets.filter((item) => {
         return item.id !== widgetId;
       });
+
+      cnt.saveDashboard();
     };
 
     cnt.configWidget = function(widget) {
@@ -154,23 +162,24 @@
       cnt.widgets = [];
     };
 
-    cnt.submitForm = function(form) {
-      if (form.$valid) {
-        cnt.dashboardData.widgets = cnt.widgets;
-        if (!cnt.dashboardData._id) {
-          $Datasource.addObject(cnt.dashboardData, "Dashboard")
-          .then(response => {
+    cnt.saveDashboard = function(redirect) {
+      cnt.dashboardData.widgets = cnt.widgets;
+      if (!cnt.dashboardData._id) {
+        $Datasource.addObject(cnt.dashboardData, "Dashboard")
+        .then(response => {
+          if (redirect) {
             $state.go('admin.dashboards', {});
-          })
-        } else {
-          $Datasource.updateObject(cnt.dashboardData, "Dashboard")
-          .then(response => {
+          }
+        })
+      } else {
+        $Datasource.updateObject(cnt.dashboardData, "Dashboard")
+        .then(response => {
+          if (redirect) {
             $state.go('admin.dashboards', {});
-          })
-        }
+          }
+        })
       }
     };
-
   };
 
   function processChartData(result, catField, valField) {
@@ -194,7 +203,6 @@
       });
     }
 
-    console.log(ret);
     return ret;
   };
 

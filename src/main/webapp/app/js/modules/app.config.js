@@ -65,6 +65,8 @@
         abstract: true,
         url: "/admin",
         templateUrl: "templates/container.html",
+        controller: 'MainCtrl',
+        controllerAs: 'main',
         resolve: {
           userInfo: ['$q', '$LoginService', function($q, $LoginService) {
             var deferred = $q.defer();

@@ -61,11 +61,25 @@
 
     cnt.addILayer = function() {
       if (!cnt.iLayer) return;
+      cnt.iLayer.markerColor = cnt.markerColor;
+      cnt.iLayer.polygonColor = cnt.polygonColor;
       cnt.addedLayers.push(cnt.iLayer);
       cnt.layerList = cnt.layerList.filter((item) => {
         return item._id !== cnt.iLayer._id;
       });
+
       cnt.iLayer = {};
+      cnt.setMarkerColor('black');
+    };
+
+    cnt.setMarkerColor = function(color) {
+      cnt.markerStyle = {color: color};
+      cnt.markerColor = color;
+    };
+
+    cnt.setPolygonColor = function(color) {
+      cnt.polygonStyle = {color: color};
+      cnt.polygonColor = color;
     };
 
     cnt.submitForm = function(form) {
@@ -76,7 +90,8 @@
             name: item.name,
             description: item.description,
             resourceURL: item.resourceURL,
-            type: item.type
+            type: item.type,
+            markerColor: item.markerColor
           }
         });
 

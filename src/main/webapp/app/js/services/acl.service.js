@@ -62,15 +62,112 @@
 
   var adminMenuItems = [
     {
+      label: "Administración",
+      menuItems: [
+        {
+          label: "Usuarios y permisos",
+          roles: ["Admin"],
+          menuItems: [
+            {
+              label:"Usuarios",
+              cssClass: "fa fa-user fa-fw",
+              stateLink: 'admin.users'
+            },
+            {
+              label:"Roles",
+              cssClass: "fa fa-user-times fa-fw",
+              stateLink: 'admin.roles'
+            }
+          ]
+        },
+        {
+          label: "Fuentes de datos",
+          menuItems: [
+            {
+              label:"Extractores",
+              cssClass: "fa fa-cogs fa-fw",
+              stateLink: 'admin.extractors'
+            },
+            {
+              label:"Conjuntos de datos",
+              cssClass: "fa fa-table fa-fw",
+              stateLink: 'admin.datasources'
+            },
+            {
+              label:"Capas",
+              cssClass: "fa fa-map-o fa-fw",
+              stateLink: 'admin.geolayers'
+            }
+          ]
+        },
+        {
+          label: "Puntos de acceso",
+          roles: ["Admin"],
+          menuItems: [
+            {
+              label:"Puntos de acceso",
+              stateLink: "admin.endpoints",
+              cssClass: "fa fa-plug fa-fw"
+            },
+            {
+              label:"Llaves API",
+              stateLink:"admin.apikeys",
+              cssClass: "fa fa-key fa-fw"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      label: "Gestión de destinos",
+      menuItems: [
+        {
+          label: "",
+          menuItems: [
+            {
+              label: "Pueblos Mágicos",
+              stateLink: 'admin.pmcatalog',
+              cssClass: "fa icon-magictown fa-fw"
+            },
+            {
+              label: "Tableros",
+              stateLink: 'admin.dashboards',
+              cssClass: "fa fa-dashboard fa-fw"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      label: "",
+      menuItems: [
+        {
+          label: "",
+          menuItems: [
+            {
+              label: "Bitácora",
+              stateLink: 'admin.activity',
+              cssClass: "fa fa-clock-o fa-fw"
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+  /*var adminMenuItems = [
+    {
       label: "Usuarios y permisos",
       roles: ["Admin"],
       menuItems: [
         {
           label:"Usuarios",
+          cssClass: "fa fa-user fa-fw",
           stateLink: 'admin.users'
         },
         {
           label:"Roles",
+          cssClass: "fa fa-user-times fa-fw",
           stateLink: 'admin.roles'
         }
       ]
@@ -80,14 +177,17 @@
       menuItems: [
         {
           label:"Conjuntos",
+          cssClass: "fa fa-table fa-fw",
           stateLink: 'admin.datasources'
         },
         {
           label:"Capas",
+          cssClass: "fa fa-map-o fa-fw",
           stateLink: 'admin.geolayers'
         },
         {
           label:"Extractores",
+          cssClass: "fa fa-cogs fa-fw",
           stateLink: 'admin.extractors'
         }
       ]
@@ -118,6 +218,6 @@
       label: "Bitácora",
       stateLink: 'admin.activity'
     },
-  ];
+  ];*/
 
 })();

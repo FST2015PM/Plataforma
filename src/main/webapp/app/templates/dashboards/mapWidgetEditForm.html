@@ -17,13 +17,27 @@
             <h4>Capas</h4>
             <hr/>
             <div class="form-group">
-              <!--div class="col-sm-5">
-                <input type="text" name="etitle" placeholder="Nombre" class="form-control" ng-model="ds.dsEntry.title"/>
-              </div-->
               <div class="col-sm-5 col-md-5">
                 <select class="form-control" ng-model="widget.iLayer" ng-options="option as option.name for option in widget.layerList | orderBy: 'name'">
                   <option value="">Seleccione una capa</option>
                 </select>
+              </div>
+              <div class="col-sm-5 col-md-2">
+                <div class="btn-group" uib-dropdown is-open="status.isopen">
+                  <button id="markerColorButton" ng-style="widget.markerStyle" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="disabled">
+                    <span class="fa fa-map-marker fa-fw"></span><span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="markerColorButton">
+                    <li role="menuitem"><a ng-click="widget.setMarkerColor('steelblue')"><span class="fa fa-square fa-fw" style="color:steelblue;"></span>Azúl</a></li>
+                    <li role="menuitem"><a ng-click="widget.setMarkerColor('crimson')"><span class="fa fa-square fa-fw" style="color:crimson;"></span>Rojo</a></li>
+                    <li role="menuitem"><a ng-click="widget.setMarkerColor('limegreen')"><span class="fa fa-square fa-fw" style="color:limegreen;"></span>Verde</a></li>
+                    <li role="menuitem"><a ng-click="widget.setMarkerColor('orange')"><span class="fa fa-square fa-fw" style="color:orange;"></span>Naranja</a></li>
+                    <li role="menuitem"><a ng-click="widget.setMarkerColor('gold')"><span class="fa fa-square fa-fw" style="color:gold;"></span>Amarillo</a></li>
+                    <li role="menuitem"><a ng-click="widget.setMarkerColor('darkorchid')"><span class="fa fa-square fa-fw" style="color:darkorchid;"></span>Violeta</a></li>
+                    <li role="menuitem"><a ng-click="widget.setMarkerColor('gray')"><span class="fa fa-square fa-fw" style="color:gray;"></span>Gris</a></li>
+                    <li role="menuitem"><a ng-click="widget.setMarkerColor('black')"><span class="fa fa-square fa-fw" style="color:black;"></span>Negro</a></li>
+                  </ul>
+                </div>
               </div>
               <div class="col-sm-2 col-md-2">
                 <button type="button" ng-click="widget.addILayer()" class="btn btn-primary">Agregar</button>
@@ -42,7 +56,9 @@
                 <tr ng-repeat="layer in widget.addedLayers">
                   <td>{{layer.name}}</td>
                   <td>{{layer.description}}</td>
-                  <td><a ng-click="widget.removeAddedLayer(layer._id)"><span class="fa fa-trash-o"></span></a></td>
+                  <td>
+                    <a ng-click="widget.removeAddedLayer(layer._id)"><span class="fa fa-trash-o"></span></a>
+                  </td>
                 </tr>
               </tbody>
             </table>

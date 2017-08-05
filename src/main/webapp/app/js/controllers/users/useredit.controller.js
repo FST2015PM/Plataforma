@@ -45,7 +45,9 @@
     }
 
     cnt.submitForm = function(form) {
-      if (form.$valid && cnt.isPasswordEqual()) {
+      var valid = form.$valid && cnt.isPasswordEqual();
+
+      if (valid) {
         cnt.processing = true;
 
         cnt.userData.password = cnt.password1;

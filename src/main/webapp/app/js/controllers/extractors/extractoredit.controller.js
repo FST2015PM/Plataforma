@@ -39,7 +39,14 @@
     } else {
       $Extractor.getEncodingList()
       .then(res => {
-        cnt.charsetList = res;
+        cnt.charsetList = res.map(function(item) {
+          var type = "Todos";
+          if (item === "ISO-8859-1" || item === "UTF-8") type = "Más usados";
+          return {
+            type: type,
+            name: item
+          };
+        });
       });
 
       $Datasource.listDatasources()

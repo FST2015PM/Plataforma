@@ -52,7 +52,7 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">Codificación</label>
               <div class="col-sm-10">
-                <select name="charset" class="form-control" ng-model="extractors.extractorData.charset" ng-options="option for option in extractors.charsetList">
+                <select name="charset" class="form-control" ng-model="extractors.extractorData.charset" ng-options="option.name as option.name group by option.type for option in extractors.charsetList | orderBy:'type'">
                   <option value="">Seleccione una codificación</option>
                 </select>
               </div>

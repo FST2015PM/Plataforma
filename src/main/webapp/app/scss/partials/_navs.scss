@@ -1,5 +1,29 @@
 
 /**Top Navbar*/
+.navbar-inverse.adminbar {
+  background-color: #1153bb;
+  border-color: #1153bb;
+
+  .navbar-nav>li>a {
+    color: #fff;
+  }
+}
+
+.nav-group {
+  text-transform: uppercase;
+}
+
+.sidenav-category {
+  h5 {
+    text-transform: uppercase;
+    border-bottom: 1px solid #bfbfbf;
+    font-weight: bold;
+  }
+  .sidenav-category-title {
+
+  }
+}
+
 .navbar-brand {
   img {
     width: auto;
@@ -16,16 +40,16 @@
 /* Hide for mobile, show later */
 .sidebar {
   display: none;
-  padding: 0px;
+  padding-left: 0px;
 
   @media (min-width: 768px) {
     position: fixed;
-    top: 50px;
+    top: 40px;
     bottom: 0;
     left: 0;
     z-index: 1000;
     display: block;
-    padding-top: 20px;
+    padding: 20px 0px 0px 10px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
     background-color: #f5f5f5;
@@ -36,7 +60,23 @@
     }
   }
 
-  .active {
-    border-left: 4px solid #ccc;
+  .fa-fw {
+    width: 1.8em;
   }
+
+  .active {
+    background-color: #eee;
+  }
+
+  .nav>li>ul {
+      margin-bottom: 10px;
+  }
+
+  /*.nav>li {
+    padding:15px 0px 0px 15px;
+
+    a {
+      cursor: pointer;
+    }
+  }*/
 }

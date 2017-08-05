@@ -1,12 +1,15 @@
 <div class="col-sm-3 col-md-2 sidebar animate fadeIn" ng-cloak>
-  <ul class="nav metismenu" id="side-menu" ng-hide="nav.loading">
-    <li ng-repeat="item in nav.menuItems" ng-class="{'active': nav.isExpanded(item)}">
-      <a ng-click="nav.click(item)" aria-expanded="{{nav.isExpanded(item)}}" ng-class="{'has-arrow' : item.menuItems && item.menuItems.length}">{{item.label}}</a>
-      <ul aria-expanded="{{nav.isExpanded(item)}}" ng-show="item.menuItems && item.menuItems.length" class="nav">
-        <li ng-repeat="subitem in item.menuItems" ng-class="{'active': nav.isExpanded(subitem)}">
-          <a ng-click="nav.click(subitem)">{{subitem.label}}</a>
-        </li>
-      </ul>
-    </li>
-  </ul>
+  <div ng-repeat="item in nav.menuItems" class="sidenav-category" ng-hide="nav.loading">
+    <h5>{{item.label}}</h5>
+    <ul class="nav">
+      <li ng-repeat="item2 in item.menuItems">
+        {{item2.label}}
+        <ul class="nav">
+          <li ng-repeat="subitem in item2.menuItems" ng-class="{'active': nav.isActive(subitem)}">
+            <a ng-click="nav.click(subitem)"><span class="{{subitem.cssClass}}"></span>{{subitem.label}}</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
 </div>
