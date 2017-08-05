@@ -1,3 +1,7 @@
+[![Build Status](https://jenkins.hasdaipacheco.com/buildStatus/icon?job=plataforma-QA)](https://jenkins.hasdaipacheco.com/job/plataforma-QA/)
+[![Quality Gate](https://sonarqube.hasdaipacheco.com/api/badges/gate?key=org.fst2015pm.swbforms:dev)](https://sonarqube.hasdaipacheco.com/api/badges/gate?key=org.fst2015pm.swbforms:dev)
+
+
 ## Descripción
 
 La **Plataforma de Integración de Información Heterogénea Asociada a Destinos Turísticos** provee mecanismos para acelerar la captura e integración de información de fuentes diversas, asociadas al sector turístico, mediante su estructuración y explotación para apoyar en la caracterización y análisis de los destinos.
