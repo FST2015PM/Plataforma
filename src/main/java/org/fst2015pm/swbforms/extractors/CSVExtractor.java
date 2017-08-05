@@ -29,21 +29,21 @@ public class CSVExtractor extends PMExtractorBase {
 	public CSVExtractor (DataObject def) {
 		super(def);
 	}
-	
+
 	@Override
 	public void store(String filePath) {
 		boolean zipped = extractorDef.getBoolean("zipped", false);
 		String relPath = zipped ? extractorDef.getString("zipPath") : "tempFile.csv";
 		String charset = extractorDef.getString("charset");
 		String overwrite = extractorDef.getString("overwrite");
-		
+
 		boolean clearDS = true;
 		if (null == overwrite || overwrite.isEmpty()) {
 			clearDS = true;
 		} else {
 			clearDS = Boolean.valueOf(overwrite);
 		}
-		
+
 		CSVDBFReader reader;
 		if (null == charset || charset.isEmpty()) {
 			reader = new CSVDBFReader(filePath);
@@ -52,11 +52,11 @@ public class CSVExtractor extends PMExtractorBase {
 			props.setProperty("charset", charset);
 			reader = new CSVDBFReader(filePath, props);
 		}
-		
+
 		//File tempJson = new  File(FileUtils.getTempDirectory() + "/tempJSON.json");
 		//BufferedWriter w = null;
 		//System.out.println("Writing to "+tempJson.getAbsolutePath());
-		
+
 		try {
 			//w = new BufferedWriter(new FileWriter(tempJson));
 			boolean hasMapping = false;
@@ -64,7 +64,7 @@ public class CSVExtractor extends PMExtractorBase {
 		    ResultSetMetaData md = results.getMetaData();
 		    ArrayList<String> cids = new ArrayList<>();
 		    ArrayList<String> ctypes = new ArrayList<>();
-		    
+
 		    //Try to get column mapping
 		    DataList cols = getDataSourceColumns();
 		    if (null != cols) {
@@ -74,31 +74,32 @@ public class CSVExtractor extends PMExtractorBase {
 					cids.add(col.getString("name"));
 					ctypes.add(col.getString("type"));
 				}
-				
+
 				if (!cids.isEmpty()) hasMapping = true;
 		    }
-		    
+
 		    //If no mapping get column names from metadata
 		    if (!hasMapping) {
 	            for (int i = 1; i <= md.getColumnCount(); i++) {
 	                cids.add(md.getColumnName(i));
 	            }
 		    }
-		    
+
+		    //System.out.println("Extractor "+getName()+(hasMapping ? " has mapping":" does not have mapping"));
 		    //Clear datasource
 		    if (clearDS) {
 		    	DataObject q = new DataObject();
 		    	q.addParam("removeByID", false);
 		    	q.addParam("data", new DataObject());
-		    	
+
 		    	getDataSource().remove(q);
 		    }
-		    
+
 		    while(results.next()) {
 		    	DataObject obj = new DataObject();
 		    	for (int i = 0; i < cids.size(); i++) {
                     String cname = cids.get(i);
-                    
+
                     try {
                     	String cval = results.getString(cname);
                     	Object val = null;
@@ -110,7 +111,7 @@ public class CSVExtractor extends PMExtractorBase {
                         }
                     	obj.put(cname, val);
                     } catch (SQLException sqex) {
-                    	
+
                     }
                 }
 		    	getDataSource().addObj(obj);
@@ -124,25 +125,20 @@ public class CSVExtractor extends PMExtractorBase {
 		} finally {
 			reader.closeConnection();
 			log.info("PMExtractor :: Cleaning file system...");
-			/*try {
-				if (null != w) w.close();
-			} catch (IOException e) {
-				
-			}*/
 			org.apache.commons.io.FileUtils.deleteQuietly(new File(filePath));
 		}
-		
+
 		/*HashMap<String, DataObject> colMapping = new HashMap<>();
 		Properties props = new Properties();
 		String dbPath = filePath.substring(0, filePath.lastIndexOf("/"));
 		String tblName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length());
 		String charset = extractorDef.getString("charset");
 		if (null == charset || charset.isEmpty()) charset = "UTF-8";
-		
+
 		tblName = tblName.substring(0, tblName.lastIndexOf("."));
 		props.put("charset", charset);
 		props.put("columnTypes", "");*/
-		
+
 		//Get column mapping
 		/*DataObject columnMapping = extractorDef.getDataObject("columns");
 		if (null != columnMapping) {
@@ -155,26 +151,26 @@ public class CSVExtractor extends PMExtractorBase {
 				}
 			}
 		}*/
-		
+
 		/*try {
 			Class.forName("org.relique.jdbc.csv.CsvDriver");
 		} catch (ClassNotFoundException cnfex) {
 			cnfex.printStackTrace();
 		}
-		
+
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection("jdbc:relique:csv:" + dbPath, props);
 		    Statement stmt = conn.createStatement();
 		    ResultSet results = stmt.executeQuery("SELECT * FROM "+tblName);
-		    
+
 		    while(results.next()) {
-		    	DataObject obj = new DataObject(); 
+		    	DataObject obj = new DataObject();
 		    	for(String key : colMapping.keySet()) {
 		    		DataObject entry = (DataObject) colMapping.get(key);
 		    		String finalField = null != entry.getString("dest") ? entry.getString("dest") : key;
 		    		String dataType = null != entry.getString("type") ? entry.getString("type") : "string";
-		    		
+
 		    		int colIdx = results.findColumn(key);
 		    		Object val = FSTUtils.DATA.inferTypedValue(results.getString(colIdx));//TODO: Verificar tipos de datpos en columnas con el driver
 		    		//System.out.println("Key: "+key+", finalName: "+finalField+", colIndex: "+colIdx);
@@ -193,7 +189,7 @@ public class CSVExtractor extends PMExtractorBase {
 			}
 		}*/
 	}
-	
+
 	private DataList getDataSourceColumns() {
 		SWBScriptEngine engine = getDataSource().getScriptEngine();
 		SWBDataSource ds = engine.getDataSource("DBDataSource");
@@ -209,7 +205,7 @@ public class CSVExtractor extends PMExtractorBase {
 
 			if (null != dsFetch) {
 				DataObject response = dsFetch.getDataObject("response");
-				if (null != response) {					
+				if (null != response) {
 					dlist = response.getDataList("data");
 					if (!dlist.isEmpty()) {
 						DataObject dse = dlist.getDataObject(0);
@@ -220,10 +216,10 @@ public class CSVExtractor extends PMExtractorBase {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	private Object getTypedValue(String type, String source) {
 		switch(type) {
 			case "FLOAT": {
@@ -246,7 +242,7 @@ public class CSVExtractor extends PMExtractorBase {
 			}
 		}
 	}
-	
+
 	@Override
 	public String getType() {
 		return "CSV";

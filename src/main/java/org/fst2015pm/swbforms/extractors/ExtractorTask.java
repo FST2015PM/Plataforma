@@ -12,12 +12,12 @@ import org.semanticwb.datamanager.DataObject;
 
 /**
  * Review and execute peridoc Extractors
- * 
+ *
  * @author juan.fernandez
  */
 public class ExtractorTask extends TimerTask {
 	private static Logger log = Logger.getLogger(ExtractorTask.class.getName());
-	
+
     @Override
     public void run() {
         reviewExtractorPeriodicity();
@@ -27,34 +27,33 @@ public class ExtractorTask extends TimerTask {
      * Checks extractor definitions and executes periodic Extractors accordingly.
      */
     public void reviewExtractorPeriodicity() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         Iterator<String> it = ExtractorManager.hmExtractor.keySet().iterator();
         while (it.hasNext()) {  //
             String next = it.next();
             DataObject dobj = null;
-            
+
             try {
             	dobj = ExtractorManager.datasource.fetchObjById(next);
             } catch (IOException ioex) {
             	log.severe("Error getting extractor definition");
             }
-            
+
             if (null == dobj) {
             	ExtractorManager.hmExtractor.remove(next);
             } else {
             	PMExtractor extractor = ExtractorManager.hmExtractor.get(next);
-            	
+
             	if (null != extractor && extractor.canStart()) {
 	                String lastExec = dobj.getString("lastExecution");
 	                Date nextExecution = null;
-		                    
+
 	                try {
 	                	if (null != lastExec && !lastExec.isEmpty()) nextExecution = sdf.parse(lastExec);
 	                } catch (ParseException psex) {
 	                	log.severe("Error parsing execution date");
 	                }
-		
+
 	                // Revisando si tiene periodicidad
 	                if (dobj.getBoolean("periodic")) {
 	                	boolean extractorStarted = false;
@@ -66,7 +65,7 @@ public class ExtractorTask extends TimerTask {
 		                		long tiempo = dobj.getLong("timer");
 		                    	String unidad = dobj.getString("unit");
 		                    	long unitmilis = 0l;
-		                    	
+
 		                    	switch(unidad) {
 		                    		case "min":
 		                    			unitmilis = tiempo * 60 * 1000;
@@ -81,7 +80,7 @@ public class ExtractorTask extends TimerTask {
 		                    			unitmilis = tiempo * 30 * 24 * 60 * 60 * 1000;
 		                    			break;
 		                    	}
-			                    	
+
 		                    	if (unitmilis > 0) {
 		                    		unitmilis = unitmilis + nextExecution.getTime();
 		                    		if(new Date().getTime() > unitmilis) {
@@ -93,7 +92,7 @@ public class ExtractorTask extends TimerTask {
 	                			log.severe("Error getting extractor config data");
 	                		}
 	                	}
-	                	
+
 	                	if (extractorStarted) {
 	                		dobj.put("lastExecution", sdf.format(new Date()));
 	                		try {
