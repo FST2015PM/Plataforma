@@ -1,5 +1,5 @@
-[![Build Status](https://jenkins.hasdaipacheco.com/buildStatus/icon?job=plataforma-QA)](https://jenkins.hasdaipacheco.com/job/plataforma-QA/)
-[![Quality Gate](https://sonarqube.hasdaipacheco.com/api/badges/gate?key=org.fst2015pm.swbforms:dev)](https://sonarqube.hasdaipacheco.com/api/badges/gate?key=org.fst2015pm.swbforms:dev)
+[![Build Status](https://jenkins.hasdaipacheco.com/buildStatus/icon?job=Plataforma-QA)](https://jenkins.hasdaipacheco.com/job/Plataforma-QA/)
+[![Quality Gate](https://sonarqube.hasdaipacheco.com/api/badges/gate?key=org.fst2015pm.swbforms:master)](https://sonarqube.hasdaipacheco.com/api/badges/gate?key=org.fst2015pm.swbforms:master)
 
 
 ## Descripción
