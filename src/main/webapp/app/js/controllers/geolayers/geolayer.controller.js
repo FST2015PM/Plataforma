@@ -25,7 +25,7 @@
       });
 
       cnt.deleteLayer = function(id) {
-        bootbox.confirm("<h3>Esta capa será eliminada permanentemente. \n ¿Deseas continuar?</h3>", result => {
+        bootbox.confirm("<h3>Esta capa será eliminada permanentemente. \n ¿Desea continuar?</h3>", result => {
           if (result) {
             $GeoLayer.removeGeoLayer(id)
             .then(result => {

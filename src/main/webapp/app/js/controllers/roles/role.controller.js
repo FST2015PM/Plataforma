@@ -18,7 +18,7 @@
     });
 
     cnt.deleteRole = function (_id) {
-      bootbox.confirm("<h3>Este rol será eliminado permanentemente. \n ¿Deseas continuar?</h3>", result => {
+      bootbox.confirm("<h3>Este rol será eliminado permanentemente. \n ¿Desea continuar?</h3>", result => {
         if (result) {
           $Datasource.removeObject(_id, "Role")
           .then((response) => {

@@ -18,7 +18,7 @@
     });
 
     cnt.deleteDS = function(id) {
-      bootbox.confirm("<h3>Este conjunto será eliminado permanentemente y los objetos asociados dejarán de funcionar. \n ¿Deseas continuar?</h3>", result => {
+      bootbox.confirm("<h3>Este conjunto será eliminado permanentemente y los objetos asociados dejarán de funcionar. \n ¿Desea continuar?</h3>", result => {
         if (result) {
           $Datasource.removeObject(id, "DBDataSource")
           .then(result => {

@@ -18,7 +18,7 @@
     });
 
     cnt.deleteUsr = function (_id) {
-      bootbox.confirm("<h3>Este usuario será eliminado permanentemente. \n ¿Deseas continuar?</h3>", result => {
+      bootbox.confirm("<h3>Este usuario será eliminado permanentemente. \n ¿Desea continuar?</h3>", result => {
         if (result) {
           $Datasource.removeObject(_id, "User")
           .then(response => {

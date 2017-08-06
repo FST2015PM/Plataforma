@@ -18,7 +18,7 @@
     });
 
     cnt.deleteEndPoint = function(id) {
-      bootbox.confirm("<h3>Este endpoint será eliminado permanentemente. \n ¿Deseas continuar?</h3>", result => {
+      bootbox.confirm("<h3>Este endpoint será eliminado permanentemente. \n ¿Desea continuar?</h3>", result => {
         if (result) {
           $Datasource.removeObject(id, "DSEndpoint")
           .then(result => {
