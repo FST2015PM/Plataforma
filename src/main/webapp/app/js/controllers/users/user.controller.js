@@ -5,8 +5,8 @@
     .module('FST2015PM.controllers')
     .controller('UsersCtrl', UsersCtrl);
 
-  UsersCtrl.$inject = ["$scope", "$Datasource", "$timeout", "$stateParams", "$state", "$q"];
-  function UsersCtrl($scope, $Datasource, $timeout, $stateParams, $state, $q) {
+  UsersCtrl.$inject = ["$scope", "$Datasource", "$timeout", "$stateParams", "$state", "$q", "toaster"];
+  function UsersCtrl($scope, $Datasource, $timeout, $stateParams, $state, $q, toaster) {
     let cnt = this;
     cnt.users = [];
 
@@ -18,7 +18,7 @@
     });
 
     cnt.deleteUsr = function (_id) {
-      bootbox.confirm("<h3>Este usuario será eliminado permanentemente. \n ¿Desea continuar?</h3>", result => {
+      bootbox.confirm("<h4>Este usuario será eliminado permanentemente. \n ¿Desea continuar?</h4>", result => {
         if (result) {
           $Datasource.removeObject(_id, "User")
           .then(response => {
@@ -26,6 +26,11 @@
               if (elem._id === _id) {
                 cnt.users.splice(i, 1);
               }
+            });
+            toaster.pop({
+              type: 'success',
+              body: 'Se ha eliminado el usuario',
+              showCloseButton: true,
             });
           })
         }

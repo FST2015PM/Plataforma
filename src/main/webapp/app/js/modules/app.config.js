@@ -53,7 +53,6 @@
               {
                   serie: true,
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
                     'lib/bootbox/bootbox.js'
                   ]
               }
@@ -125,8 +124,7 @@
               {
                   serie: true,
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/bootbox/bootbox.js',
+                    'lib/bootbox/bootbox.js'
                   ]
               }
             ]);
@@ -170,7 +168,6 @@
               {
                   serie: true,
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
                     'lib/bootbox/bootbox.js',
                     'lib/angular-bootstrap/ui-bootstrap.min.js',
                     'lib/d3/d3.min.js',
@@ -238,7 +235,6 @@
               {
                   serie: true,
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
                     'lib/bootbox/bootbox.js',
                     'lib/angular-bootstrap/ui-bootstrap.min.js',
                     'lib/d3/d3.min.js',
@@ -396,7 +392,6 @@
               {
                   serie: true,
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
                     'lib/bootbox/bootbox.js',
                     'lib/angular-bootstrap/ui-bootstrap.min.js',
                     'lib/d3/d3.min.js',
@@ -748,8 +743,6 @@
                     'js/dataviz/constants.js',
                     'js/dataviz/datatables.js',
                     'js/dataviz/dataviz.js',
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/bootbox/bootbox.js',
                     'lib/datatables.net-bs/css/dataTables.bootstrap.min.css',
                   ]
@@ -796,9 +789,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
-                    'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
               }
@@ -844,8 +834,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js'
                   ]
               }
@@ -890,8 +878,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js'
                   ]
               }
@@ -937,8 +923,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -985,8 +969,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1042,8 +1024,6 @@
                     'js/dataviz/constants.js',
                     'js/dataviz/datatables.js',
                     'js/dataviz/dataviz.js',
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/bootbox/bootbox.js',
                     'lib/datatables.net-bs/css/dataTables.bootstrap.min.css',
                   ]
@@ -1090,8 +1070,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1138,8 +1116,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1186,8 +1162,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js'
                   ]
               }
@@ -1232,8 +1206,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js'
                   ]
               }
@@ -1279,8 +1251,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     //'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1327,8 +1297,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     //'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1375,8 +1343,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     //'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1423,8 +1389,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     //'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1471,8 +1435,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     //'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1577,8 +1539,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1625,8 +1585,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]
@@ -1673,8 +1631,6 @@
                   serie: true,
                   //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
-                    'lib/AngularJS-Toaster/toaster.min.css',
-                    'lib/AngularJS-Toaster/toaster.min.js',
                     'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/bootbox/bootbox.js'
                   ]

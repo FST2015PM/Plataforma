@@ -32,3 +32,5 @@ node_modules/
 .classpath
 .project
 .settings/
+
+src/main/webapp/app/lib

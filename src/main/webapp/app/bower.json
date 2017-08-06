@@ -34,7 +34,6 @@
     "angular-ui-codemirror": "^0.3.0",
     "oclazyload": "^1.0.9",
     "jshint": "https://github.com/jshint/jshint.git#v2.9.4",
-    "AngularJS-Toaster": "angularjs-toaster#^2.1.0",
     "angular-datatables": "^0.5.6",
     "leaflet": "^1.0.2",
     "d3": "^3.5.17",
@@ -57,7 +56,8 @@
     "matchheight": "matchheight#^0.7.2",
     "angular-uuid": "https://github.com/munkychop/angular-uuid.git#0.0.4",
     "metisMenu": "metismenu#^2.7.0",
-    "highcharts": "^5.0.10"
+    "highcharts": "^5.0.10",
+    "AngularJS-Toaster": "angularjs-toaster#^2.1.0"
   },
   "resolutions": {
     "angular": "~1.5.0",
