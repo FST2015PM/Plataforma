@@ -33,6 +33,7 @@ eng.dataStores["ts_leveldb"]={
 */
 //******* DataSources ************
 
+//Datasource dinámico
 eng.dataSources["DBDataSource"]={
     scls: "DBDataSource",
     modelid: DBModel,
@@ -45,6 +46,7 @@ eng.dataSources["DBDataSource"]={
     ]
 };
 
+//Datasource de usuarios
 eng.dataSources["User"]={
     scls: "User",
     modelid: DBModel,
@@ -61,6 +63,8 @@ eng.dataSources["User"]={
         //{name:"groups",title:"Grupos",stype:"select", valueMap:{infotec:"INFOTEC",dac:"DAC",gdnps:"GDNPS",dads:"DADS"},multiple:true},
     ]
 };
+
+//Datasource de roles
 eng.dataSources["Role"] = {
     scls: "Role",
     modelid: DBModel,
@@ -73,6 +77,19 @@ eng.dataSources["Role"] = {
     ]
 };
 
+//Datasource para asociar usuarios con roles
+eng.dataSources["UserRole"] = {
+    scls: "UserRole",
+    modelid: DBModel,
+    dataStore: "mongodb",
+    secure: true,
+    fields: [
+        {name: "user", title: "Usuario", required: true, type: "string"},
+        {name: "role", title: "Rol", required: true, type: "string"}
+    ]
+};
+
+//Datasource de bitácora
 eng.dataSources["PMLog"]={
     scls: "PMLog",
     modelid: DBModel,
@@ -89,6 +106,7 @@ eng.dataSources["PMLog"]={
     ]
 };
 
+//Datasource de sesiones de usuarios para aplicaciones de terceros
 eng.dataSources["UserSession"]={
     scls: "UserSession",
     modelid: DBModel,
@@ -104,6 +122,7 @@ eng.dataSources["UserSession"]={
     ]
 };
 
+//Datasource de tokens para recuperación de contraseña
 eng.dataSources["ResetPasswordToken"]={
     scls: "ResetPasswordToken",
     modelid: DBModel,
@@ -116,6 +135,7 @@ eng.dataSources["ResetPasswordToken"]={
     ]
 };
 
+//Datasource de llaves API
 eng.dataSources["APIKey"] = {
     scls: "APIKey",
     modelid: DBModel,
@@ -133,6 +153,7 @@ eng.dataSources["APIKey"] = {
     ]
 };
 
+//Datasource de puntos de acceso
 eng.dataSources["DSEndpoint"] = {
     scls: "DSEndpoint",
     modelid: DBModel,
@@ -148,6 +169,7 @@ eng.dataSources["DSEndpoint"] = {
     ]
 };
 
+//Datasource de capas geográficas
 eng.dataSources["GeoLayer"] = {
     scls: "GeoLayer",
     modelid: DBModel,
@@ -165,6 +187,7 @@ eng.dataSources["GeoLayer"] = {
     ]
 };
 
+//Datasource de tableros de análisis
 eng.dataSources["Dashboard"] = {
     scls: "Dashboard",
     modelid: DBModel,
@@ -177,6 +200,7 @@ eng.dataSources["Dashboard"] = {
     ]
 };
 
+//Datasource de extractores de datos
 eng.dataSources["Extractor"] = {
   scls: "Extractor",
   modelid: DBModel,

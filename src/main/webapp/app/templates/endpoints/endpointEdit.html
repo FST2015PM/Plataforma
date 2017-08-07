@@ -8,10 +8,10 @@
         <div class="panel-body">
           <div class="col-sm-8 col-sm-offset-2">
             <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid }">
-              <label class="col-sm-2 control-label">DataSource</label>
+              <label class="col-sm-2 control-label">Conjunto de datos</label>
               <div class="col-sm-10">
                 <select name="dataSourceName" required class="form-control" ng-model="endpoint.endpointData.dataSourceName" ng-options="option for option in endpoint.dsList">
-                  <option value="">Seleccione un datasource</option>
+                  <option value="">Seleccione un conjunto</option>
                 </select>
                 <span ng-show="(editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid" class="help-block">El datasource es requerido</span>
               </div>

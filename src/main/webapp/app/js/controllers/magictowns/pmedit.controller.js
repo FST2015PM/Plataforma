@@ -5,8 +5,8 @@
     .module('FST2015PM.controllers')
     .controller('PMEditCatalog', PMEditCatalog);
 
-  PMEditCatalog.$inject = ["$Datasource", "$stateParams", "$state"];
-  function PMEditCatalog($Datasource, $stateParams, $state) {
+  PMEditCatalog.$inject = ["$Datasource", "$stateParams", "$state", "toaster"];
+  function PMEditCatalog($Datasource, $stateParams, $state, toaster) {
     let cnt = this;
     cnt.formTitle = "Agregar Pueblo Mágico";
     cnt.pmData = {};
@@ -21,7 +21,7 @@
     cnt.processing = false;
 
     $Datasource.listObjects("State")
-    .then(response => {
+    .then(function(response) {
       if (response.data.data && response.data.data.length) {
         cnt.stateList = response.data.data;
       }
@@ -29,7 +29,8 @@
 
     if ($stateParams.id && $stateParams.id.length) {
       cnt.formTitle = "Editar Pueblo Mágico";
-      $Datasource.getObject($stateParams.id, "MagicTown").then(mtown => {
+      $Datasource.getObject($stateParams.id, "MagicTown")
+      .then(function(mtown) {
         cnt.pmData = mtown.data;
         cnt.updateMuniList();
         cnt.updateLocList();
@@ -43,7 +44,8 @@
       }
       cnt.muniList = [];
       if (cnt.pmData.CVE_ENT) {
-        $Datasource.listObjects("Municipality", [{name:"CVE_ENT", value:cnt.pmData.CVE_ENT}]).then(res => {
+        $Datasource.listObjects("Municipality", [{name:"CVE_ENT", value:cnt.pmData.CVE_ENT}])
+        .then(function(res) {
           if (res.data.data && res.data.data.length) {
             cnt.muniList = res.data.data;
           }
@@ -57,7 +59,8 @@
       }
       cnt.locList = [];
       if (cnt.pmData.CVE_MUN) {
-        $Datasource.listObjects("Locality", [{name:"CVE_MUN", value:cnt.pmData.CVE_MUN}, {name:"CVE_ENT", value:cnt.pmData.CVE_ENT}]).then(res => {
+        $Datasource.listObjects("Locality", [{name:"CVE_MUN", value:cnt.pmData.CVE_MUN}, {name:"CVE_ENT", value:cnt.pmData.CVE_ENT}])
+        .then(function(res) {
           if (res.data.data && res.data.data.length) {
             cnt.locList = res.data.data;
           }
@@ -68,7 +71,7 @@
     cnt.submitForm = function(form) {
       if (form.$valid) {
         cnt.processing = true;
-        
+
         if (cnt.validMime && cnt.pictureData && cnt.pictureData.base64) {
           cnt.pmData.picture = {
             fileName: cnt.pictureData.filename,
@@ -83,12 +86,22 @@
 
         if (cnt.pmData._id) {
           $Datasource.updateObject(cnt.pmData, "MagicTown")
-          .then(response => {
+          .then(function(response) {
+            toaster.pop({
+              type: 'success',
+              body: 'Se ha actualizado el Pueblo Mágico',
+              showCloseButton: true,
+            });
             $state.go('admin.pmcatalog', {});
           });
         } else {
           $Datasource.addObject(cnt.pmData, "MagicTown")
-          .then(response => {
+          .then(function(response) {
+            toaster.pop({
+              type: 'success',
+              body: 'Se ha agregado el nuevo Pueblo Mágico',
+              showCloseButton: true,
+            });
             $state.go('admin.pmcatalog', {});
           });
         }
