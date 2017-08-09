@@ -74,6 +74,10 @@ body {
 .title-ribbon {
   border-bottom: 1px solid #ccc;
   margin-bottom: 20px;
+
+  & > h3 {
+    margin-top: 10px;
+  }
 }
 
 #angularContent {

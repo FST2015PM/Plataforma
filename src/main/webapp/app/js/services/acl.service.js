@@ -80,12 +80,12 @@
               label:"Usuarios",
               cssClass: "fa fa-user fa-fw",
               stateLink: 'admin.users'
-            },
+            }/*,
             {
               label:"Roles",
               cssClass: "fa fa-user-times fa-fw",
               stateLink: 'admin.roles'
-            }
+            }*/
           ]
         },
         {
