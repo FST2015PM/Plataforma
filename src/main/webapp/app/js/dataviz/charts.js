@@ -1,3 +1,6 @@
+/** D3 engine flag */
+const ENGINE_D3 = "d3";
+
 /** Class to encapsulate charts creation */
 class ChartsFactory {
   constructor() { }

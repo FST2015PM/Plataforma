@@ -57,7 +57,8 @@
     "angular-uuid": "https://github.com/munkychop/angular-uuid.git#0.0.4",
     "metisMenu": "metismenu#^2.7.0",
     "highcharts": "^5.0.10",
-    "AngularJS-Toaster": "angularjs-toaster#^2.1.0"
+    "AngularJS-Toaster": "angularjs-toaster#^2.1.0",
+    "vivagraphjs": "https://github.com/anvaka/VivaGraphJS.git#v0.9.0"
   },
   "resolutions": {
     "angular": "~1.5.0",

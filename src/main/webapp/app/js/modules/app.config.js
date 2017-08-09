@@ -15,6 +15,64 @@
         controller: 'PMInformation',
         controllerAs: "pm"
       })
+      .state('admin.pmontology', {
+        url: "/pmontology",
+        views: {
+          'sidenav': {
+            templateUrl: 'templates/includes/sidenav.html',
+            controller: 'SideNavCtrl',
+            controllerAs: 'nav'
+          },
+          'content': {
+            templateUrl: 'templates/ontology/ontology.html',
+            controller: 'OntologyCtrl',
+            controllerAs: "ont"
+          }
+        },
+        resolve: {
+          userInfo: ['$q', '$LoginService', function($q, $LoginService) {
+            var deferred = $q.defer();
+            $LoginService.me()
+            .then(function(response) {
+              deferred.resolve(response);
+            }).catch(function(err) {
+              deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          ontology: ['$q', '$http', function($q, $http) {
+            var deferred = $q.defer();
+            $http.get('/public/ontology/PMOntology.json')
+            .then(function(res) {
+              deferred.resolve(res.data);
+            }).catch(function(err) {
+              deferred.reject(err);
+            });
+            return deferred.promise;
+          }],
+          menuItems: ['$ACLService', function($ACLService) {
+            return $ACLService.getUserActions()
+            .then(function(result) {
+              return result.data || [];
+            }).catch(function(err) {
+              return [];
+            });
+          }],
+          loadDependencies: function($ocLazyLoad) {
+            return $ocLazyLoad.load([
+              {
+                serie: true,
+                cache: false,
+                files: [
+                  'lib/vivagraphjs/dist/vivagraph.js',
+                  'js/dataviz/graphs.js',
+                  'js/dataviz/dataviz.js'
+                ]
+              }
+            ]);
+          }
+        }
+      })
       .state('admin.endpoints', {
         url: '/endpoints',
         views: {
@@ -167,6 +225,7 @@
             return $ocLazyLoad.load([
               {
                   serie: true,
+                  cache: false,
                   files: [
                     'lib/bootbox/bootbox.js',
                     'lib/angular-bootstrap/ui-bootstrap.min.js',
@@ -187,7 +246,6 @@
                     'lib/highcharts/js/highcharts.js',
                     'lib/highcharts/js/highcharts-more.js',
                     'lib/highcharts/js/modules/solid-gauge.js',
-                    'js/dataviz/constants.js',
                     'js/dataviz/charts.js',
                     'js/dataviz/maps.js',
                     'js/dataviz/datatables.js',
@@ -234,6 +292,7 @@
             return $ocLazyLoad.load([
               {
                   serie: true,
+                  cache: false,
                   files: [
                     'lib/bootbox/bootbox.js',
                     'lib/angular-bootstrap/ui-bootstrap.min.js',
@@ -250,7 +309,6 @@
                     'lib/spin.js/spin.min.js',
                     'lib/leaflet-spin/leaflet.spin.min.js',
                     'lib/google-maps/lib/Google.min.js',
-                    'js/dataviz/constants.js',
                     'js/dataviz/charts.js',
                     'js/dataviz/maps.js',
                     'js/dataviz/datatables.js',
@@ -297,9 +355,9 @@
             return $ocLazyLoad.load([
               {
                   serie: true,
+                  cache: false,
                   files: [
                     'lib/highcharts/highcharts.js',
-                    'js/dataviz/constants.js',
                     'js/dataviz/charts.js',
                     'js/dataviz/dataviz.js'
                   ]
@@ -344,9 +402,9 @@
             return $ocLazyLoad.load([
               {
                   serie: true,
+                  cache: false,
                   files: [
                     'lib/highcharts/highcharts.js',
-                    'js/dataviz/constants.js',
                     'js/dataviz/charts.js',
                     'js/dataviz/dataviz.js'
                   ]
@@ -391,6 +449,7 @@
             return $ocLazyLoad.load([
               {
                   serie: true,
+                  cache: false,
                   files: [
                     'lib/bootbox/bootbox.js',
                     'lib/angular-bootstrap/ui-bootstrap.min.js',
@@ -407,7 +466,6 @@
                     'lib/spin.js/spin.min.js',
                     'lib/leaflet-spin/leaflet.spin.min.js',
                     'lib/google-maps/lib/Google.min.js',
-                    'js/dataviz/constants.js',
                     'js/dataviz/charts.js',
                     'js/dataviz/maps.js',
                     'js/dataviz/datatables.js',
@@ -467,11 +525,6 @@
               {
                   serie: true,
                   files: [
-                    //'js/dataviz/constants.js',
-                    //'js/dataviz/charts.js',
-                    //'js/dataviz/maps.js',
-                    //'js/dataviz/datatables.js',
-                    //'js/dataviz/dataviz.js',
                     'lib/bootbox/bootbox.js',
                     'lib/matchheight/dist/jquery.matchHeight-min.js'
                   ]
@@ -517,12 +570,6 @@
               {
                   serie: true,
                   files: [
-                    //'lib/datatables.net/js/jquery.dataTables.min.js',
-                    //'js/dataviz/constants.js',
-                    //'js/dataviz/charts.js',
-                    //'js/dataviz/maps.js',
-                    //'js/dataviz/datatables.js',
-                    //'js/dataviz/dataviz.js',
                     'lib/moment/moment.js',
                     'lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
                     'lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
@@ -570,12 +617,6 @@
               {
                   serie: true,
                   files: [
-                    //'lib/datatables.net/js/jquery.dataTables.min.js',
-                    //'js/dataviz/constants.js',
-                    //'js/dataviz/charts.js',
-                    //'js/dataviz/maps.js',
-                    //'js/dataviz/datatables.js',
-                    //'js/dataviz/dataviz.js',
                     'lib/moment/moment.js',
                     'lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
                     'lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
@@ -735,16 +776,16 @@
             return $ocLazyLoad.load([
               {
                   serie: true,
+                  cache: false,
                   insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
                     'lib/spin.js/spin.min.js',
+                    'lib/datatables.net-bs/css/dataTables.bootstrap.min.css',
                     'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/datatables.net-bs/js/dataTables.bootstrap.min.js',
-                    'js/dataviz/constants.js',
                     'js/dataviz/datatables.js',
                     'js/dataviz/dataviz.js',
-                    'lib/bootbox/bootbox.js',
-                    'lib/datatables.net-bs/css/dataTables.bootstrap.min.css',
+                    'lib/bootbox/bootbox.js'
                   ]
               }
             ]);
@@ -1016,16 +1057,16 @@
             return $ocLazyLoad.load([
               {
                   serie: true,
+                  cache: false,
                   insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                   files: [
                     'lib/papaparse/papaparse.min.js',
+                    'lib/datatables.net-bs/css/dataTables.bootstrap.min.css',
                     'lib/datatables.net/js/jquery.dataTables.min.js',
                     'lib/datatables.net-bs/js/dataTables.bootstrap.min.js',
-                    'js/dataviz/constants.js',
                     'js/dataviz/datatables.js',
                     'js/dataviz/dataviz.js',
-                    'lib/bootbox/bootbox.js',
-                    'lib/datatables.net-bs/css/dataTables.bootstrap.min.css',
+                    'lib/bootbox/bootbox.js'
                   ]
               }
             ]);
@@ -1479,6 +1520,7 @@
             return $ocLazyLoad.load([
               {
                 serie: true,
+                cache: false,
                 //insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                 files: [
                   'lib/leaflet-markercluster/dist/MarkerCluster.css',
@@ -1490,11 +1532,8 @@
                   'lib/leaflet-spin/leaflet.spin.min.js',
                   'lib/google-maps/lib/Google.min.js',
                   'lib/togeojson/togeojson.js',
-                  'js/dataviz/constants.js',
-                  'js/dataviz/charts.js',
                   'js/dataviz/maps.js',
-                  'js/dataviz/datatables.js',
-                  'js/dataviz/dataviz.js',
+                  'js/dataviz/dataviz.js'
                 ]
               }
             ]);

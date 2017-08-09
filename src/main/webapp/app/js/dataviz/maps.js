@@ -1,6 +1,12 @@
+/** Google maps engine flag */
+const ENGINE_GOOGLEMAPS = "googlemaps";
+
+/** Leaflet maps engine flag */
+const ENGINE_LEAFLET = "leaflet";
+const ENGINE_LEAFLET_DUAL = "leafletTwoViews";
+
 /** Class to encapsulate maps creation */
 class MapsFactory {
-
   constructor() {
     //Create PM watermark on map
     L.Control.Watermark = L.Control.extend({
