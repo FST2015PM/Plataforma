@@ -3,6 +3,7 @@ package org.fst2015pm.swbforms.api.v1;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -38,6 +39,8 @@ import org.semanticwb.datamanager.SWBDataSource;
 import org.semanticwb.datamanager.SWBScriptEngine;
 import org.semanticwb.datamanager.script.ScriptObject;
 
+import com.ibm.icu.text.SimpleDateFormat;
+
 /**
  * REST service to manage datasources from inside app.
  **/
@@ -53,34 +56,45 @@ public class DataSourceService {
 	private enum AccessType { DISABLED, OPEN, APIKEY, SESSION };
 	private final String restrictedDS = "DBDataSource|User|Role|PMLog|UserSession|ResetPasswordToken|APIKey|DSEndpoint|GeoLayer|Dashboard|Extractor";
 
+	SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getDataSourceList() throws IOException {
+	public Response getDataSourceList(@Context UriInfo context) throws IOException {
 		HttpSession session = httpRequest.getSession();
 		engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
+		SWBDataSource ds = engine.getDataSource("DBDataSource");
+		
+		DataObject dsFetch = null;
+		DataList dlist = null;
 
-		if (null != session.getAttribute("_USER_")) {
-			Set<String> dataSources = engine.getDataSourceNames();
-			JSONArray ret;
-
-			try {
-				ret = new JSONArray();
-				for (String name : dataSources) {
-					SWBDataSource dsource = engine.getDataSource(name);
-					ScriptObject dsourceDef = dsource.getDataSourceScript();
-
-					if (null != dsource && null != dsourceDef && !Boolean.valueOf(dsourceDef.getString("secure"))) {//Filter secured datasources
-						ret.put(name);
-					}
-				}
-			} catch (JSONException jsex) {
-				return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		try {
+			DataObject wrapper = new DataObject();
+			DataObject q = new DataObject();
+			MultivaluedMap<String, String> params = context.getQueryParameters();
+			for (String key : params.keySet()) {
+				q.put(key, params.getFirst(key));
 			}
 
-			return Response.ok().entity(ret.toString()).build();
-		}
+			wrapper.put("data", q);
+			dsFetch = ds.fetch(wrapper);
 
-		return Response.status(Status.FORBIDDEN).build();
+			if (null != dsFetch) {
+				DataObject response = dsFetch.getDataObject("response");
+				if (null != response) {
+					dlist = response.getDataList("data");
+				}
+			}
+			
+			if (!dlist.isEmpty()) {
+				return Response.ok(dlist).build();
+			} else {
+				return Response.ok("[]").build();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@GET
@@ -192,6 +206,7 @@ public class DataSourceService {
 				objData.remove("_id");
 				//Transform JSON to dataobject to avoid fail
 				DataObject obj = (DataObject) DataObject.parseJSON(content);
+				obj.put("created", sdf.format(new Date()));
 
 				if (validateObject(obj)) {
 					DataObject objNew = ds.addObj(obj);

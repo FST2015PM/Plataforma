@@ -8,7 +8,12 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.fst2015pm.swbforms.utils.FSTUtils;
+import org.semanticwb.datamanager.DataList;
 import org.semanticwb.datamanager.DataMgr;
 import org.semanticwb.datamanager.DataObject;
 import org.semanticwb.datamanager.SWBDataSource;
@@ -29,6 +34,7 @@ public class PMExtractorBase implements PMExtractor {
 		LOADED, STARTED, EXTRACTING, STOPPED, ABORTED, FAILLOAD
 	}
 	private STATUS status;
+	private SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
 
 	/**
 	 * Constructor. Creates a new instance of PMExtractorBase.
@@ -141,8 +147,40 @@ public class PMExtractorBase implements PMExtractor {
 		status = STATUS.STARTED;
 
 		//Update execution date
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		extractorDef.put("lastExecution", sdf.format(new Date()));
+
+		//Update DBDatasource metadata
+		SWBScriptEngine dbeng = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", null);
+		SWBDataSource dbds = dbeng.getDataSource("DBDataSource");
+		if (null != dbds) {
+			DataObject dsFetch = null;
+			DataList dlist = null;
+
+			try {
+				DataObject wrapper = new DataObject();
+				DataObject q = new DataObject();
+				q.put("name", extractorDef.getString("dataSource"));
+
+				wrapper.put("data", q);
+				dsFetch = dbds.fetch(wrapper);
+
+				if (null != dsFetch) {
+					DataObject response = dsFetch.getDataObject("response");
+					if (null != response) {
+						dlist = response.getDataList("data");
+					}
+				}
+				
+				if (!dlist.isEmpty()) {
+					DataObject dsource = dlist.getDataObject(0);
+					dsource.put("updated", sdf.format(new Date()));
+					dbds.updateObj(dsource);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
 		ExtractorManager.datasource.updateObj(extractorDef);
 	}
 
