@@ -1,4 +1,50 @@
 {
+  "categories": [
+    {
+      "name" : "Superestructura",
+      "description" : "Componentes que representan la regulación de las relaciones que se dan dentro del espacio geográfico en la conjunción de la normatividad con la institucionalidad."
+    },
+    {
+      "name" : "Infraestructura",
+      "description" : "Conjunto de elementos que representan las intervenciones que el ser humano ha realizado sobre el medio natural, con la función específica de proveer las condiciones mínimas para que la población cuente con servicios básicos. Incluye aspectos de equipamiento urbano, rutas de acceso y comunicaciones."
+    },
+    {
+      "name" : "Cultura",
+      "description" : "Enmarca los componentes que describen la acción del hombre como un agente que construye y adapta su entorno. como un proceso de movimiento, creación, transmisión y reformulación del ambiente."
+    },
+    {
+      "name" : "Comunidad Local",
+      "description" : "Incorpora los componentes que caracterizan los aspectos demográficos, sociales y de bienestar de la comunidad."
+    },
+    {
+      "name" : "Espacio geográfico",
+      "description" : "Considera los elementos que describen el espacio geográfico donde se desarrolla propiamente la actividad turística (destino). Para su descripción se incorporan los principios de localización, distribución, asociación, interacción y evolución."
+    },
+    {
+      "name" : "Oferta",
+      "description" : "Considera los productos y servicios turísticos que se conforman y articulan esencialmente de algunos recursos de la cultural o el medio natural y que llegan a convertirse como tal, gracias al soporte que da la infraestructura y servicios muy particulares."
+    },
+    {
+      "name" : "Demanda",
+      "description" : "Incluye los componentes que caracterizan a los turistas y visitantes como el agente dinámico que sale de su lugar de origen hacia una región destino para consumir los productos y servicios turísticos de la oferta de un destino."
+    },
+    {
+      "name" : "Medio Natural",
+      "description" : "Considera un conjunto de elementos de la naturaleza (biótica y abiótica), que constituyen las potencialidades o limitaciones en el desarrollo de la comunidad local."
+    },
+    {
+      "name" : "Desarrollo Sustentable",
+      "description" : "Enmarca aquellos conceptos de orden ecológico, social y económico que tradicionalmente se consideran para evaluar la sustentabilidad de un espacio geográfico determinado, donde se miden la participación social en la construcción de un futuro más justo para las generaciones presentes y futuras."
+    },
+    {
+      "name" : "Mercadotecnia",
+      "description" : "Engloba los elementos y procesos necesarios para que la oferta turística de un destino sea promovida, comercializada y consumida por un tipo de demanda muy particular."
+    },
+    {
+      "name" : "Servicios públicos",
+      "description" : "Incluye aquellos componentes que buscan satisfacer una necesidad de carácter general entre la población y están a cargo de una organización pública. De acuerdo al nivel en el que son abastecidos, se pueden encontrar federales, de las entidades federativas, de los municipales y aquellos de protección a la comunidad y bienestar social."
+    }
+  ],
   "nodes": [
     {
       "styleid": "tourservice",
@@ -1140,7 +1186,8 @@
     {
       "styleid": "tourservice",
       "name": "Servicios Públicos",
-      "id": "1d2s2bqhhbkqmjrifr0djd51vq"
+      "id": "1d2s2bqhhbkqmjrifr0djd51vq",
+      "category": "Servicios públicos"
     },
     {
       "styleid": "infraestructure",
@@ -1378,38 +1425,33 @@
     },
     {
       "styleid": "tourservice",
-      "name": "Feredación",
-      "id": "68899qjo4pogm3qu6qd0g7faj9"
-    },
-    {
-      "styleid": "tourservice",
-      "name": "Entidad federativa",
-      "id": "2s55mj1p5gnsf1kgpu2aa5sk5b"
+      "name": "Federación",
+      "id": "68899qjo4pogm3qu6qd0g7faj9",
+      "category": "Servicios públicos"
     },
     {
       "styleid": "tourservice",
       "name": "De protección a la comunidad y bienestar social",
-      "id": "67q43dq95icr6nhdffi6eb2mvm"
-    },
-    {
-      "styleid": "tourservice",
-      "name": "Municipio",
-      "id": "18obitf113ct11hk1jjpfuucl7"
+      "id": "67q43dq95icr6nhdffi6eb2mvm",
+      "category": "Servicios públicos"
     },
     {
       "styleid": "tourservice",
       "name": "Básicos",
-      "id": "220fovo5243moaslcuk171uqo4"
+      "id": "220fovo5243moaslcuk171uqo4",
+      "category": "Servicios públicos"
     },
     {
       "styleid": "tourservice",
       "name": "Básicos complementarios",
-      "id": "00j03s2631usvm2aee8b7hikks"
+      "id": "00j03s2631usvm2aee8b7hikks",
+      "category": "Servicios públicos"
     },
     {
       "styleid": "tourservice",
       "name": "De seguridad",
-      "id": "1tm0cv58631ptm5vq654jusp1t"
+      "id": "1tm0cv58631ptm5vq654jusp1t",
+      "category": "Servicios públicos"
     },
     {
       "styleid": "infraestructure",
@@ -1454,9 +1496,10 @@
       "category": "Demanda"
     },
     {
-      "styleid": "tourservice",
+      "styleid": "marketing",
       "name": "Nicho de mercado",
-      "id": "37renge9r6j4l5imj0g3fs712i"
+      "id": "37renge9r6j4l5imj0g3fs712i",
+      "category": "Mercadotecnia"
     },
     {
       "styleid": "demand",
@@ -1613,11 +1656,6 @@
       "name": "Competitividad",
       "id": "2sk0sai9camemuula0b9k2ogcv",
       "category": "Demanda"
-    },
-    {
-      "styleid": "tourservice",
-      "name": "Equipamiento urbano",
-      "id": "4klbvd8642lu1at2moacp9a1lc"
     },
     {
       "styleid": "superstructure",
@@ -4259,27 +4297,27 @@
       "name": "Administra",
       "id": "3d24fbjtqgpgo3uc64stpum1lr",
       "source": "1d2s2bqhhbkqmjrifr0djd51vq",
-      "target": "2s55mj1p5gnsf1kgpu2aa5sk5b"
+      "target": "0thqia52diiqigpok7efa1bf6m"
     },
     {
       "styleid": "tourservice",
       "name": "Administra",
       "id": "6l2rfr26ognbb3anc9vrvc08bt",
       "source": "1d2s2bqhhbkqmjrifr0djd51vq",
-      "target": "18obitf113ct11hk1jjpfuucl7"
+      "target": "6s4klvomkfkgviq0hfatne68lu"
     },
     {
       "styleid": "tourservice",
       "name": "Son",
       "id": "17jh3ej0c5aublres4u7epfedb",
-      "source": "18obitf113ct11hk1jjpfuucl7",
+      "source": "6s4klvomkfkgviq0hfatne68lu",
       "target": "220fovo5243moaslcuk171uqo4"
     },
     {
       "styleid": "tourservice",
       "name": "Son",
       "id": "64k371e3i7tsuakkvbl6s6sl0m",
-      "source": "18obitf113ct11hk1jjpfuucl7",
+      "source": "6s4klvomkfkgviq0hfatne68lu",
       "target": "1tm0cv58631ptm5vq654jusp1t"
     },
     {
@@ -4615,7 +4653,7 @@
       "styleid": "tourservice",
       "name": "Son",
       "id": "0t3l3icigpgkunankuo9eebvcm",
-      "source": "18obitf113ct11hk1jjpfuucl7",
+      "source": "6s4klvomkfkgviq0hfatne68lu",
       "target": "00j03s2631usvm2aee8b7hikks"
     },
     {

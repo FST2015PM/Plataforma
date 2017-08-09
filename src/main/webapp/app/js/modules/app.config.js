@@ -350,20 +350,7 @@
             }).catch(function(err) {
               return [];
             });
-          }],
-          loadDependencies: function($ocLazyLoad, $stateParams) {
-            return $ocLazyLoad.load([
-              {
-                  serie: true,
-                  cache: false,
-                  files: [
-                    'lib/highcharts/highcharts.js',
-                    'js/dataviz/charts.js',
-                    'js/dataviz/dataviz.js'
-                  ]
-              }
-            ]);
-          }
+          }]
         }
       })
       .state('admin.editindicatorwidget', {
@@ -696,6 +683,16 @@
             });
             return deferred.promise;
           }],
+          ontology: ['$q', '$http', function($q, $http) {
+            var deferred = $q.defer();
+            $http.get('/public/ontology/PMOntology.json')
+            .then(function(res) {
+              deferred.resolve(res.data);
+            }).catch(function(err) {
+              deferred.reject(err);
+            });
+            return deferred.promise;
+          }],
           menuItems: ['$ACLService', function($ACLService) {
             return $ACLService.getUserActions()
             .then(function(result) {
@@ -727,6 +724,16 @@
               deferred.resolve(response);
             }).catch(function(err) {
               deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          ontology: ['$q', '$http', function($q, $http) {
+            var deferred = $q.defer();
+            $http.get('/public/ontology/PMOntology.json')
+            .then(function(res) {
+              deferred.resolve(res.data);
+            }).catch(function(err) {
+              deferred.reject(err);
             });
             return deferred.promise;
           }],
@@ -1416,6 +1423,16 @@
             });
             return deferred.promise;
           }],
+          ontology: ['$q', '$http', function($q, $http) {
+            var deferred = $q.defer();
+            $http.get('/public/ontology/PMOntology.json')
+            .then(function(res) {
+              deferred.resolve(res.data);
+            }).catch(function(err) {
+              deferred.reject(err);
+            });
+            return deferred.promise;
+          }],
           menuItems: ['$ACLService', function($ACLService) {
             return $ACLService.getUserActions()
             .then(function(result) {
@@ -1459,6 +1476,16 @@
               deferred.resolve(response);
             }).catch(function(err) {
               deferred.reject({notLoggedIn: true});
+            });
+            return deferred.promise;
+          }],
+          ontology: ['$q', '$http', function($q, $http) {
+            var deferred = $q.defer();
+            $http.get('/public/ontology/PMOntology.json')
+            .then(function(res) {
+              deferred.resolve(res.data);
+            }).catch(function(err) {
+              deferred.reject(err);
             });
             return deferred.promise;
           }],

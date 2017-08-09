@@ -60,7 +60,7 @@
             <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.dataSource.$touched) && editForm.dataSource.$invalid }">
               <label class="col-sm-2 control-label">Destino</label>
               <div class="col-sm-10">
-                <select name="dataSource" required class="form-control" ng-model="extractors.extractorData.dataSource" ng-options="option for option in extractors.dsList">
+                <select name="dataSource" required class="form-control" ng-model="extractors.extractorData.dataSource" ng-options="option.id as option.name for option in extractors.dsList">
                   <option value="">Seleccione un datasource</option>
                 </select>
                 <span ng-show="(editForm.$submitted || editForm.dataSource.$touched) && editForm.dataSource.$invalid" class="help-block">El datasource es requerido</span>

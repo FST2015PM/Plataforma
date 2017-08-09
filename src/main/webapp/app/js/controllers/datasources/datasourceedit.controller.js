@@ -5,8 +5,8 @@
     .module("FST2015PM.controllers")
     .controller("DSEditCtrl", DSEditCtrl);
 
-  DSEditCtrl.$inject = ["$Datasource", "$stateParams", "$state", "toaster"];
-  function DSEditCtrl($Datasource, $stateParams, $state, toaster) {
+  DSEditCtrl.$inject = ["$Datasource", "$stateParams", "$state", "ontology", "toaster"];
+  function DSEditCtrl($Datasource, $stateParams, $state, ontology, toaster) {
     let cnt = this;
     cnt.formTitle = "Agregar Conjunto";
     cnt.dsList = [];
@@ -15,14 +15,22 @@
     cnt.dSourceName;
     cnt.nameValid = true;
     cnt.processing = false;
+    cnt.dimensions = ontology.categories.map(function(item) { return {id:item.name, name:item.name}; });
+    cnt.concepts = [];
 
     if($stateParams.id && $stateParams.id.length) {
       cnt.formTitle = "Editar Conjunto";
       $Datasource.getObject($stateParams.id, "DBDataSource").then(function(ds) {
         cnt.dsData = ds.data;
         cnt.dSourceName = ds.data.name;
+        cnt.updateConcepts();
       });
     }
+
+    cnt.updateConcepts = function() {
+      var f = cnt.dsData.ontCategory || "";
+      cnt.concepts = ontology.nodes.filter(function(item) { return item.category === f; }).map(function(item) {return {id:item.name, name:item.name};});
+    };
 
     cnt.submitForm = function(form) {
       if (form.$valid && cnt.nameValid) {

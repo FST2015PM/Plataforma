@@ -53,7 +53,7 @@
       .then(function(res) {
         if (res.data && res.data.length) {
           cnt.dsList = res.data;
-          cnt.dsList.map(function(item) { return {id: item, name: item} });
+          cnt.dsList = cnt.dsList.map(function(item) { return {id: item.name, name: item.name} });
 
           $Datasource.listObjects("Extractor").then(function(res) {
             if(res.data.data && res.data.data.length) {

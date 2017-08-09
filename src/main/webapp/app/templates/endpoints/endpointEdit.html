@@ -10,7 +10,7 @@
             <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid }">
               <label class="col-sm-2 control-label">Conjunto de datos</label>
               <div class="col-sm-10">
-                <select name="dataSourceName" required class="form-control" ng-model="endpoint.endpointData.dataSourceName" ng-options="option for option in endpoint.dsList">
+                <select name="dataSourceName" required class="form-control" ng-model="endpoint.endpointData.dataSourceName" ng-options="option.id as option.name for option in endpoint.dsList">
                   <option value="">Seleccione un conjunto</option>
                 </select>
                 <span ng-show="(editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid" class="help-block">El datasource es requerido</span>

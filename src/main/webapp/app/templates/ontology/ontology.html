@@ -5,7 +5,7 @@
       <div class="form-group">
         <label for="">Dimensión:</label>
         <select class="form-control" ng-model="ont.dimension" ng-options="option for option in ont.dimensions" ng-change="ont.updateGraph()">
-          <option value="Todas">Todas</option>
+          <option value="">Todas</option>
         </select>
       </div>
     </div>
@@ -17,8 +17,8 @@
         <h4>{{ont.selected.name}}</h4>
         <hr>
         <p>Categoría: <span class="label label-default">{{ont.selected.category}}</span></p>
-        <p>Conjuntos de datos: <span class="label label-default">5</span></p>
-        <p>Capas geográficas: <span class="label label-default">5</span></p>
+        <p>Conjuntos de datos: <span class="label label-default">{{ont.selected.datasourceCount || 0}}</span></p>
+        <p>Capas geográficas: <span class="label label-default">{{ont.selected.layerCount || 0}}</span></p>
       </div>
       <div class="panel-body" style="padding:5px;">
         <div id="graph" class="graphContainer"></div>

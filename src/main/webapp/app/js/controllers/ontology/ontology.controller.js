@@ -5,15 +5,65 @@
     .module("FST2015PM.controllers")
     .controller("OntologyCtrl", OntologyCtrl);
 
-  OntologyCtrl.$inject = ["$scope","ontology", "$timeout"];
-  function OntologyCtrl($scope, ontology, $timeout) {
+  OntologyCtrl.$inject = ["$GeoLayer", "$Datasource", "$scope","ontology", "$timeout"];
+  function OntologyCtrl($GeoLayer, $Datasource, $scope, ontology, $timeout) {
     let cnt = this;
 
-    cnt.dimension = "Todas";
-    cnt.dimensions = ["Todas", "Superestructura", "Infraestructura", "Cultura",
-    "Comunidad Local", "Espacio geográfico", "Oferta", "Demanda", "Medio Natural",
-    "Desarrollo Sustentable", "Mercadotecnia", "Servicios"];
+    cnt.dimension = "";
+    cnt.dimensions = ontology.categories.map(function(item) { return item.name; });
     cnt.selected;
+
+    //Set counters
+    ontology.nodes.forEach(function(node) {
+      node.datasourceCount = 0;
+      node.layerCount = 0;
+    });
+
+    //Get datasource count
+    $Datasource.listDatasources()
+    .then(function(res) {
+      if (res.data && res.data.length) {
+        res.data.forEach(function(ds) {
+          var o = ontology.nodes.filter(function(item) {
+            return item.category === ds.ontCategory && item.name === ds.ontConcept;
+          });
+
+          if (o.length > 0) {
+            o[0].datasourceCount = o[0].datasourceCount + 1;
+          }
+        });
+
+        //Update styles
+        ontology.nodes.forEach(function(node) {
+          if (node.datasourceCount > 0) {
+            node.styleid = node.styleid + " hasContent";
+          }
+        });
+      }
+    });
+
+    //Get layer count
+    $GeoLayer.listGeoLayers()
+    .then(function(res) {
+      if (res.data && res.data.length) {
+        res.data.forEach(function(ds) {
+          var o = ontology.nodes.filter(function(item) {
+            return item.category === ds.ontCategory && item.name === ds.ontConcept;
+          });
+
+          if (o.length > 0) {
+            o[0].layerCount = o[0].layerCount + 1;
+          }
+        });
+
+        //Update styles
+        ontology.nodes.forEach(function(node) {
+          if (node.layerCount > 0) {
+            node.styleid = node.styleid + " hasContent";
+          }
+        });
+      }
+    });
 
     //Draw graph
     $timeout(function () {
@@ -36,9 +86,7 @@
       cnt.selected = undefined;
       var newSet = {};
 
-      if (cnt.dimension === "Todas") {
-        newSet = ontology;
-      } else {
+      if (cnt.dimension) {
         newSet.nodes = filterNodes(ontology.nodes, cnt.dimension);
 
         var nodesHash = newSet.nodes.map(function(item) {
@@ -48,6 +96,8 @@
         newSet.edges = ontology.edges.filter(function(item) {
           return nodesHash.indexOf(item.source) > -1 && nodesHash.indexOf(item.target) > -1;
         });
+      } else {
+        newSet = ontology;
       }
 
       $timeout(function () {

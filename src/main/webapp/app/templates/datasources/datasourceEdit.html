@@ -25,7 +25,17 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">Categoría</label>
               <div class="col-sm-10">
-                <input type="text" name="category" class="form-control" ng-model="ds.dsData.ontCategory"/>
+                <select class="form-control" ng-model="ds.dsData.ontCategory" ng-options="option.id as option.name for option in ds.dimensions | orderBy:'name'" ng-change="ds.updateConcepts()">
+                  <option value="">Seleccione una categoría</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Concepto</label>
+              <div class="col-sm-10">
+                <select class="form-control" ng-model="ds.dsData.ontConcept" ng-options="option.id as option.name for option in ds.concepts | orderBy:'name'">
+                  <option value="">Seleccione un concepto</option>
+                </select>
               </div>
             </div>
             <div class="form-group">

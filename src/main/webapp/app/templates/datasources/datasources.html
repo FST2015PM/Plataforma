@@ -20,12 +20,16 @@
           <thead>
             <tr>
               <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Última actualización</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="dsource in ds.dsList | filter:ds.searchText | orderBy:'name'">
               <td><span ng-show="{{dsource.restricted}}" class="fa fa-lock fa-fw"></span>{{dsource.name}}</td>
+              <td>{{dsource.ontCategory}}</td>
+              <td>{{dsource.updated}}</td>
               <td class="text-right">
                 <a class="btn btn-sm btn-primary" ui-sref="admin.previewdatasource({id: '{{dsource.name}}'})"><span class="fa fa-eye"></span></a>
                 <a class="btn btn-sm btn-primary" ui-sref="admin.datasourceedit({id: '{{dsource._id}}'})"><span class="fa fa-pencil"></span></a>

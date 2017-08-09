@@ -42,7 +42,9 @@ eng.dataSources["DBDataSource"]={
     fields: [
       {name:"name", title:"Nombre", type:"string", required:true},
       {name:"description", title:"Descripción", type:"string", required:true},
-      {name:"columns", title:"Columnas", type:"boolean", required:true}
+      {name:"columns", title:"Columnas", type:"boolean", required:true},
+      {name:"created", title:"Creado", type:"date", required:true},
+      {name:"updated", title:"Actualizado", type:"date", required:true}
     ]
 };
 

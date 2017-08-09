@@ -10,7 +10,7 @@
             <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid }">
               <label class="col-sm-3 control-label">DataSource</label>
               <div class="col-sm-9">
-                <select name="dataSourceName" required class="form-control" ng-model="widget.widget.dataSourceName" ng-options="option for option in widget.dsList" ng-change="widget.updateDSDefinition()">
+                <select name="dataSourceName" required class="form-control" ng-model="widget.widget.dataSourceName" ng-options="option.id as option.name for option in widget.dsList" ng-change="widget.updateDSDefinition()">
                   <option value="">Seleccione un datasource</option>
                 </select>
                 <span ng-show="(editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid" class="help-block">El datasource es requerido</span>

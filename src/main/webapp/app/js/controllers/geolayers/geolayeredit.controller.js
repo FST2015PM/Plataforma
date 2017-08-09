@@ -5,18 +5,26 @@
     .module("FST2015PM.controllers")
     .controller("GeolayerEditCtrl", GeolayerEditCtrl);
 
-    GeolayerEditCtrl.$inject = ["$GeoLayer", "$stateParams", "$state", "toaster"];
-    function GeolayerEditCtrl($GeoLayer, $stateParams, $state, toaster) {
+    GeolayerEditCtrl.$inject = ["$GeoLayer", "$stateParams", "$state", "ontology", "toaster"];
+    function GeolayerEditCtrl($GeoLayer, $stateParams, $state, ontology, toaster) {
       let cnt = this;
       cnt.formTitle = "Agregar capa";
       cnt.processing = false;
+      cnt.dimensions = ontology.categories.map(function(item) { return {id:item.name, name:item.name}; });
+      cnt.concepts = [];
 
       if ($stateParams.id && $stateParams.id.length) {
         cnt.formTitle = "Editar capa";
         $GeoLayer.getGeoLayer($stateParams.id).then(function(layer) {
           cnt.layerData = layer.data;
+          cnt.updateConcepts();
         });
       }
+
+      cnt.updateConcepts = function() {
+        var f = cnt.layerData.ontCategory || "";
+        cnt.concepts = ontology.nodes.filter(function(item) { return item.category === f; }).map(function(item) {return {id:item.name, name:item.name};});
+      };
 
       cnt.submitForm = function(form) {
         if (form.$valid) {

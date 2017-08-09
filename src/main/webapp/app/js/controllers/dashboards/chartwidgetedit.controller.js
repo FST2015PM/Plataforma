@@ -18,6 +18,7 @@
     .then(function(res) {
       if (res.data && res.data.length) {
         cnt.dsList = res.data;
+        cnt.dsList = cnt.dsList.map(function(item) { return {id: item.name, name: item.name} });
       }
     });
 
@@ -44,7 +45,7 @@
     cnt.updateDSDefinition = function() {
       $Datasource.listObjects("DBDataSource", [{name:'name', value: cnt.widget.dataSourceName}])
       .then(function(result) {
-        if (result.data && result.data.data) {
+        if (result.data && result.data.data.length) {
           var cols = result.data.data[0].columns || [];
           //cnt.dsColumns = result.data.data[0].columns || [];
 
@@ -53,6 +54,7 @@
           }).map(function(item) {
             return item.name;
           });
+
           cnt.dsColumns = cols.map(function(item) {
             return item.name;
           });

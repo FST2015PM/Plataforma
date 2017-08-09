@@ -17,6 +17,7 @@
     .then(function(res) {
       if (res.data && res.data.length) {
         cnt.dsList = res.data;
+        cnt.dsList = cnt.dsList.map(function(item) { return {id: item.name, name: item.name} });
       }
     });
 
