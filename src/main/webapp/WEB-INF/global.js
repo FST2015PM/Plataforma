@@ -252,6 +252,7 @@ eng.routes["global"] = {
     //{ routePath: "register", forwardTo: "/work/config/register.jsp", isRestricted: "false" },
     { routePath: "work", isRestricted: "true"},
     { routePath: "app/*", forwardTo: "/app/", isRestricted: "true" },
+    { routePath: "mapdata", forwardTo: "/work/config/mapdata.jsp", isRestricted: "false" },
     { routePath: "public/*", forwardTo: "/public/", isRestricted: "false" }, //Public assets and images
     { routePath: "work/*", jspMapTo: "/work/jsp/", isRestricted: "true" }
     //{ routePath: "ds", forwardTo: "/platform/jsp/datasource.jsp", isRestricted: "true" }
