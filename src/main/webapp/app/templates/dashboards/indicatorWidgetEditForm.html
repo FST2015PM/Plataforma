@@ -1,0 +1,86 @@
+<div>
+  <div class="row title-ribbon">
+    <h3>Configurar Gráfica</h3>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <form name="editForm" novalidate class="form-horizontal" ng-submit="widget.submitForm(editForm)">
+        <div class="panel-body">
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid }">
+              <label class="col-sm-3 control-label">DataSource</label>
+              <div class="col-sm-9">
+                <select name="dataSourceName" required class="form-control" ng-model="widget.widget.dataSourceName" ng-options="option.id as option.name for option in widget.dsList" ng-change="widget.updateDSDefinition()">
+                  <option value="">Seleccione un datasource</option>
+                </select>
+                <span ng-show="(editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid" class="help-block">El datasource es requerido</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Columna</label>
+              <div class="col-sm-9">
+                <select name="groupField" class="form-control" ng-model="widget.widget.groupField" ng-options="option for option in widget.dsColumns">
+                  <option value="">Seleccione una columna</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Tipo de indicador</label>
+              <div class="col-sm-9">
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-sm btn-default active" ng-click="widget.setIndicatorType('label')">
+                    <input type="radio" autocomplete="off" checked> <span class="fa fa-font"></span>
+                  </label>
+                  <label class="btn btn-sm btn-default" ng-click="widget.setIndicatorType('gauge')">
+                    <input type="radio" autocomplete="off"> <span class="fa fa-tachometer"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid }" >
+              <label class="col-sm-3 control-label">Etiqueta</label>
+              <div class="col-sm-9">
+                <input type="text" name="name" required class="form-control" ng-model="widget.widget.name" />
+                <span ng-show="(editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid" class="help-block">El nombre es requerido</span>
+              </div>
+            </div>
+            <div class="form-group" >
+              <label class="col-sm-3 control-label">Unidad</label>
+              <div class="col-sm-9">
+                <input type="text" name="unit" class="form-control" ng-model="widget.widget.unit" />
+              </div>
+            </div>
+            <div class="form-group" ng-show="widget.widget.indicatorType === 'gauge'">
+              <label class="col-sm-3 control-label">Valor mínimo</label>
+              <div class="col-sm-9">
+                <input type="text" name="minVal" class="form-control" ng-model="widget.widget.minVal" />
+              </div>
+            </div>
+            <div class="form-group" ng-show="widget.widget.indicatorType === 'gauge'">
+              <label class="col-sm-3 control-label">Valor máximo</label>
+              <div class="col-sm-9">
+                <input type="text" name="maxVal" class="form-control" ng-model="widget.widget.maxVal" />
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.showValue.$touched) && editForm.showValue.$invalid }">
+              <label class="col-sm-3 control-label">Valor</label>
+              <div class="col-sm-9">
+                <select name="showValue" required class="form-control" ng-model="widget.widget.showValue">
+                  <option value="sum">Suma</option>
+                  <option value="avg">Promedio</option>
+                  <option value="min">Mínimo</option>
+                  <option value="max">Máximo</option>
+                </select>
+                <span ng-show="(editForm.$submitted || editForm.showValue.$touched) && editForm.showValue.$invalid" class="help-block">El valor es requerido</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-footer text-right">
+          <button type="submit" ng-disabled="widget.processing" class="btn btn-primary btn-minw"><span ng-show="widget.processing" class="fa fa-cog fa-spin fa-lg fa-fw"></span>Guardar</button>
+          <button ui-sref="admin.editdashboard({id: widget.dashboardData._id})" ng-disabled="widget.processing" class="btn btn-default btn-minw">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

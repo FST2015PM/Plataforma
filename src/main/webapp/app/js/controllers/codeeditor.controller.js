@@ -5,8 +5,8 @@
     .module('FST2015PM.controllers')
     .controller('CodeEditorCtrl', CodeEditorCtrl);
 
-    CodeEditorCtrl.$inject = ['$scope', '$stateParams', '$ocLazyLoad', '$FileManager', 'toaster'];
-    function CodeEditorCtrl($scope, $stateParams, $ocLazyLoad, $FileManager, toaster) {
+    CodeEditorCtrl.$inject = ['$scope', '$stateParams', '$ocLazyLoad', '$FileManager'];
+    function CodeEditorCtrl($scope, $stateParams, $ocLazyLoad, $FileManager) {
       //console.log($stateParams);
 
       $scope.fileContent = 'Loading file content...';
@@ -35,11 +35,6 @@
             $FileManager.getFile($scope.fileName)
               .then((res) => {
                 $scope.fileContent = res.data;
-                toaster.pop({
-                  type: "success",
-                  body: "Se ha guardado el archivo",
-                  timeout: 2000
-                });
               });
           }
         });

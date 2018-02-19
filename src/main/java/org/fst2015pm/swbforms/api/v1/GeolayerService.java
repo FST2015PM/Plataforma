@@ -225,8 +225,8 @@ public class GeolayerService {
 
 	/**
 	 * Updates resource associated to dataobject.
-	 * @param obj
-	 * @return
+	 * @param obj DataObject with @Link{Layer} information.
+	 * @return true if updated successfully, false otherwise.
 	 */
 	private boolean updateLayerResource(DataObject obj) {
 		String fileUrl = obj.getString("fileLocation");

@@ -4,14 +4,22 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.fst2015pm.swbforms.utils.FSTUtils;
+import org.semanticwb.datamanager.DataList;
 import org.semanticwb.datamanager.DataMgr;
 import org.semanticwb.datamanager.DataObject;
 import org.semanticwb.datamanager.SWBDataSource;
 import org.semanticwb.datamanager.SWBScriptEngine;
+
+import java.text.SimpleDateFormat;
 
 /**
  * Base class for extractors. Implements methods from PMExtractor interface.
@@ -22,17 +30,16 @@ public class PMExtractorBase implements PMExtractor {
 
 	protected DataObject extractorDef;
 	private SWBDataSource ds;
-	private boolean extracting;
 	public static enum STATUS {
 		LOADED, STARTED, EXTRACTING, STOPPED, ABORTED, FAILLOAD
 	}
 	private STATUS status;
+	private SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
 
 	/**
 	 * Constructor. Creates a new instance of PMExtractorBase.
 	 */
 	public PMExtractorBase(DataObject def) {
-		extracting = false;
 		extractorDef = def;
 
 		String dsName = def.getString("dataSource");
@@ -75,17 +82,15 @@ public class PMExtractorBase implements PMExtractor {
 
 	@Override
 	public void extract() throws IOException {
-		if (this.extracting) return; //Prevent data overwrite
+		if (status == STATUS.EXTRACTING) return; //Prevent data overwrite
 		status = STATUS.EXTRACTING;
 
-		this.extracting = true;
 		// Get scriptObject configuration parameters
 		String fileUrl = extractorDef.getString("fileLocation"); //Local path or URL of remote file
 		boolean zipped = Boolean.valueOf(extractorDef.getString("zipped")); //Zipped flag
 		boolean remote = false;
 
 		if (null == fileUrl || fileUrl.isEmpty()) {
-			this.extracting = false;
 			status = STATUS.STARTED;
 			return;
 		}
@@ -95,7 +100,7 @@ public class PMExtractorBase implements PMExtractor {
 		String destPath = org.apache.commons.io.FileUtils.getTempDirectoryPath();
 		if (!destPath.endsWith("/")) destPath += "/";
 		destPath += uuid;
-		
+
 		File destDir = new File(destPath);
 
 		//Check if URL is provided
@@ -111,14 +116,21 @@ public class PMExtractorBase implements PMExtractor {
 		if (remote) {
 			log.info("PMExtractor :: Downloading resource "+ url +"...");
 			destDir = new File(destPath,"tempFile"+(zipped ? "" : "." + getType().toLowerCase()));
-			org.apache.commons.io.FileUtils.copyURLToFile(url, destDir, 5000, 5000);
+
+			try {
+				org.apache.commons.io.FileUtils.copyURLToFile(url, destDir, 5000, 5000);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+				status = STATUS.STARTED;
+				return;
+			}
+
 			fileUrl = destPath + "/tempFile" + (zipped ? "" : "." + getType().toLowerCase());
 		}
 
 		if (zipped) {
 			String zipPath = extractorDef.getString("zipPath");
 			if (null == zipPath || zipPath.isEmpty()) { //No relative path provided
-				this.extracting = false;
 				org.apache.commons.io.FileUtils.deleteQuietly(new File(destPath));
 				status = STATUS.STARTED;
 				return;
@@ -130,9 +142,46 @@ public class PMExtractorBase implements PMExtractor {
 
 		//Store data
 		log.info("PMExtractor :: Storing data...");
+
 		store(destPath);
-		this.extracting = false;
 		status = STATUS.STARTED;
+
+		//Update execution date
+		extractorDef.put("lastExecution", sdf.format(new Date()));
+
+		//Update DBDatasource metadata
+		SWBScriptEngine dbeng = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", null);
+		SWBDataSource dbds = dbeng.getDataSource("DBDataSource");
+		if (null != dbds) {
+			DataObject dsFetch = null;
+			DataList dlist = null;
+
+			try {
+				DataObject wrapper = new DataObject();
+				DataObject q = new DataObject();
+				q.put("name", extractorDef.getString("dataSource"));
+
+				wrapper.put("data", q);
+				dsFetch = dbds.fetch(wrapper);
+
+				if (null != dsFetch) {
+					DataObject response = dsFetch.getDataObject("response");
+					if (null != response) {
+						dlist = response.getDataList("data");
+					}
+				}
+				
+				if (!dlist.isEmpty()) {
+					DataObject dsource = dlist.getDataObject(0);
+					dsource.put("updated", sdf.format(new Date()));
+					dbds.updateObj(dsource);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		ExtractorManager.datasource.updateObj(extractorDef);
 	}
 
 	public SWBDataSource getDataSource() {
@@ -151,6 +200,7 @@ public class PMExtractorBase implements PMExtractor {
 			try {
 				extract();
 			} catch (IOException ioex) {
+				status = STATUS.STARTED;
 				ioex.printStackTrace();
 			}
 		}
@@ -160,7 +210,7 @@ public class PMExtractorBase implements PMExtractor {
 	public synchronized void stop() {
 		status = STATUS.STOPPED;
 	}
-	
+
 	/**
 	 * Sets extractor status flag.
 	 * @param st Status flag.

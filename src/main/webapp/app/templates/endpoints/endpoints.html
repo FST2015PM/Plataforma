@@ -1,8 +1,8 @@
 <div>
   <div class="row title-ribbon">
-    <h3 class="pull-left">EndPoints</h3>
+    <h3 class="pull-left">Puntos de acceso</h3>
     <div class="pull-right">
-      <a ui-sref="admin.addendpoint" class="btn btn-primary btn-minw">Agregar endpoint</a>
+      <a ui-sref="admin.addendpoint" class="btn btn-primary btn-minw">Agregar punto de acceso</a>
     </div>
   </div>
   <div class="row">
@@ -19,7 +19,7 @@
         <table class="table">
           <thead>
             <tr>
-              <th>DataSource</th>
+              <th>Conjunto de datos</th>
               <th>Restricción</th>
               <th>Activo</th>
               <th></th>
@@ -28,7 +28,7 @@
           <tbody>
             <tr ng-repeat="ds in endpoint.dsList | filter:ds.searchText | orderBy:'ds.dataSourceName'">
               <td>{{ds.dataSourceName}}</td>
-              <td>{{ds.restrictionType === "1" ? "Ninguna" : ds.restrictionType === "2" ? "Session token" : ""}}</td>
+              <td>{{ds.restrictionTypeName}}</td>
               <td>
                 <span ng-show="{{ds.enabled}}" class="fa fa-check"></span>
               </td>

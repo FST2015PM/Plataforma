@@ -6,11 +6,16 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.fst2015pm.swbforms.utils.CSVDBFReader;
 import org.fst2015pm.swbforms.utils.FSTUtils;
+import org.semanticwb.datamanager.DataList;
+import org.semanticwb.datamanager.DataMgr;
 import org.semanticwb.datamanager.DataObject;
+import org.semanticwb.datamanager.SWBDataSource;
+import org.semanticwb.datamanager.SWBScriptEngine;
 
 /**
  * CSV Extractor implementation.
@@ -24,21 +29,21 @@ public class CSVExtractor extends PMExtractorBase {
 	public CSVExtractor (DataObject def) {
 		super(def);
 	}
-	
+
 	@Override
 	public void store(String filePath) {
 		boolean zipped = extractorDef.getBoolean("zipped", false);
 		String relPath = zipped ? extractorDef.getString("zipPath") : "tempFile.csv";
 		String charset = extractorDef.getString("charset");
 		String overwrite = extractorDef.getString("overwrite");
-		
+
 		boolean clearDS = true;
 		if (null == overwrite || overwrite.isEmpty()) {
 			clearDS = true;
 		} else {
 			clearDS = Boolean.valueOf(overwrite);
 		}
-		
+
 		CSVDBFReader reader;
 		if (null == charset || charset.isEmpty()) {
 			reader = new CSVDBFReader(filePath);
@@ -47,41 +52,70 @@ public class CSVExtractor extends PMExtractorBase {
 			props.setProperty("charset", charset);
 			reader = new CSVDBFReader(filePath, props);
 		}
-		
+
 		//File tempJson = new  File(FileUtils.getTempDirectory() + "/tempJSON.json");
 		//BufferedWriter w = null;
 		//System.out.println("Writing to "+tempJson.getAbsolutePath());
-		
+
 		try {
 			//w = new BufferedWriter(new FileWriter(tempJson));
+			boolean hasMapping = false;
 		    ResultSet results = reader.readResultSet(relPath, 0);
 		    ResultSetMetaData md = results.getMetaData();
-		    ArrayList<String> columNames = new ArrayList<String>();
-            
-            for (int i = 1; i <= md.getColumnCount(); i++) {
-                columNames.add(md.getColumnName(i));
-            }
-		    
+		    ArrayList<String> cids = new ArrayList<>();
+		    ArrayList<String> ctypes = new ArrayList<>();
+
+		    //Try to get column mapping
+		    DataList cols = getDataSourceColumns();
+		    if (null != cols) {
+		    	Iterator<DataObject> colMap = cols.iterator();
+				while (colMap.hasNext()) {
+					DataObject col = colMap.next();
+					cids.add(col.getString("name"));
+					ctypes.add(col.getString("type"));
+				}
+
+				if (!cids.isEmpty()) hasMapping = true;
+		    }
+
+		    //If no mapping get column names from metadata
+		    if (!hasMapping) {
+	            for (int i = 1; i <= md.getColumnCount(); i++) {
+	                cids.add(md.getColumnName(i));
+	            }
+		    }
+
+		    //System.out.println("Extractor "+getName()+(hasMapping ? " has mapping":" does not have mapping"));
 		    //Clear datasource
 		    if (clearDS) {
 		    	DataObject q = new DataObject();
 		    	q.addParam("removeByID", false);
 		    	q.addParam("data", new DataObject());
-		    	
+
 		    	getDataSource().remove(q);
 		    }
-		    
+
 		    while(results.next()) {
 		    	DataObject obj = new DataObject();
-		    	for (int i = 0; i < columNames.size(); i++) {
-                    String cname = columNames.get(i);
-                    
-                    obj.put(cname, FSTUtils.DATA.inferTypedValue(results.getString(cname)));
+		    	for (int i = 0; i < cids.size(); i++) {
+                    String cname = cids.get(i);
+
+                    try {
+                    	String cval = results.getString(cname);
+                    	Object val = null;
+                    	if (hasMapping) {
+                        	String ctype = ctypes.get(i).toUpperCase();
+                        	val = getTypedValue(ctype, cval);
+                        } else {
+                        	val = FSTUtils.DATA.inferTypedValue(cval);
+                        }
+                    	obj.put(cname, val);
+                    } catch (SQLException sqex) {
+
+                    }
                 }
-		    	//w.write(obj.toString());
 		    	getDataSource().addObj(obj);
 		    }
-		    //w.close();
 		} catch (SQLException sqlex) {
 			sqlex.printStackTrace();
 			setStatus(STATUS.ABORTED);
@@ -91,25 +125,20 @@ public class CSVExtractor extends PMExtractorBase {
 		} finally {
 			reader.closeConnection();
 			log.info("PMExtractor :: Cleaning file system...");
-			/*try {
-				if (null != w) w.close();
-			} catch (IOException e) {
-				
-			}*/
 			org.apache.commons.io.FileUtils.deleteQuietly(new File(filePath));
 		}
-		
+
 		/*HashMap<String, DataObject> colMapping = new HashMap<>();
 		Properties props = new Properties();
 		String dbPath = filePath.substring(0, filePath.lastIndexOf("/"));
 		String tblName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length());
 		String charset = extractorDef.getString("charset");
 		if (null == charset || charset.isEmpty()) charset = "UTF-8";
-		
+
 		tblName = tblName.substring(0, tblName.lastIndexOf("."));
 		props.put("charset", charset);
 		props.put("columnTypes", "");*/
-		
+
 		//Get column mapping
 		/*DataObject columnMapping = extractorDef.getDataObject("columns");
 		if (null != columnMapping) {
@@ -122,26 +151,26 @@ public class CSVExtractor extends PMExtractorBase {
 				}
 			}
 		}*/
-		
+
 		/*try {
 			Class.forName("org.relique.jdbc.csv.CsvDriver");
 		} catch (ClassNotFoundException cnfex) {
 			cnfex.printStackTrace();
 		}
-		
+
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection("jdbc:relique:csv:" + dbPath, props);
 		    Statement stmt = conn.createStatement();
 		    ResultSet results = stmt.executeQuery("SELECT * FROM "+tblName);
-		    
+
 		    while(results.next()) {
-		    	DataObject obj = new DataObject(); 
+		    	DataObject obj = new DataObject();
 		    	for(String key : colMapping.keySet()) {
 		    		DataObject entry = (DataObject) colMapping.get(key);
 		    		String finalField = null != entry.getString("dest") ? entry.getString("dest") : key;
 		    		String dataType = null != entry.getString("type") ? entry.getString("type") : "string";
-		    		
+
 		    		int colIdx = results.findColumn(key);
 		    		Object val = FSTUtils.DATA.inferTypedValue(results.getString(colIdx));//TODO: Verificar tipos de datpos en columnas con el driver
 		    		//System.out.println("Key: "+key+", finalName: "+finalField+", colIndex: "+colIdx);
@@ -160,7 +189,60 @@ public class CSVExtractor extends PMExtractorBase {
 			}
 		}*/
 	}
-	
+
+	private DataList getDataSourceColumns() {
+		SWBScriptEngine engine = getDataSource().getScriptEngine();
+		SWBDataSource ds = engine.getDataSource("DBDataSource");
+		DataObject dsFetch = null;
+		DataList dlist = null;
+
+		try {
+			DataObject wrapper = new DataObject();
+			DataObject q = new DataObject();
+			q.put("name", getDataSource().getName());
+			wrapper.put("data", q);
+			dsFetch = ds.fetch(wrapper);
+
+			if (null != dsFetch) {
+				DataObject response = dsFetch.getDataObject("response");
+				if (null != response) {
+					dlist = response.getDataList("data");
+					if (!dlist.isEmpty()) {
+						DataObject dse = dlist.getDataObject(0);
+						return dse.getDataList("columns");
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return null;
+	}
+
+	private Object getTypedValue(String type, String source) {
+		switch(type) {
+			case "FLOAT": {
+				return FSTUtils.DATA.parseFloat(source);
+			}
+			case "INTEGER": {
+				return FSTUtils.DATA.parseInt(source);
+			}
+			case "DOUBLE": {
+				return FSTUtils.DATA.parseDouble(source);
+			}
+			case "LONG": {
+				return FSTUtils.DATA.parseLong(source);
+			}
+			case "BOOLEAN": {
+				return FSTUtils.DATA.parseBoolean(source);
+			}
+			default: {
+				return source;
+			}
+		}
+	}
+
 	@Override
 	public String getType() {
 		return "CSV";

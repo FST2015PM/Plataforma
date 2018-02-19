@@ -23,7 +23,7 @@ eng.config={
 eng.dataStores["mongodb"]={
     host:"localhost",
     port:27017,
-    class: "org.semanticwb.datamanager.datastore.DataStoreMongo",
+    class: "org.semanticwb.datamanager.datastore.DataStoreMongo"
 };
 /*
 eng.dataStores["ts_leveldb"]={
@@ -33,13 +33,22 @@ eng.dataStores["ts_leveldb"]={
 */
 //******* DataSources ************
 
+//Datasource dinámico
 eng.dataSources["DBDataSource"]={
     scls: "DBDataSource",
     modelid: DBModel,
     dataStore: "mongodb",
-    secure: true
+    secure: true,
+    fields: [
+      {name:"name", title:"Nombre", type:"string", required:true},
+      {name:"description", title:"Descripción", type:"string", required:true},
+      {name:"columns", title:"Columnas", type:"boolean", required:true},
+      {name:"created", title:"Creado", type:"date", required:true},
+      {name:"updated", title:"Actualizado", type:"date", required:true}
+    ]
 };
 
+//Datasource de usuarios
 eng.dataSources["User"]={
     scls: "User",
     modelid: DBModel,
@@ -56,6 +65,8 @@ eng.dataSources["User"]={
         //{name:"groups",title:"Grupos",stype:"select", valueMap:{infotec:"INFOTEC",dac:"DAC",gdnps:"GDNPS",dads:"DADS"},multiple:true},
     ]
 };
+
+//Datasource de roles
 eng.dataSources["Role"] = {
     scls: "Role",
     modelid: DBModel,
@@ -68,6 +79,19 @@ eng.dataSources["Role"] = {
     ]
 };
 
+//Datasource para asociar usuarios con roles
+eng.dataSources["UserRole"] = {
+    scls: "UserRole",
+    modelid: DBModel,
+    dataStore: "mongodb",
+    secure: true,
+    fields: [
+        {name: "user", title: "Usuario", required: true, type: "string"},
+        {name: "role", title: "Rol", required: true, type: "string"}
+    ]
+};
+
+//Datasource de bitácora
 eng.dataSources["PMLog"]={
     scls: "PMLog",
     modelid: DBModel,
@@ -84,6 +108,7 @@ eng.dataSources["PMLog"]={
     ]
 };
 
+//Datasource de sesiones de usuarios para aplicaciones de terceros
 eng.dataSources["UserSession"]={
     scls: "UserSession",
     modelid: DBModel,
@@ -99,6 +124,7 @@ eng.dataSources["UserSession"]={
     ]
 };
 
+//Datasource de tokens para recuperación de contraseña
 eng.dataSources["ResetPasswordToken"]={
     scls: "ResetPasswordToken",
     modelid: DBModel,
@@ -111,6 +137,7 @@ eng.dataSources["ResetPasswordToken"]={
     ]
 };
 
+//Datasource de llaves API
 eng.dataSources["APIKey"] = {
     scls: "APIKey",
     modelid: DBModel,
@@ -128,6 +155,7 @@ eng.dataSources["APIKey"] = {
     ]
 };
 
+//Datasource de puntos de acceso
 eng.dataSources["DSEndpoint"] = {
     scls: "DSEndpoint",
     modelid: DBModel,
@@ -143,6 +171,7 @@ eng.dataSources["DSEndpoint"] = {
     ]
 };
 
+//Datasource de capas geográficas
 eng.dataSources["GeoLayer"] = {
     scls: "GeoLayer",
     modelid: DBModel,
@@ -160,6 +189,7 @@ eng.dataSources["GeoLayer"] = {
     ]
 };
 
+//Datasource de tableros de análisis
 eng.dataSources["Dashboard"] = {
     scls: "Dashboard",
     modelid: DBModel,
@@ -172,6 +202,7 @@ eng.dataSources["Dashboard"] = {
     ]
 };
 
+//Datasource de extractores de datos
 eng.dataSources["Extractor"] = {
   scls: "Extractor",
   modelid: DBModel,
@@ -221,6 +252,7 @@ eng.routes["global"] = {
     //{ routePath: "register", forwardTo: "/work/config/register.jsp", isRestricted: "false" },
     { routePath: "work", isRestricted: "true"},
     { routePath: "app/*", forwardTo: "/app/", isRestricted: "true" },
+    { routePath: "mapdata", forwardTo: "/work/config/mapdata.jsp", isRestricted: "false" },
     { routePath: "public/*", forwardTo: "/public/", isRestricted: "false" }, //Public assets and images
     { routePath: "work/*", jspMapTo: "/work/jsp/", isRestricted: "true" }
     //{ routePath: "ds", forwardTo: "/platform/jsp/datasource.jsp", isRestricted: "true" }

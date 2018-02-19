@@ -11,14 +11,14 @@
     context.formTitle = "Agregar Dashboard";
     context.dashboardLsist = [];
 
-    $Datasource.listDatasources()
-    .then(res => {
-      if (res.data && res.data.length) {
+    //$Datasource.listDatasources()
+    //.then(res => {
+      //if (res.data && res.data.length) {
         $Datasource.listObjects("Dashboard").then(res => {
           context.dashboardList = res.data.data;
         });
-      }
-    });
+      //}
+    //});
 
     $scope.deleteDashboard = function(dashboardId) {
       bootbox.confirm("¿está seguro de eliminar el dashboard?", function(result) {

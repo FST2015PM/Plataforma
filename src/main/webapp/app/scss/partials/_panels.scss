@@ -54,3 +54,13 @@ div.codemirror-panel {
   color: #676a6c;
   font-size: 0.9em;
 }
+
+.gridster-item .panel {
+  border-radius: 0;
+
+  & .panel-heading {
+    background-color: #fff;
+    border-radius: 0;
+    border-bottom: 2px solid #ddd;
+  }
+}

@@ -1,6 +1,169 @@
+/** D3 engine flag */
+const ENGINE_D3 = "d3";
+
 /** Class to encapsulate charts creation */
 class ChartsFactory {
   constructor() { }
+
+  createLabel(container, mainText, secondaryText) {
+    $("#"+container).append("<div class='col-md-12'><h1>"+mainText+"<small>"+secondaryText+"</small></h1></div>");
+  }
+
+  createBarChart(container, data) {
+    var ctitle = data.title || "";
+    var xAxisTitle = data.xAxisTitle || "";
+    var yAxisTitle = data.yAxisTitle || "";
+    var cats = data.categories || [];
+    var colValues = data.series[0].values;
+
+    var chartOptions = {
+      title: {
+        text: ctitle
+      },
+      xAxis: {
+          categories: cats
+      },
+      yAxis: {
+  	    title: {
+        	text: yAxisTitle
+        }
+      },
+
+      series: [{
+          type: 'column',
+          colorByPoint: false,
+          data: colValues,
+          showInLegend: false
+      }]
+    };
+
+    var ret = Highcharts.chart(container, chartOptions);
+    ret.reflow();
+
+    return ret;
+
+  }
+
+  createLineChart(container, data) {
+    var ctitle = data.title || "";
+    var xAxisTitle = data.xAxisTitle || "";
+    var yAxisTitle = data.yAxisTitle || "";
+    var cats = data.categories || [];
+    var colValues = data.series[0].values;
+
+    var chartOptions = {
+      chart: {
+        type: 'line'
+      },
+      legend: {
+            enabled: false
+        },
+      title: {
+        text: ctitle
+      },
+      xAxis: {
+          categories: cats
+      },
+      yAxis: {
+  	    title: {
+        	text: yAxisTitle
+        }
+      },
+      plotOptions: {
+        line: {
+            dataLabels: {
+                enabled: false
+            },
+            enableMouseTracking: true
+        }
+    },
+      series: [{
+          name:"",
+          data: colValues
+      }]
+    };
+
+    var ret = Highcharts.chart(container, chartOptions);
+    ret.reflow();
+
+    return ret;
+
+  }
+
+  createGauge(container, title, val, min, max, unit, starth, startw) {
+    if (!Highcharts) return;
+
+    var gaugeOptions = {
+      chart: {
+        type: 'solidgauge'
+      },
+      title: title,
+
+      credits: {
+        enabled: false
+      },
+
+      pane: {
+        center: ['50%', '85%'],
+        size: '140%',
+        startAngle: -90,
+        endAngle: 90,
+        background: {
+          backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+          innerRadius: '60%',
+          outerRadius: '100%',
+          shape: 'arc'
+        }
+      },
+      tooltip: {
+        enabled: false
+      },
+
+      yAxis: {
+        lineWidth: 0,
+        minorTickInterval: null,
+        tickAmount: 2,
+        title: {
+            y: -70
+        },
+        labels: {
+            y: 16
+        },
+        min: min,
+        max: max,
+        title: {
+            text: title
+        }
+      },
+
+      series: [{
+        name: 's',
+        data: [val],
+        dataLabels: {
+          format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+            ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+               '<span style="font-size:12px;color:silver">'+unit+'</span></div>'
+        },
+        tooltip: {
+          valueSuffix: ' '+unit
+        }
+      }],
+
+      plotOptions: {
+        solidgauge: {
+          dataLabels: {
+            y: 5,
+            borderWidth: 0,
+            useHTML: true
+          }
+        }
+      }
+    };
+
+    var ret = Highcharts.chart(container, gaugeOptions);
+    ret.reflow();
+    return ret;
+  }
 
   //TODO: Place specific code from here
   createChart(container, data, engine, options) {

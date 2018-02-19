@@ -1,0 +1,90 @@
+.graphContainer {
+  //height: 100%;
+  //width: 100%;
+  position:relative;
+  top:0;
+  left:0;
+  overflow: hidden;
+  height: 800px;
+
+  & > svg {
+      width: 100%;
+      height: 100%;
+  }
+}
+
+.localcommunity {
+  fill: #FFB966;
+}
+
+.geospace {
+  fill: #FFE866;
+}
+
+.offer {
+  fill: #FF6E66;
+}
+
+.demand {
+  fill: #7C9EFF;
+}
+
+.nature {
+  fill: #BFA306;
+}
+
+.tourservice {
+  fill: #CCEFFF;
+}
+
+.sustainable {
+  fill: #C8ED66;
+}
+
+.marketing {
+  fill: #D0AAFF;
+}
+
+.culture {
+  fill: #FDCFCD;
+}
+
+.infraestructure {
+  fill: #E8D5FF;
+}
+
+.superstructure {
+  fill: #CCCCCC;
+}
+
+.lateral {
+  border: 1px solid red;
+  position: fixed;
+  right:0;
+  top: 0;
+  width: 400px;
+  height:300px;
+  background-color: #fff;
+}
+
+.hasContent {
+  stroke: #000;
+  stroke-width: 3;
+}
+
+.infoBox {
+  padding: 5px;
+  position: absolute;
+  background-color: #fff;
+  right: 20px;
+  margin-top: 5px;
+  width:300px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  z-index: 100;
+  box-shadow: 1px 1px 11px -4px rgba(0,0,0,0.75);
+
+  hr {
+    margin-top: 15px;
+  }
+}

@@ -1,0 +1,9 @@
+<div class="row" ng-show="main.isRootState()">
+  <div class="col-sm-12">
+    <div class="jumbotron text-center">
+      <h2 ng-show="userInfo.isAdmin">Bienvenido Administrador</h2>
+      <h2 ng-show="!userInfo.isAdmin">Bienvenido analista de destinos</h2>
+      <p>Utiliza las opciones del menú lateral para comenzar</p>
+    </div>
+  </div>
+</div>

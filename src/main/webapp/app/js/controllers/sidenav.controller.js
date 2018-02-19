@@ -8,31 +8,16 @@
     SideNavCtrl.$inject = ["$scope", "$rootScope", "$state", "$timeout", "$ACLService", "menuItems"];
     function SideNavCtrl($scope, $rootScope, $state, $timeout, $ACLService, menuItems) {
       let cnt = this;
-      cnt.menuItems = menuItems || [];//$scope.userActions || [];
+      cnt.menuItems = menuItems || [];
       $scope.$state = $state;
       cnt.loading = true;
 
-      cnt.isExpanded = function(item) {
-        var ret = false;
-        if (item.stateLink && $state.includes(item.stateLink)) {
-          ret = true;
-        }
-
-        if (!ret) {
-          if (item.menuItems && item.menuItems.length > 0) {
-            item.menuItems.forEach(function(subel) {
-              if(subel.stateLink && $state.includes(subel.stateLink)) {
-                ret = true;
-              }
-            });
-          }
-        }
-
-        return ret;
+      cnt.isActive = function(item) {
+        return item.stateLink && $state.includes(item.stateLink);
       };
 
       $timeout(function() {
-        $("#side-menu").metisMenu({preventDefault:false});
+        //$("#side-menu").metisMenu({preventDefault:false});
         cnt.loading = false;
       }, 200);
 

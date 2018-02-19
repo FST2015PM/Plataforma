@@ -205,7 +205,13 @@ public class FSTUtils {
 			String destPath = org.apache.commons.io.FileUtils.getTempDirectoryPath();
 			if (!destPath.endsWith("/")) destPath += "/";
 			destPath += UUID.randomUUID().toString().replace("-", "");
-			return downloadResource(urlString, destPath, fileName, zipped);
+			
+			String rPath = downloadResource(urlString, destPath, fileName);
+			if (zipped) {
+				File fPath = new File(rPath, fileName);
+				FSTUtils.ZIP.extractAll(fPath.getAbsolutePath(), rPath);
+			}
+			return rPath;
 		}
 		
 		/**
@@ -216,7 +222,7 @@ public class FSTUtils {
 		 * @param zipped Whether the downloaded resource is zipped. Resource will be extracted if needed. 
 		 * @return Path to resource folder or empty string.
 		 */
-		public static String downloadResource(String urlString, String destPath, String fileName, boolean zipped) {
+		public static String downloadResource(String urlString, String destPath, String fileName) {
 			File destDir;
 			if (null != fileName && !fileName.isEmpty()) {
 				 destDir = new File(destPath, fileName);
@@ -234,10 +240,6 @@ public class FSTUtils {
 			try {
 				System.out.println("..Downloading resource "+url);
 				org.apache.commons.io.FileUtils.copyURLToFile(url, destDir, 5000, 5000);
-				if (zipped) {
-					System.out.println("..Inflating "+url);
-					FSTUtils.ZIP.extractAll(destDir.getAbsolutePath(), destPath);
-				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
 				return "";

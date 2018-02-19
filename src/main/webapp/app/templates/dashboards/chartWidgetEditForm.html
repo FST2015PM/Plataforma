@@ -1,0 +1,113 @@
+<div>
+  <div class="row title-ribbon">
+    <h3>Configurar Gráfica</h3>
+  </div>
+  <div class="row">
+    <div class="panel panel-default box-panel">
+      <form name="editForm" novalidate class="form-horizontal" ng-submit="widget.submitForm(editForm)">
+        <div class="panel-body">
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid }" >
+              <label class="col-sm-2 control-label">Título de la gráfica</label>
+              <div class="col-sm-10">
+                <input type="text" name="name" required class="form-control" ng-model="widget.widget.name" />
+                <span ng-show="(editForm.$submitted || editForm.name.$touched) && editForm.name.$invalid" class="help-block">El nombre es requerido</span>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid }">
+              <label class="col-sm-2 control-label">DataSource</label>
+              <div class="col-sm-10">
+                <select name="dataSourceName" required class="form-control" ng-model="widget.widget.dataSourceName" ng-options="option.id as option.name for option in widget.dsList" ng-change="widget.updateDSDefinition()">
+                  <option value="">Seleccione un datasource</option>
+                </select>
+                <span ng-show="(editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid" class="help-block">El datasource es requerido</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Tipo de gráfica</label>
+              <div class="col-sm-10">
+                <div class="btn-group" data-toggle="buttons">
+                  <!--label class="btn btn-sm btn-default active" ng-click="widget.setChartType('pie')">
+                    <input type="radio" autocomplete="off" checked> <span class="fa fa-pie-chart"></span>
+                  </label-->
+                  <label class="btn btn-sm btn-default" ng-class="{ 'active' : widget.widget.chartType === 'bar'}" ng-click="widget.setChartType('bar')">
+                    <input type="radio" autocomplete="off" ng-checked="widget.widget.chartType === 'bar'"> <span class="fa fa-bar-chart"></span>
+                  </label>
+                  <label class="btn btn-sm btn-default" ng-class="{ 'active' : widget.widget.chartType === 'line'}" ng-click="widget.setChartType('line')">
+                    <input type="radio" autocomplete="off" ng-checked="widget.widget.chartType === 'line'"> <span class="fa fa-line-chart"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1">
+            <h4>Eje X</h4>
+            <hr/>
+          </div>
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.groupField.$touched) && editForm.groupField.$invalid }">
+              <label class="col-sm-2 control-label">Columna</label>
+              <div class="col-sm-10">
+                <select name="groupField" class="form-control" ng-model="widget.widget.groupField" ng-options="option for option in widget.dsColumns">
+                  <option value="">Seleccione una columna</option>
+                </select>
+                <span ng-show="(editForm.$submitted || editForm.groupField.$touched) && editForm.groupField.$invalid" class="help-block">El grupo es requerido</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Título</label>
+              <div class="col-sm-10">
+                <input type="text" name="xAxisTitle" class="form-control" ng-model="widget.widget.xAxisTitle" />
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="groupValues" ng-model="widget.widget.groupValues"> Agrupar valores
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group" ng-show="widget.widget.groupValues">
+              <label class="col-sm-2 control-label">Valor</label>
+              <div class="col-sm-10">
+                <select name="showValue" required class="form-control" ng-model="widget.widget.showValue">
+                  <option value="sum">Suma</option>
+                  <option value="avg">Promedio</option>
+                  <option value="min">Mínimo</option>
+                  <option value="max">Máximo</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1">
+            <h4>Eje Y</h4>
+            <hr/>
+          </div>
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.groupField.$touched) && editForm.groupField.$invalid }">
+              <label class="col-sm-2 control-label">Columna</label>
+              <div class="col-sm-10">
+                <select name="valField" class="form-control" ng-model="widget.widget.valField" ng-options="option for option in widget.dsYColumns">
+                  <option value="">Seleccione una columna</option>
+                </select>
+                <span ng-show="(editForm.$submitted || editForm.groupField.$touched) && editForm.groupField.$invalid" class="help-block">El grupo es requerido</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Título</label>
+              <div class="col-sm-10">
+                <input type="text" name="yAxisTitle" class="form-control" ng-model="widget.widget.yAxisTitle" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-footer text-right">
+          <button type="submit" ng-disabled="widget.processing" class="btn btn-primary btn-minw"><span ng-show="widget.processing" class="fa fa-cog fa-spin fa-lg fa-fw"></span>Guardar</button>
+          <button ui-sref="admin.editdashboard({id: widget.dashboardData._id})" ng-disabled="widget.processing" class="btn btn-default btn-minw">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

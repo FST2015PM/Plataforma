@@ -5,31 +5,58 @@
     .module("FST2015PM.controllers")
     .controller("EndpointCtrl", EndpointCtrl);
 
-  EndpointCtrl.$inject = ["$Datasource"];
-  function EndpointCtrl($Datasource) {
+  EndpointCtrl.$inject = ["$Datasource", "toaster"];
+  function EndpointCtrl($Datasource, toaster) {
     let cnt = this;
     cnt.dsList = [];
 
     $Datasource.listObjects("DSEndpoint")
-    .then(res => {
+    .then(function(res) {
       if (res.data.data && res.data.data.length) {
         cnt.dsList = res.data.data;
+        cnt.dsList.forEach(function(item) {
+          if (item.restrictionType === "OPEN") {
+            item.restrictionTypeName = "NINGUNA";
+          } else if (item.restrictionType === "SESSION") {
+            item.restrictionTypeName = "SESIÓN ACTIVA";
+          } else if (item.restrictionType === "APIKEY") {
+            item.restrictionTypeName = "LLAVE API";
+          }
+        });
       }
     });
 
     cnt.deleteEndPoint = function(id) {
-      bootbox.confirm("<h3>Este endpoint será eliminado permanentemente. \n ¿Deseas continuar?</h3>", result => {
-        if (result) {
-          $Datasource.removeObject(id, "DSEndpoint")
-          .then(result => {
-            cnt.dsList.filter((elem, i) => {
-              if (elem._id === id) {
-                cnt.dsList.splice(i, 1);
-              }
+      bootbox.confirm({
+        message: "<h4>Este punto de acceso será eliminado permanentemente.<br>¿Desea continuar?</h4>",
+        buttons: {
+          cancel: {
+            label: "Cancelar"
+          },
+          confirm: {
+            label: "Aceptar"
+          }
+        },
+        callback: function(result) {
+          if (result) {
+            $Datasource.removeObject(id, "DSEndpoint")
+            .then(function(result) {
+              cnt.dsList.filter(function(elem, i) {
+                if (elem._id === id) {
+                  cnt.dsList.splice(i, 1);
+                }
+              });
             });
-          });
+
+            toaster.pop({
+              type: 'success',
+              body: 'Se ha eliminado el punto de acceso',
+              showCloseButton: true,
+            });
+          }
         }
       });
+
     };
 
   }

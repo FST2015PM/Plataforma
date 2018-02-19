@@ -16,10 +16,13 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
@@ -45,6 +48,58 @@ public class AppServices {
 	@Context HttpServletRequest httpRequest;
 	private final static String ERROR_FORBIDDEN = "{\"error\":\"Unauthorized\"}";
 	private final static String ERROR_BADREQUEST = "{\"error\":\"Bad request\"}";
+	
+	@GET
+	@Path("/aggregate/{dsName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response aggregateData(@PathParam("dsName") String dataSourceId, @Context UriInfo context) {
+		HttpSession session = httpRequest.getSession();
+		SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
+		
+		//Get DataSource
+		SWBDataSource ds = engine.getDataSource(dataSourceId);
+		if (null == ds) return Response.status(Status.NOT_FOUND).build();
+		
+		if (hasAccess(httpRequest)) {
+			MultivaluedMap<String, String> params = context.getQueryParameters();
+			String oper = params.getFirst("operation");
+			String field = params.getFirst("field");
+			String group = params.getFirst("group");
+			String mfield = params.getFirst("matchField");
+			String mval = params.getFirst("matchVal");
+			
+			if (null == field || null == oper || field.isEmpty() || oper.isEmpty()) {
+				return Response.status(Status.BAD_REQUEST).build();
+			}
+			
+			StringBuilder qB = new StringBuilder();
+			qB.append("{'data':[");
+			qB.append("{");
+			qB.append("'$group':{");
+			qB.append("'_id':");
+			if (null == group || group.isEmpty()) {
+				qB.append("null");
+			} else {
+				qB.append("'$").append(group).append("'");
+			}
+			qB.append(",");
+			qB.append("'result':{'").append("$"+oper).append("':'").append("$"+field).append("'}");
+			qB.append("}");
+			qB.append("}");
+			qB.append("]}");
+			
+			String query = qB.toString();
+			DataObject q = (DataObject) DataObject.parseJSON(query);
+			try {
+				DataObject ret = ds.aggregate(q);
+				return Response.ok().entity(ret).build();
+			} catch (IOException ioex) {
+				ioex.printStackTrace();
+			}
+		}
+
+		return Response.status(Status.FORBIDDEN).build();
+	}
 	
 	@GET
 	@Path("/encoding")
@@ -205,5 +260,14 @@ public class AppServices {
 		
 		File f = new File(context.getRealPath("/") + "WEB-INF/dbdatasources.js");
 		FileUtils.write(f, sb.toString(), "UTF-8", false);
+	}
+	
+	//TODO: Move to a single place
+	private boolean hasAccess(HttpServletRequest request) {
+		boolean ret = false;
+		if (null != request.getSession().getAttribute("_USER_")) {
+			ret = true;
+		}
+		return ret;
 	}
 }

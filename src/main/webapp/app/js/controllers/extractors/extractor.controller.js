@@ -5,8 +5,8 @@
     .module("FST2015PM.controllers")
     .controller("ExtractorCtrl", ExtractorCtrl);
 
-  ExtractorCtrl.$inject = ["$Datasource", "$interval", "$Extractor", "$scope"];
-  function ExtractorCtrl($Datasource, $interval, $Extractor, $scope) {
+  ExtractorCtrl.$inject = ["$Datasource", "$interval", "$Extractor", "$scope", "toaster"];
+  function ExtractorCtrl($Datasource, $interval, $Extractor, $scope, toaster) {
     let cnt = this;
     let extractorsLoaded = false;
     cnt.interval = undefined,
@@ -14,9 +14,9 @@
     cnt.extractorList = [];
 
     $Datasource.listObjects("Extractor")
-    .then(res => {
+    .then(function(res) {
       if (res.data.data && res.data.data.length) {
-        cnt.extractorList = res.data.data.map(item => {
+        cnt.extractorList = res.data.data.map(function(item) {
           item.status = "DESCONOCIDO";
 
           return item;
@@ -25,12 +25,12 @@
 
         cnt.interval = $interval(function () {
           if (extractorsLoaded) {
-            cnt.extractorList.forEach(item => {
+            cnt.extractorList.forEach(function(item) {
               $Extractor.getStatus(item._id)
-              .then(res => {
+              .then(function(res) {
                 item.status = res;
               })
-              .catch(error => {
+              .catch(function(error) {
                 item.status = "DESCONOCIDO";
               });
             });
@@ -41,6 +41,12 @@
 
     cnt.startExtractor = function (extractor) {
       $Extractor.startExtractor(extractor._id);
+      var msg = "Se ha iniciado el extractor "+extractor.name;
+      toaster.pop({
+        type: 'success',
+        body: msg,
+        showCloseButton: true,
+      });
     };
 
     cnt.canStart = function(extractor) {
@@ -48,16 +54,32 @@
     };
 
     cnt.deleteExtractor = function(id) {
-      bootbox.confirm("<h3>Este extractor será eliminado permanentemente. \n ¿Deseas continuar?</h3>", result => {
-        if (result) {
-          $Datasource.removeObject(id, "Extractor")
-          .then(result => {
-            cnt.extractorList.filter((elem, i) => {
-              if (elem._id === id) {
-                cnt.extractorList.splice(i, 1);
-              }
+      bootbox.confirm({
+        message: "<h4>Este extractor será eliminado permanentemente. \n ¿Desea continuar?</h4>",
+        buttons: {
+          cancel: {
+            label: "Cancelar"
+          },
+          confirm: {
+            label: "Aceptar"
+          }
+        },
+        callback: function(result) {
+          if (result) {
+            $Datasource.removeObject(id, "Extractor")
+            .then(function(res) {
+              cnt.extractorList.filter(function(elem, i) {
+                if (elem._id === id) {
+                  cnt.extractorList.splice(i, 1);
+                }
+              });
             });
-          });
+            toaster.pop({
+              type: 'success',
+              body: 'Se ha eliminado el extractor',
+              showCloseButton: true,
+            });
+          }
         }
       });
     };
