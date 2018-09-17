@@ -30,9 +30,9 @@
               <td>{{layer.ontCategory}}</td>
               <td class="text-right">
                 <a tabindex="0" role="button" class="btn btn-sm btn-primary" rel="popover" data-content='<input type="text" class="form-control" value="{{layer.resourceURL}}" />' data-placement="left"><span class="fa fa-link"></span></a>
-                <a class="btn btn-sm btn-primary" ui-sref="admin.previewgeolayer({id: '{{layer._id}}'})"><span class="fa fa-map-o"></span></a>
-                <a class="btn btn-sm btn-primary" ui-sref="admin.editgeolayer({id: '{{layer._id}}'})"><span class="fa fa-pencil"></span></a>
-                <a class="btn btn-sm btn-primary" ng-click="geo.deleteLayer(layer._id)"><span class="fa fa-trash-o"></span></a>
+                <a class="btn btn-sm btn-primary" ui-sref="admin.previewgeolayer({id: '{{layer._id}}'})"><span class="fa fa-map-marked-alt"></span></a>
+                <a class="btn btn-sm btn-primary" ui-sref="admin.editgeolayer({id: '{{layer._id}}'})"><span class="fa fa-pencil-alt"></span></a>
+                <a class="btn btn-sm btn-primary" ng-click="geo.deleteLayer(layer._id)"><span class="fa fa-trash-alt"></span></a>
               </td>
             </tr>
           </tbody>

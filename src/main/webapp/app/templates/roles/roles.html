@@ -27,8 +27,8 @@
             <tr ng-repeat="role in roles.roles | filter:roles.searchText | orderBy:'role.title'">
               <td>{{role.title}}</td>
               <td class="text-right">
-                <a class="btn btn-sm btn-primary" ng-show="role.title !== 'Admin'" ui-sref="admin.editrole({id: '{{role._id}}'})"><span class="fa fa-pencil"></span></a>
-                <a class="btn btn-sm btn-primary" ng-show="role.title !== 'Admin'" ng-click="roles.deleteRole(role._id)"><span class="fa fa-trash-o"></span></a>
+                <a class="btn btn-sm btn-primary" ng-show="role.title !== 'Admin'" ui-sref="admin.editrole({id: '{{role._id}}'})"><span class="fa fa-pencil-alt"></span></a>
+                <a class="btn btn-sm btn-primary" ng-show="role.title !== 'Admin'" ng-click="roles.deleteRole(role._id)"><span class="fa fa-trash-alt"></span></a>
               </td>
             </tr>
           </tbody>

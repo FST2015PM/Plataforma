@@ -7,7 +7,7 @@
 
   ChartEditWidgetCtrl.$inject = ["$state","$stateParams", "$Datasource", "$GeoLayer"];
   function ChartEditWidgetCtrl($state, $stateParams, $Datasource, $GeoLayer) {
-    let cnt = this;
+    var cnt = this;
     cnt.dashboardData = {};
     cnt.widget = {};
     cnt.dsList = {};
@@ -27,8 +27,8 @@
       .then(function(ds) {
         cnt.dashboardData = ds.data;
 
-        let widgetIdx;
-        let addedIds = [];
+        var widgetIdx;
+        var addedIds = [];
         cnt.dashboardData.widgets.forEach((item, idx) => {
           if (item.id === $stateParams.wid) {
             widgetIdx = idx;

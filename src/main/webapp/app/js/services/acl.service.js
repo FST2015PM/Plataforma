@@ -7,9 +7,9 @@
 
   ACLService.$inject = ['$http', '$q'];
   function ACLService($http, $q) {
-    let apiVersion = 1; //TODO: Move to app config
+    var apiVersion = 1; //TODO: Move to app config
     //Service definition
-    let service = {};
+    var service = {};
     service.getUserActions = getUserActions;
 
     return service;
@@ -103,7 +103,7 @@
             },
             {
               label:"Capas",
-              cssClass: "fa fa-map-o fa-fw",
+              cssClass: "fa fa-map-marked-alt fa-fw",
               stateLink: 'admin.geolayers'
             }
           ]
@@ -141,7 +141,7 @@
             {
               label: "Tableros",
               stateLink: 'admin.dashboards',
-              cssClass: "fa fa-dashboard fa-fw"
+              cssClass: "fa fa-analytics fa-fw"
             }
           ]
         }
@@ -167,7 +167,7 @@
             {
               label: "Bitácora",
               stateLink: 'admin.activity',
-              cssClass: "fa fa-clock-o fa-fw"
+              cssClass: "fa fa-clock fa-fw"
             }
           ]
         }

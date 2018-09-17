@@ -34,8 +34,8 @@
               <td>{{extractor.lastExecution}}</td>
               <td class="text-right">
                 <a ng-show="extractors.canStart(extractor)" class="btn btn-sm btn-primary" ng-click="extractors.startExtractor(extractor)"><span class="fa fa-play"></span></a>
-                <a ng-show="extractors.canStart(extractor)" class="btn btn-sm btn-primary" ui-sref="admin.editextractor({id: '{{extractor._id}}'})"><span class="fa fa-pencil"></span></a>
-                <a ng-show="extractors.canStart(extractor)" class="btn btn-sm btn-primary" ng-click="extractors.deleteExtractor(extractor._id)"><span class="fa fa-trash-o"></span></a>
+                <a ng-show="extractors.canStart(extractor)" class="btn btn-sm btn-primary" ui-sref="admin.editextractor({id: '{{extractor._id}}'})"><span class="fa fa-pencil-alt"></span></a>
+                <a ng-show="extractors.canStart(extractor)" class="btn btn-sm btn-primary" ng-click="extractors.deleteExtractor(extractor._id)"><span class="fa fa-trash-alt"></span></a>
               </td>
             </tr>
           </tbody>
