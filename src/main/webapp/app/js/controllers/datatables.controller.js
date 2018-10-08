@@ -8,11 +8,11 @@
     DataTablesCtrl.$inject = ['$scope', '$http'];
     function DataTablesCtrl($scope, $http) {
       //Invoke dataviz functions here
-      let request = $http({
+      var request = $http({
         url: "/app/mockdata/datatables.json",
         method: "GET"
-      }).then((res) => {
+      }).then(function(res) {
         dataviz.dataTablesFactory.createDataTable("example", res.data);
       });
-    };
+    }
 })();

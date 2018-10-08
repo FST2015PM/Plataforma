@@ -1,70 +1,47 @@
 package org.fst2015pm.swbforms.api.v1;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import org.apache.commons.io.FileUtils;
+import org.fst2015pm.swbforms.utils.DBLogger;
+import org.fst2015pm.swbforms.utils.FSTUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.semanticwb.datamanager.*;
+import org.semanticwb.datamanager.script.ScriptObject;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
-
-import org.apache.commons.io.FileUtils;
-import org.fst2015pm.swbforms.utils.DBLogger;
-import org.fst2015pm.swbforms.utils.FSTUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.semanticwb.datamanager.DataList;
-import org.semanticwb.datamanager.DataMgr;
-import org.semanticwb.datamanager.DataObject;
-import org.semanticwb.datamanager.SWBDataSource;
-import org.semanticwb.datamanager.SWBScriptEngine;
-import org.semanticwb.datamanager.script.ScriptObject;
-
-import com.ibm.icu.text.SimpleDateFormat;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * REST service to manage datasources from inside app.
  **/
 @Path("/datasources")
 public class DataSourceService {
+	private final String restrictedDS = "DBDataSource|User|Role|PMLog|UserSession|ResetPasswordToken|APIKey|DSEndpoint|GeoLayer|Dashboard|Extractor";
 	@Context ServletContext context;
 	@Context HttpServletRequest httpRequest;
 	DBLogger logger = DBLogger.getInstance();
-
-	SWBScriptEngine engine;
-	PMCredentialsManager mgr = new PMCredentialsManager();;
-	
-	private enum AccessType { DISABLED, OPEN, APIKEY, SESSION };
-	private final String restrictedDS = "DBDataSource|User|Role|PMLog|UserSession|ResetPasswordToken|APIKey|DSEndpoint|GeoLayer|Dashboard|Extractor";
-
+    SWBScriptEngine engine;;
+    PMCredentialsManager mgr = new PMCredentialsManager();;
 	SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDataSourceList(@Context UriInfo context) throws IOException {
 		HttpSession session = httpRequest.getSession();
 		engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		SWBDataSource ds = engine.getDataSource("DBDataSource");
-		
+
 		DataObject dsFetch = null;
 		DataList dlist = null;
 
@@ -85,7 +62,7 @@ public class DataSourceService {
 					dlist = response.getDataList("data");
 				}
 			}
-			
+
 			if (!dlist.isEmpty()) {
 				return Response.ok(dlist).build();
 			} else {
@@ -104,18 +81,18 @@ public class DataSourceService {
 		HttpSession session = httpRequest.getSession();
 		MultivaluedMap<String, String> params = info.getQueryParameters();
 		DataObject queryObj = new DataObject();
-		
+
 		//Init platform
 		if (restrictedDS.contains(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
 			engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		}
-		
+
 		//Get DataSource
 		SWBDataSource ds = engine.getDataSource(dataSourceId);
 		if (null == ds) return Response.status(Status.NOT_FOUND).build();
-		
+
 		if (hasAccess(ds, httpRequest)) {
 			//Get datasource fields
 			boolean hasFields = false;
@@ -165,17 +142,17 @@ public class DataSourceService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addDataSourceObject(@PathParam("dsname") String dataSourceId, String content) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		
+
 		if (restrictedDS.contains(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
 			engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		}
-		
+
 		//Get DataSource
 		SWBDataSource ds = engine.getDataSource(dataSourceId);
 		if (null == ds) return Response.status(Status.NOT_FOUND).build();
-		
+
 		if (hasAccess(false, true, httpRequest)) {
 			DataObject usr = (DataObject) session.getAttribute("_USER_");
 			JSONObject objData = null;
@@ -229,13 +206,13 @@ public class DataSourceService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDataSourceObject(@PathParam("dsname") String dataSourceId, @PathParam("objId") String oId) throws IOException {
 		HttpSession session = httpRequest.getSession();
-		
+
 		if (restrictedDS.contains(dataSourceId)) {
 			engine = DataMgr.initPlatform(session);
 		} else {
 			engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		}
-		
+
 		//Get DataSource
 		SWBDataSource ds = engine.getDataSource(dataSourceId);
 		if (null == ds) return Response.status(Status.NOT_FOUND).build();
@@ -262,11 +239,11 @@ public class DataSourceService {
 		} else {
 			engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 		}
-		
+
 		//Get DataSource
 		SWBDataSource ds = engine.getDataSource(dataSourceId);
 		if (null == ds) return Response.status(Status.NOT_FOUND).build();
-		
+
 		if (hasAccess(false, true, httpRequest)) {
 			DataObject usr = (DataObject) session.getAttribute("_USER_");
 			JSONObject objData = null;
@@ -329,7 +306,7 @@ public class DataSourceService {
 		//Get DataSource
 		SWBDataSource ds = engine.getDataSource(dataSourceId);
 		if (null == ds) return Response.status(Status.NOT_FOUND).build();
-		
+
 		if (hasAccess(false, true, httpRequest)) {
 			DataObject usr = (DataObject) session.getAttribute("_USER_");
 			DataObject obj = ds.fetchObjById(oId);
@@ -394,23 +371,23 @@ public class DataSourceService {
 			return null;
 		}
 	}
-	
+
 	private boolean isSecureDataSource(SWBDataSource ds) {
 		ScriptObject dsourceDef = ds.getDataSourceScript();
 		return (null != ds && null != dsourceDef && Boolean.valueOf(dsourceDef.getString("secure")));
 	}
-	
+
 	private boolean hasAccess(SWBDataSource ds, HttpServletRequest request) {
 		//Check if it is secured and enable checksession flag
 		boolean cs = false;
 		boolean ca = false;
 		boolean hasAccess = false;
-		
+
 		if (isSecureDataSource(ds)) {
 			cs = true;
 		} else {
 			AccessType at = getDSAPIAccessType(ds.getName());
-			
+
 			switch (at) {
 				case DISABLED: {
 					return false;
@@ -431,14 +408,14 @@ public class DataSourceService {
 				}
 			};
 		}
-		
+
 		if (!hasAccess) {
 			hasAccess = hasAccess(ca, cs, request);
 		}
-		
+
 		return hasAccess;
 	}
-	
+
 	private boolean hasAccess(boolean checkAPIKey, boolean checkSession, HttpServletRequest request) {
 		boolean ret = false;
 		if (checkSession) {
@@ -450,14 +427,14 @@ public class DataSourceService {
 		} else {
 			return true;
 		}
-		
+
 		return ret;
 	}
-	
+
 	private AccessType getDSAPIAccessType(String dsName) {
 		//Find datasource in DSEndpoint configurations and return restriction type
 		engine = DataMgr.initPlatform(null);
-		
+
 		SWBDataSource ds = engine.getDataSource("DSEndpoint");
 		DataObject dsFetch = null;
 		DataList dlist = null;
@@ -471,14 +448,14 @@ public class DataSourceService {
 
 			if (null != dsFetch) {
 				DataObject response = dsFetch.getDataObject("response");
-				if (null != response) {					
+				if (null != response) {
 					dlist = response.getDataList("data");
 					if (!dlist.isEmpty()) {
 						DataObject dse = dlist.getDataObject(0);
 						if (dse.getBoolean("enabled", false) == false) {
 							return AccessType.DISABLED;
 						}
-						
+
 						String at = dse.getString("restrictionType");
 						switch (at) {
 							case "OPEN": {
@@ -497,7 +474,7 @@ public class DataSourceService {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 		return AccessType.DISABLED;
 	}
 
@@ -505,4 +482,6 @@ public class DataSourceService {
 		// TODO: validate object before insert
 		return true;
 	}
+
+private enum AccessType { DISABLED, OPEN, APIKEY, SESSION }
 }

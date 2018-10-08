@@ -1,25 +1,16 @@
 package org.fst2015pm.swbforms.extractors;
 
+import org.fst2015pm.swbforms.utils.FSTUtils;
+import org.semanticwb.datamanager.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 import java.util.logging.Logger;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.fst2015pm.swbforms.utils.FSTUtils;
-import org.semanticwb.datamanager.DataList;
-import org.semanticwb.datamanager.DataMgr;
-import org.semanticwb.datamanager.DataObject;
-import org.semanticwb.datamanager.SWBDataSource;
-import org.semanticwb.datamanager.SWBScriptEngine;
-
-import java.text.SimpleDateFormat;
 
 /**
  * Base class for extractors. Implements methods from PMExtractor interface.
@@ -226,6 +217,29 @@ public class PMExtractorBase implements PMExtractor {
 	 */
 	public void store(String filePath) throws IOException {
 		throw new UnsupportedOperationException("Method not implemented");
+	}
+
+	public Object getTypedValue(String type, String source) {
+		switch(type) {
+			case "FLOAT": {
+				return FSTUtils.DATA.parseFloat(source);
+			}
+			case "INTEGER": {
+				return FSTUtils.DATA.parseInt(source);
+			}
+			case "DOUBLE": {
+				return FSTUtils.DATA.parseDouble(source);
+			}
+			case "LONG": {
+				return FSTUtils.DATA.parseLong(source);
+			}
+			case "BOOLEAN": {
+				return FSTUtils.DATA.parseBoolean(source);
+			}
+			default: {
+				return source;
+			}
+		}
 	}
 
 	public String getType() {

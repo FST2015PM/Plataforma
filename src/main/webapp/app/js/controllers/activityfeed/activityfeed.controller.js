@@ -5,7 +5,7 @@
         .module("FST2015PM.controllers")
         .controller("ActivityFeedCtrl", ActivityFeedCtrl);
 
-    ActivityFeedCtrl.$inject = ["$Datasource"];
+    ActivityFeedCtrl.$inject = ["$Datasource", 'API_VERSION', 'ENGINE_GOOGLEMAPS', 'ENGINE_LEAFLET', 'ENGINE_D3', 'ENGINE_LEAFLET_DUAL'];
     function ActivityFeedCtrl($Datasource) {
         var cnt = this;
         cnt.activityList = [];

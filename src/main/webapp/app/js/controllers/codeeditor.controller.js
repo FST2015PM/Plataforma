@@ -24,21 +24,21 @@
       };
 
       $FileManager.getFile($scope.fileName)
-        .then((res) => {
+        .then(function(res) {
           $scope.fileContent = res.data;
         });
 
       $scope.save = function() {
         $FileManager.saveFile($scope.fileName, $scope.fileContent)
-        .then((res) => {
+        .then(function(res) {
           if (res.status === 200) {
             $FileManager.getFile($scope.fileName)
-              .then((res) => {
+              .then(function(res) {
                 $scope.fileContent = res.data;
               });
           }
         });
       }
-    };
+    }
 
 })();

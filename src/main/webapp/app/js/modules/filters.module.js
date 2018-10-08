@@ -1,7 +1,7 @@
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('FST2015PM.filters', []);
+    angular
+        .module('FST2015PM.filters', []);
 
 })();

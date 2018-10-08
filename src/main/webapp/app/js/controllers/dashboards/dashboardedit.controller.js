@@ -5,8 +5,8 @@
         .module('FST2015PM.controllers')
         .controller('EditDashboardCtrl', EditDashboardCtrl);
 
-    EditDashboardCtrl.$inject = ["$state","$stateParams", "$Datasource", "uuid", "$timeout"];
-    function EditDashboardCtrl($state, $stateParams, $Datasource, uuid, $timeout) {
+    EditDashboardCtrl.$inject = ["$state","$stateParams", "$Datasource", "uuid", "$timeout", 'ENGINE_LEAFLET'];
+    function EditDashboardCtrl($state, $stateParams, $Datasource, uuid, $timeout, ENGINE_LEAFLET) {
         var cnt = this;
         var renderers = [];
         cnt.widgets = [];
@@ -86,28 +86,36 @@
 
                             if (!item.groupValues) {
                                 $Datasource.listObjects(item.dataSourceName).then(function(res) {
-                                    data = processChartData(res, item.groupField, item.valField);
+                                    data = processChartData(res, item.groupField, item.valField, item.zField, item.chartType);
                                     data.title = item.name;
                                     data.xAxisTitle = item.xAxisTitle;
                                     data.yAxisTitle = item.yAxisTitle;
 
-                                    if (item.chartType === "bar") {
-                                        renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createBarChart(item.id, data)});
+                                    if (item.chartType === "bar" || item.chartType === "column") {
+                                        renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createBarChart(item.id, data, item.chartType)});
                                     } else if (item.chartType === "line") {
                                         renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createLineChart(item.id, data)});
+                                    } else if (item.chartType === "scatter") {
+                                        renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createScatterChart(item.id, data)});
+                                    } else if (item.chartType === "bubble") {
+                                        renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createBubbleChart(item.id, data)});
                                     }
                                 });
                             } else {
-                                $Datasource.aggregate(item.dataSourceName, item.valField, item.showValue, item.groupField).then(function(ret){
-                                    data = processChartData(ret);
+                                $Datasource.aggregate(item.dataSourceName, item.valField, item.showValue, item.groupField, item.matchField, item.matchVal, item.sort).then(function(ret){
+                                    data = processChartData(ret, item.groupField, item.valField, item.zField, item.chartType);
                                     data.title = item.name;
                                     data.xAxisTitle = item.xAxisTitle;
                                     data.yAxisTitle = item.yAxisTitle;
 
-                                    if (item.chartType === "bar") {
-                                        renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createBarChart(item.id, data)});
+                                    if (item.chartType === "bar" || item.chartType === "column") {
+                                        renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createBarChart(item.id, data, item.chartType)});
                                     } else if (item.chartType === "line") {
                                         renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createLineChart(item.id, data)});
+                                    } else if (item.chartType === "scatter") {
+                                        renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createScatterChart(item.id, data)});
+                                    } else if (item.chartType === "bubble") {
+                                        renderers.push({id: item.id, type:"chart", chart: dataviz.chartsFactory.createBubbleChart(item.id, data)});
                                     }
                                 });
                             }
@@ -182,7 +190,12 @@
         };
     }
 
-    function processChartData(result, catField, valField) {
+    function processChartData(result, catField, valField, zField, chartType) {
+        console.log(chartType);
+        console.log(catField);
+        console.log(valField);
+        console.log(zField);
+        console.log(result);
         var d=[], ret = {};
 
         ret.categories = [];
@@ -191,12 +204,28 @@
 
         if (result.response) { //Aggregation
             d = result.response.data || [];
-            d.forEach(function(item) {
-                ret.categories.push(item._id);
-                ret.series[0].values.push(item.result);
-            });
         } else {
             d = result.data.data || [];
+        }
+
+        if (chartType === "scatter") {
+            d.forEach(function(item) {
+                var xy = [];
+                xy[0] = item[catField];
+                xy[1] = item[valField];
+                ret.series[0].values.push(xy);
+            });
+        } else if (chartType === "bubble") {
+            console.log("Must format bubble data");
+            d.forEach(function(item) {
+                var d = {};
+                d.x = item[catField];
+                d.y = item[valField];
+                d.z = item[zField];
+                ret.series[0].values.push(d);
+            });
+            console.log(ret);
+        } else {
             d.forEach(function(item) {
                 ret.categories.push(item[catField]);
                 ret.series[0].values.push(item[valField]);

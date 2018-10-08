@@ -1,8 +1,6 @@
-class GraphsFactory {
+function GraphsFactory() {
   //var layout, graph, graphics, nodeSize, renderer;
-  constructor() { }
-
-  createGraph(container, data, nodeConstructor) {
+  function createGraph(container, data, nodeConstructor) {
     var self = this;
 
     if (this.renderer) {
@@ -85,13 +83,13 @@ class GraphsFactory {
     }
   }
 
-  destroy() {
+  function destroy() {
     if (this.renderer) {
       this.renderer.dispose();
     }
   }
 
-  placeNodeHandler(nodeUI, pos) {
+  function placeNodeHandler(nodeUI, pos) {
     var nodeSize = 8;
     nodeUI.attr('transform',
       'translate(' +

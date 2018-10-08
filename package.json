@@ -19,7 +19,7 @@
     "angular-resource": "~1.5.0",
     "angular-sanitize": "~1.5.0",
     "angular-ui-codemirror": "^0.3.0",
-    "angular-ui-router": "^1.0.20",
+    "angular-ui-router": "~0.2.15",
     "angular-uuid": "https://github.com/munkychop/angular-uuid.git#0.0.4",
     "angularjs-toaster": "^2.2.0",
     "animate.css": "~3.4.0",

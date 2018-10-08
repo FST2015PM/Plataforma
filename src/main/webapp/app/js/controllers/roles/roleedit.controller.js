@@ -7,7 +7,7 @@
 
   RolesEditCtrl.$inject = ["$Datasource", "$stateParams", "$state", "toaster"];
   function RolesEditCtrl($Datasource, $stateParams, $state, toaster) {
-    let cnt = this;
+    var cnt = this;
     cnt.roleData = {};
     cnt.formTitle = "Agregar rol";
     cnt.processing = false;
@@ -15,7 +15,7 @@
     //$scope.roleData = {};
     if($stateParams.id && $stateParams.id.length) {
       cnt.formTitle = "Editar rol";
-      $Datasource.getObject($stateParams.id, "Role").then(role => {
+      $Datasource.getObject($stateParams.id, "Role").then(function(role) {
         cnt.roleData = role.data;
       });
     }
@@ -29,7 +29,7 @@
             toaster.pop({
               type: 'success',
               body: 'Se ha agregado el nuevo rol',
-              showCloseButton: true,
+              showCloseButton: true
             });
             $state.go('admin.roles', {});
           });
@@ -40,13 +40,13 @@
             toaster.pop({
               type: 'success',
               body: 'Se ha actualizado el rol',
-              showCloseButton: true,
+              showCloseButton: true
             });
             $state.go('admin.roles', {});
           });
         }
       }
     };
-  };
+  }
 
 })();

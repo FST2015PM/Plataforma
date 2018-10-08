@@ -227,7 +227,7 @@
                                 serie: true,
                                 cache: false,
                                 files: [
-                                    'lib/bootbox/bootbox.js',
+                                    'lib/bootbox/bootbox.min.js',
                                     'lib/angular-bootstrap/ui-bootstrap.min.js',
                                     'lib/d3/dist/d3.min.js',
                                     'lib/datatables/media/js/jquery.dataTables.min.js',
@@ -237,8 +237,10 @@
                                     'lib/leaflet.markercluster/dist/MarkerCluster.css',
                                     'lib/leaflet.markercluster/dist/MarkerCluster.Default.css',
                                     'lib/leaflet/dist/leaflet.css',
+                                    //'lib/leaflet-measure/dist/leaflet-measure.css',
                                     'lib/highcharts/css/highcharts.css',
                                     'lib/leaflet/dist/leaflet.js',
+                                    //'lib/leaflet-measure/dist/leaflet-measure.min.js',
                                     'lib/leaflet.markercluster/dist/leaflet.markercluster.js',
                                     'lib/spin.js/spin.min.js',
                                     'lib/leaflet-spin/leaflet.spin.min.js',
@@ -246,6 +248,7 @@
                                     'lib/highcharts/js/highcharts.js',
                                     'lib/highcharts/js/highcharts-more.js',
                                     'lib/highcharts/js/modules/solid-gauge.js',
+                                    'js/dataviz/constants.js',
                                     'js/dataviz/charts.js',
                                     'js/dataviz/maps.js',
                                     'js/dataviz/datatables.js',
@@ -304,11 +307,14 @@
                                     'lib/leaflet.markercluster/dist/MarkerCluster.css',
                                     'lib/leaflet.markercluster/dist/MarkerCluster.Default.css',
                                     'lib/leaflet/dist/leaflet.css',
+                                    //'lib/leaflet-measure/dist/leaflet-measure.css',
                                     'lib/leaflet/dist/leaflet.js',
+                                    //'lib/leaflet-measure/dist/leaflet-measure.min.js',
                                     'lib/leaflet.markercluster/dist/leaflet.markercluster.js',
                                     'lib/spin.js/spin.min.js',
                                     'lib/leaflet-spin/leaflet.spin.min.js',
                                     'lib/google-maps/lib/Google.min.js',
+                                    'js/dataviz/constants.js',
                                     'js/dataviz/charts.js',
                                     'js/dataviz/maps.js',
                                     'js/dataviz/datatables.js',
@@ -448,11 +454,14 @@
                                     'lib/leaflet.markercluster/dist/MarkerCluster.css',
                                     'lib/leaflet.markercluster/dist/MarkerCluster.Default.css',
                                     'lib/leaflet/dist/leaflet.css',
+                                    //'lib/leaflet-measure/dist/leaflet-measure.css',
                                     'lib/leaflet/dist/leaflet.js',
+                                    //'lib/leaflet-measure/dist/leaflet-measure.min.js',
                                     'lib/leaflet.markercluster/dist/leaflet.markercluster.js',
                                     'lib/spin.js/spin.min.js',
                                     'lib/leaflet-spin/leaflet.spin.min.js',
                                     'lib/google-maps/lib/Google.min.js',
+                                    'js/dataviz/constants.js',
                                     'js/dataviz/charts.js',
                                     'js/dataviz/maps.js',
                                     'js/dataviz/datatables.js',
@@ -513,7 +522,7 @@
                                 serie: true,
                                 files: [
                                     'lib/bootbox/bootbox.js',
-                                    'lib/jquery-match-height/dist/jquery.matchHeight-min.js'
+                                    'lib/matchheight/dist/jquery.matchHeight-min.js'
                                 ]
                             }
                         ]);
@@ -608,8 +617,8 @@
                                     'lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
                                     'lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
                                     'lib/bootbox/bootbox.js',
-                                    'lib/ng-file-upload/dist/ng-file-upload-shim.min.js',
-                                    'lib/ng-file-upload/dist/ng-file-upload.min.js'
+                                    'lib/ng-file-upload/ng-file-upload-shim.min.js',
+                                    'lib/ng-file-upload/ng-file-upload.min.js'
                                 ]
                             }
                         ]);
@@ -787,9 +796,9 @@
                                 insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                                 files: [
                                     'lib/spin.js/spin.min.js',
-                                    'lib/datatables-bootstrap/css/dataTables.bootstrap.css',
+                                    'lib/datatables.net-bs/css/dataTables.bootstrap.min.css',
                                     'lib/datatables/media/js/jquery.dataTables.min.js',
-                                    'lib/datatables-bootstrap/js/dataTables.bootstrap.js',
+                                    'lib/datatables.net-bs/js/dataTables.bootstrap.min.js',
                                     'js/dataviz/datatables.js',
                                     'js/dataviz/dataviz.js',
                                     'lib/bootbox/bootbox.js'
@@ -1068,9 +1077,9 @@
                                 insertBefore: "#mainStyles", //Otherwise app styles will be overridem
                                 files: [
                                     'lib/papaparse/papaparse.min.js',
-                                    'lib/datatables-bootstrap/css/dataTables.bootstrap.css',
+                                    'lib/datatables.net-bs/css/dataTables.bootstrap.min.css',
                                     'lib/datatables/media/js/jquery.dataTables.min.js',
-                                    'lib/datatables-bootstrap/js/dataTables.bootstrap.js',
+                                    'lib/datatables.net-bs/js/dataTables.bootstrap.min.js',
                                     'js/dataviz/datatables.js',
                                     'js/dataviz/dataviz.js',
                                     'lib/bootbox/bootbox.js'
@@ -1553,7 +1562,9 @@
                                     'lib/leaflet.markercluster/dist/MarkerCluster.css',
                                     'lib/leaflet.markercluster/dist/MarkerCluster.Default.css',
                                     'lib/leaflet/dist/leaflet.css',
+                                    //'lib/leaflet-measure/dist/leaflet-measure.css',
                                     'lib/leaflet/dist/leaflet.js',
+                                    //'lib/leaflet-measure/dist/leaflet-measure.min.js',
                                     'lib/leaflet.markercluster/dist/leaflet.markercluster.js',
                                     'lib/spin.js/spin.min.js',
                                     'lib/leaflet-spin/leaflet.spin.min.js',
@@ -1741,8 +1752,7 @@
             });
 
         $urlRouterProvider.otherwise("/admin/");
-
-    };
+    }
 
     run.$inject = ["$rootScope", "$state", "$stateParams", "$templateCache", "$http", "$window", "$LoginService"];
     function run($rootScope, $state, $stateParams, $templateCache, $http, $window, $LoginService) {
@@ -1760,5 +1770,5 @@
             }).catch(function(error) {
             $window.location.href = "/";
         });
-    };
+    }
 })();

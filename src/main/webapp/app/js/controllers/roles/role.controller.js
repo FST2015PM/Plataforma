@@ -7,7 +7,7 @@
 
   RolesCtrl.$inject = ["$Datasource", "toaster"];
   function RolesCtrl($Datasource, toaster) {
-    let cnt = this;
+    var cnt = this;
     cnt.roles = [];
 
     $Datasource.listObjects("Role")
@@ -53,13 +53,13 @@
             toaster.pop({
               type: 'success',
               body: 'Se ha eliminado el rol',
-              showCloseButton: true,
+              showCloseButton: true
             });
           }
         }
       });
     };
 
-  };
+  }
 
 })();

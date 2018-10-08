@@ -1,20 +1,19 @@
 /** D3 engine flag */
-const ENGINE_D3 = "d3";
+var ENGINE_D3 = "d3";
 
 /** Class to encapsulate charts creation */
-class ChartsFactory {
-  constructor() { }
-
-  createLabel(container, mainText, secondaryText) {
+function ChartsFactory() {
+  function createLabel(container, mainText, secondaryText) {
     $("#"+container).append("<div class='col-md-12'><h1>"+mainText+"<small>"+secondaryText+"</small></h1></div>");
   }
 
-  createBarChart(container, data) {
+  function createBarChart(container, data, bType) {
     var ctitle = data.title || "";
     var xAxisTitle = data.xAxisTitle || "";
     var yAxisTitle = data.yAxisTitle || "";
     var cats = data.categories || [];
     var colValues = data.series[0].values;
+    var chartType = bType || "column";
 
     var chartOptions = {
       title: {
@@ -30,7 +29,7 @@ class ChartsFactory {
       },
 
       series: [{
-          type: 'column',
+          type: chartType,
           colorByPoint: false,
           data: colValues,
           showInLegend: false
@@ -44,7 +43,7 @@ class ChartsFactory {
 
   }
 
-  createLineChart(container, data) {
+  function createLineChart(container, data) {
     var ctitle = data.title || "";
     var xAxisTitle = data.xAxisTitle || "";
     var yAxisTitle = data.yAxisTitle || "";
@@ -90,7 +89,7 @@ class ChartsFactory {
 
   }
 
-  createGauge(container, title, val, min, max, unit, starth, startw) {
+  function createGauge(container, title, val, min, max, unit, starth, startw) {
     if (!Highcharts) return;
 
     var gaugeOptions = {
@@ -123,15 +122,13 @@ class ChartsFactory {
         lineWidth: 0,
         minorTickInterval: null,
         tickAmount: 2,
-        title: {
-            y: -70
-        },
         labels: {
             y: 16
         },
         min: min,
         max: max,
         title: {
+            y: -70,
             text: title
         }
       },
@@ -165,8 +162,95 @@ class ChartsFactory {
     return ret;
   }
 
+  function createBubbleChart(container, data, labelField) {
+    var ctitle = data.title || "";
+    var xAxisTitle = data.xAxisTitle || "";
+    var yAxisTitle = data.yAxisTitle || "";
+    var values = data.series[0].values;
+
+    var bubbleOptions = {
+      chart: {
+          type: 'bubble',
+          plotBorderWidth: 1,
+          zoomType: 'xy'
+      },
+
+      legend: {
+          enabled: false
+      },
+
+      title: {
+          text: ctitle
+      },
+
+      xAxis: {
+          gridLineWidth: 1,
+          title: {
+              text: xAxisTitle
+          }
+      },
+
+      yAxis: {
+          gridLineWidth: 1,
+          title: {
+              text: yAxisTitle
+          }
+      },
+      plotOptions: {
+          series: {
+              dataLabels: {
+                  enabled: true,
+                  format: '{point.name}'
+              }
+          }
+      },
+      series: [{data: values}]
+    };
+
+    var ret = Highcharts.chart(container, bubbleOptions);
+    ret.reflow();
+    return ret;
+  }
+
+  function createScatterChart(container, data) {
+    var ctitle = data.title || "";
+    var xAxisTitle = data.xAxisTitle || "";
+    var yAxisTitle = data.yAxisTitle || "";
+    var values = data.series[0].values;
+
+    var chartOptions = {
+      chart: {
+        type: 'scatter',
+        zoomType: 'xy'
+      },
+      title: {
+        text: ctitle
+      },
+      legend:false,
+      xAxis: {
+        title: {
+            enabled: true,
+            text: xAxisTitle
+        },
+        startOnTick: true,
+        endOnTick: true,
+        showLastLabel: true
+      },
+      yAxis: {
+        title: {
+            text: yAxisTitle
+        }
+      },
+      series: [{data:values}]
+      };
+
+      var ret = Highcharts.chart(container, chartOptions);
+      ret.reflow();
+      return ret;
+    }
+
   //TODO: Place specific code from here
-  createChart(container, data, engine, options) {
+  function createChart(container, data, engine, options) {
     console.log("Must create a chart");
 
     if (options.height && options.width) {

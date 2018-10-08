@@ -1,127 +1,127 @@
 (function() {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('FST2015PM.services')
-    .service('$Extractor', ExtractorService);
+    angular
+        .module('FST2015PM.services')
+        .service('$Extractor', ExtractorService);
 
-  ExtractorService.$inject = ['$http', '$q'];
-  function ExtractorService($http, $q) {
-    let service = {},
-        apiVersion = 1,
-        gatewayPath = `/api/v${apiVersion}/services/extractor/`;
+    ExtractorService.$inject = ['$http', '$q', 'API_VERSION'];
+    function ExtractorService($http, $q, API_VERSION) {
+        var service = {},
+            gatewayPath = '/api/v'+API_VERSION+'/services/extractor/';
 
-    service.loadExtractor = loadExtractor;
-    service.startExtractor = startExtractor;
-    service.stopExtractor = stopExtractor;
-    service.getStatus = getStatus;
-    service.getEncodingList = getEncodingList;
-    service.downloadPreview = downloadPreview;
+        service.loadExtractor = loadExtractor;
+        service.startExtractor = startExtractor;
+        service.stopExtractor = stopExtractor;
+        service.getStatus = getStatus;
+        service.getEncodingList = getEncodingList;
+        service.downloadPreview = downloadPreview;
 
-    return service;
+        return service;
 
-    function getEncodingList() {
-      let deferred = $q.defer();
+        function getEncodingList() {
+            var deferred = $q.defer();
 
-      let theUrl = `/api/v${apiVersion}/services/encoding`;
-      let request = $http({
-        url: theUrl,
-        method: "GET"
-      }).then(response => {
-        deferred.resolve(response.data);
-      })
-      .catch(error => {
-        deferred.reject(error);
-      });
+            var theUrl = '/api/v'+API_VERSION+'/services/encoding';
+            var request = $http({
+                url: theUrl,
+                method: "GET"
+            }).then(function(response) {
+                deferred.resolve(response.data);
+            })
+            .catch(function(error) {
+                deferred.reject(error);
+            });
 
-      return deferred.promise;
-    };
-
-    function loadExtractor(id) {
-      let deferred = $q.defer();
-
-      if (id === undefined) return;
-      let theUrl = gatewayPath + "load/" + id;
-      let request = $http({
-        url: theUrl,
-        method: "POST"
-      }).then(response => {
-        deferred.resolve(response);
-      })
-      .catch(error => {
-        deferred.reject(error);
-      });
-
-      return deferred.promise;
-    };
-
-    function startExtractor(id) {
-      let deferred = $q.defer();
-
-      if (id === undefined) return;
-      let theUrl = gatewayPath + "start/" + id;
-      let request = $http({
-        url: theUrl,
-        method: "POST"
-      }).then(response => {
-        deferred.resolve(response);
-      })
-      .catch(error => {
-        deferred.reject(error);
-      });
-
-      return deferred.promise;
-    };
-
-    function stopExtractor(id) {
-      if (id === undefined) return;
-      let theUrl = gatewayPath + "stop/" + id;
-      let request = $http({
-        url: theUrl,
-        method: "POST"
-      });
-      return request;
-    };
-
-    function getStatus(id) {
-      let deferred = $q.defer();
-
-      if (id === undefined) return;
-      let theUrl = gatewayPath + "status/" + id;
-      let request = $http({
-        url: theUrl,
-        method: "GET"
-      }).then((response) => {
-        if (response.status === 200) {
-            deferred.resolve(response.data.status);
-        } else {
-          deferred.reject();
+            return deferred.promise;
         }
-      }).catch((error) => {
-        deferred.reject(error);
-      });
 
-      return deferred.promise;
-    };
+        function loadExtractor(id) {
+            var deferred = $q.defer();
 
-    function downloadPreview(fileLocation, zipped=false, charset="UTF-8", relPath) {
-      let deferred = $q.defer();
+            if (id === undefined) return;
+            var theUrl = gatewayPath + "load/" + id;
+            var request = $http({
+                url: theUrl,
+                method: "POST"
+            }).then(function(response) {
+                deferred.resolve(response);
+            })
+            .catch(function(error) {
+                deferred.reject(error);
+            });
 
-      if (fileLocation === undefined) return;
-      let _url = `/api/v${apiVersion}/services/csvpreview`
-      let request = $http({
-        url: _url,
-        data: {fileLocation: fileLocation, zipped: zipped, charset: charset, zipPath: relPath},
-        method: "POST"
-      }).then((response) => {
-        deferred.resolve(response);
-      })
-      .catch((error) => {
-        deferred.reject(error);
-      });
+            return deferred.promise;
+        }
 
-      return deferred.promise;
-    };
-  };
+        function startExtractor(id) {
+            var deferred = $q.defer();
+
+            if (id === undefined) return;
+            var theUrl = gatewayPath + "start/" + id;
+            var request = $http({
+                url: theUrl,
+                method: "POST"
+            }).then(function(response) {
+                deferred.resolve(response);
+            })
+            .catch(function(error) {
+                deferred.reject(error);
+            });
+
+            return deferred.promise;
+        }
+
+        function stopExtractor(id) {
+            if (id === undefined) return;
+            var theUrl = gatewayPath + "stop/" + id;
+            var request = $http({
+                url: theUrl,
+                method: "POST"
+            });
+            return request;
+        }
+
+        function getStatus(id) {
+            var deferred = $q.defer();
+
+            if (id === undefined) return;
+            var theUrl = gatewayPath + "status/" + id;
+            var request = $http({
+                url: theUrl,
+                method: "GET"
+            }).then(function(response) {
+                if (response.status === 200) {
+                    deferred.resolve(response.data.status);
+                } else {
+                    deferred.reject();
+                }
+            }).catch(function(error) {
+                deferred.reject(error);
+            });
+
+            return deferred.promise;
+        }
+
+        function downloadPreview(fileLocation, zipped, charset, relPath) {
+            //TODO: Initialize zipped to false and charset to utf-8
+            var deferred = $q.defer();
+
+            if (fileLocation === undefined) return;
+            var _url = '/api/v'+API_VERSION+'/services/csvpreview';
+            var request = $http({
+                url: _url,
+                data: {fileLocation: fileLocation, zipped: zipped, charset: charset, zipPath: relPath},
+                method: "POST"
+            }).then(function(response) {
+                deferred.resolve(response);
+            })
+            .catch(function(error) {
+                deferred.reject(error);
+            });
+
+            return deferred.promise;
+        }
+    }
 
 })();

@@ -1,38 +1,34 @@
 (function() {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('FST2015PM.services')
-    .service('$LoginService', LoginService);
+    angular
+        .module('FST2015PM.services')
+        .service('$LoginService', LoginService);
 
-  LoginService.$inject = ['$http', '$q'];
-  function LoginService($http, $q) {
-    let apiVersion = 1; //TODO: Move to app config
+    LoginService.$inject = ['$http', '$q', 'API_VERSION'];
+    function LoginService($http, $q, API_VERSION) {
+        //Service definition
+        var service = {};
+        service.me = me;
+        //TODO: Add login and logout method
 
-    //Service definition
-    let service = {};
-    service.me = me;
-    //TODO: Add login and logout method
+        return service;
 
-    return service;
+        //Service iplementation
+        function me() {
+            var deferred = $q.defer();
 
-    //Service iplementation
+            $http({
+                url: '/api/v'+API_VERSION+'/services/login/me',
+                method: "GET"
+            }).then(function(response) {
+                deferred.resolve(response);
+            }).catch(function(error) {
+                deferred.reject(error);
+            });
 
-
-    function me() {
-      var deferred = $q.defer();
-
-      $http({
-        url: '/api/v'+apiVersion+'/services/login/me',
-        method: "GET"
-      }).then(function(response) {
-        deferred.resolve(response);
-      }).catch(function(error) {
-        deferred.reject(error);
-      });
-
-      return deferred.promise;
-    };
-  };
+            return deferred.promise;
+        }
+    }
 
 })();

@@ -7,11 +7,11 @@
 
     MainCtrl.$inject = ["$state"];
     function MainCtrl($state) {
-      let cnt = this;
+      var cnt = this;
 
       cnt.isRootState = function() {
         return $state.current.name === "admin.main";
       };
-    };
+    }
 
 })();

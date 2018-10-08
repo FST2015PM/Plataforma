@@ -1,7 +1,7 @@
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('FST2015PM.controllers', []);
+    angular
+        .module('FST2015PM.controllers', []);
 
 })();

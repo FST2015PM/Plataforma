@@ -1,5 +1,12 @@
 package org.fst2015pm.swbforms.extractors;
 
+import org.fst2015pm.swbforms.utils.CSVDBFReader;
+import org.fst2015pm.swbforms.utils.FSTUtils;
+import org.semanticwb.datamanager.DataList;
+import org.semanticwb.datamanager.DataObject;
+import org.semanticwb.datamanager.SWBDataSource;
+import org.semanticwb.datamanager.SWBScriptEngine;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -9,13 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Logger;
-
-import org.fst2015pm.swbforms.utils.CSVDBFReader;
-import org.fst2015pm.swbforms.utils.FSTUtils;
-import org.semanticwb.datamanager.DataList;
-import org.semanticwb.datamanager.DataObject;
-import org.semanticwb.datamanager.SWBDataSource;
-import org.semanticwb.datamanager.SWBScriptEngine;
 
 public class DBFExtractor extends PMExtractorBase {
 	static Logger log = Logger.getLogger(DBFExtractor.class.getName());
@@ -144,29 +144,6 @@ public class DBFExtractor extends PMExtractorBase {
 		}
 		
 		return null;
-	}
-	
-	private Object getTypedValue(String type, String source) {
-		switch(type) {
-			case "FLOAT": {
-				return FSTUtils.DATA.parseFloat(source);
-			}
-			case "INTEGER": {
-				return FSTUtils.DATA.parseInt(source);
-			}
-			case "DOUBLE": {
-				return FSTUtils.DATA.parseDouble(source);
-			}
-			case "LONG": {
-				return FSTUtils.DATA.parseLong(source);
-			}
-			case "BOOLEAN": {
-				return FSTUtils.DATA.parseBoolean(source);
-			}
-			default: {
-				return source;
-			}
-		}
 	}
 	
 	@Override

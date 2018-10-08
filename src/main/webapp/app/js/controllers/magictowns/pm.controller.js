@@ -7,7 +7,7 @@
 
   PMCatalog.$inject = ['$Datasource', '$timeout', 'toaster'];
   function PMCatalog($Datasource, $timeout, toaster) {
-    let cnt = this;
+    var cnt = this;
     cnt.pmList = [];
 
     angular.element(document).ready(function () {
@@ -48,7 +48,7 @@
             toaster.pop({
               type: 'success',
               body: 'Se ha eliminado el Pueblo Mágico',
-              showCloseButton: true,
+              showCloseButton: true
             });
           }
         }

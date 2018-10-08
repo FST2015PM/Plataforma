@@ -13,6 +13,28 @@
         cnt.dsList = {};
         cnt.dsColumns = [];
         cnt.dsYColumns = [];
+        cnt.chartTypes = [
+            {
+                id:"bar",
+                title:"Barras"
+            },
+            {
+                id:"column",
+                title:"Columnas"
+            },
+            {
+                id:"line",
+                title:"Líneas"
+            },
+            {
+                id:"scatter",
+                title:"Dispersión"
+            },
+            {
+                id:"bubble",
+                title:"Burbujas"
+            }
+        ];
 
         $Datasource.listDatasources()
             .then(function(res) {
@@ -31,13 +53,13 @@
                     var addedIds = [];
                     cnt.dashboardData.widgets.forEach(function(item, idx) {
                         if (item.id === $stateParams.wid) {
-                            widgetIdx = idx;
-                        }
-                    });
+                        widgetIdx = idx;
+                    }
+                });
 
                     cnt.widget = cnt.dashboardData.widgets.splice(widgetIdx, 1)[0];
                     cnt.widget.chartType = cnt.widget.chartType || "bar";
-
+                    cnt.widget.sort = cnt.widget.sort || "asc";
                     cnt.updateDSDefinition();
                 });
         }
@@ -49,7 +71,14 @@
                         var cols = result.data.data[0].columns || [];
                         //cnt.dsColumns = result.data.data[0].columns || [];
 
+                        console.log(cnt.dsYColumns);
                         cnt.dsYColumns = cols.filter(function(item) {
+                            return item.type === "integer" || item.type === "float" || item.type === "double" || item.type === "long";
+                        }).map(function(item) {
+                            return item.name;
+                        });
+
+                        cnt.dsZColumns = cols.filter(function(item) {
                             return item.type === "integer" || item.type === "float" || item.type === "double" || item.type === "long";
                         }).map(function(item) {
                             return item.name;

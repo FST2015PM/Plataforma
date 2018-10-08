@@ -1,61 +1,61 @@
 <style type="text/css">
-  .gridster .gs-w {
-      background-color: #FFF !important;
-      cursor: pointer !important;
-      box-shadow: none !important;
-  }
+    .gridster .gs-w {
+        background-color: #FFF !important;
+        cursor: pointer !important;
+        box-shadow: none !important;
+    }
 
-  .panel-widget {
-    width: 100%;
-    height: 100%;
-  }
+    .panel-widget {
+        width: 100%;
+        height: 100%;
+    }
 </style>
 <div>
-  <div class="row title-ribbon">
-    <h3>
-      <input type="text" columns="40" ng-model="ds.dashboardData.name" style="width:85%;"/>
-    </h3>
-  </div>
-  <div class="row">
-      <div class="btn-toolbar" role="toolbar">
-        <div class="btn-group">
-          <button type="button" class="btn btn-default" ng-click="ds.saveDashboard()"><span class="fa fa-save"></span></button>
-          <button type="button" ui-sref="admin.dashboards" class="btn btn-default"><span class="fa fa-close"></span></button>
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="fa fa-plus fa-fw"></span><span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a ng-click="ds.addWidget('indicator')"><span class="fa fa-font fa-fw"></span>Indicador</a></li>
-            <li><a ng-click="ds.addWidget('map')"><span class="fa fa-map fa-fw"></span>Mapa</a></li>
-            <li><a ng-click="ds.addWidget('table')"><span class="fa fa-table fa-fw"></span>Tabla</a></li>
-            <li><a ng-click="ds.addWidget('chart')"><span class="fa fa-bar-chart fa-fw"></span>Gráfica</a></li>
-          </ul>
-        </div>
+    <div class="row title-ribbon">
+        <h3>
+            <input type="text" columns="40" ng-model="ds.dashboardData.name" style="width:85%;"/>
+        </h3>
     </div>
-  </div>
-  <div class="row">
-    <div class="panel panel-default box-panel">
-      <div class="panel-body">
-        <div class="col-sm-12 col-lg-12">
-          <div gridster="ds.gridsterOptions">
-            <div gridster-item="item" ng-repeat="item in ds.widgets">
-              <div class="panel panel-default panel-widget">
-                <div class="panel-heading">
-                  {{item.name}}
-                  <div class="pull-right">
-                    <a ng-click="ds.configWidget(item)" class="btn btn-xs"><span class="fa fa-cog"></span></a>
-                    <a ng-click="ds.removeWidget(item.id)" class="btn btn-xs"><span class="fa fa-trash-o"></span></a>
-                  </div>
-                </div>
-                <div class="panel-body" style="height:90%; padding:5px;">
-                  <div ng-attr-id="{{item.id}}" style="position:relative; width:100%; height:90%;"></div>
-                  <!--div ng-attr-id="{{item.id}}" style="position:relative; width:100%; height:90%;"></div-->
-                </div>
-              </div>
+    <div class="row">
+        <div class="btn-toolbar" role="toolbar">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" ng-click="ds.saveDashboard()"><span class="fas fa-save"></span></button>
+                <button type="button" ui-sref="admin.dashboards" class="btn btn-default"><span class="fas fa-times"></span></button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fa fa-plus fa-fw"></span><span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a ng-click="ds.addWidget('indicator')"><span class="fas fa-font fa-fw"></span>Indicador</a></li>
+                    <li><a ng-click="ds.addWidget('map')"><span class="fas fa-map fa-fw"></span>Mapa</a></li>
+                    <li><a ng-click="ds.addWidget('table')"><span class="fas fa-table fa-fw"></span>Tabla</a></li>
+                    <li><a ng-click="ds.addWidget('chart')"><span class="fas fa-line-chart fa-fw"></span>Gráfica</a></li>
+                </ul>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
+    <div class="row">
+        <div class="panel panel-default box-panel">
+            <div class="panel-body">
+                <div class="col-sm-12 col-lg-12">
+                    <div gridster="ds.gridsterOptions">
+                        <div gridster-item="item" ng-repeat="item in ds.widgets">
+                            <div class="panel panel-default panel-widget">
+                                <div class="panel-heading">
+                                    {{item.name}}
+                                    <div class="pull-right">
+                                        <a ng-click="ds.configWidget(item)" class="btn btn-xs"><span class="fas fa-cog"></span></a>
+                                        <a ng-click="ds.removeWidget(item.id)" class="btn btn-xs"><span class="fas fa-trash"></span></a>
+                                    </div>
+                                </div>
+                                <div class="panel-body" style="height:90%; padding:5px;">
+                                    <div ng-attr-id="{{item.id}}" style="position:relative; width:100%; height:90%;"></div>
+                                    <!--div ng-attr-id="{{item.id}}" style="position:relative; width:100%; height:90%;"></div-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

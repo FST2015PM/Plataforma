@@ -1,12 +1,13 @@
 package org.fst2015pm.swbforms.utils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import org.json.JSONObject;
+import org.semanticwb.datamanager.DataList;
+import org.semanticwb.datamanager.DataObject;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -20,10 +21,6 @@ import java.util.SortedMap;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Class to group utilities related to File Management
@@ -314,6 +311,91 @@ public class FSTUtils {
 			}
 			
 			return ret;
+		}
+		
+		public static DataList<DataObject> buildAggregationPipeline(String filterField, Object filterValue, String groupField, String displayField, String operation, String sort) {
+			DataList<DataObject> pipelineDL = new DataList<>();
+			JSONObject resultStage = new JSONObject();
+			JSONObject resultFields = new JSONObject();
+			resultFields.put("_id", 0);
+			
+			if (null != filterField && !filterField.isEmpty() && null != filterValue) {
+				//Match on filter field and value
+				JSONObject matchStage = new JSONObject();
+				JSONObject matchCondition = new JSONObject();
+				matchCondition.put(filterField, filterValue);
+				matchStage.put("$match", matchCondition);
+				DataObject matchStageObj = (DataObject) DataObject.parseJSON(matchStage.toString());
+				pipelineDL.add(matchStageObj);
+				
+				resultFields.put(filterField, 1);
+			}
+			
+			//Project elements on processing fields
+			JSONObject projectFields = new JSONObject();
+			projectFields.put("_id", 1);
+			if (null != filterField && !filterField.isEmpty()) {
+				projectFields.put(filterField, 1);
+			}
+			if (null != groupField && !groupField.isEmpty()) {
+				projectFields.put(groupField, 1);
+			}
+			if (null != displayField && !displayField.isEmpty()) {
+				projectFields.put(displayField, 1);
+				resultFields.put(displayField, 1);
+			}
+			
+			if (projectFields.length() > 0) {
+				//Project document on required fields
+				JSONObject projectStage = new JSONObject();
+				projectStage.put("$project", projectFields);
+				DataObject projectStageObj = (DataObject) DataObject.parseJSON(projectStage.toString());
+				pipelineDL.add(projectStageObj);
+			}
+			
+			//Group elements if needed
+			JSONObject groupStage = new JSONObject();
+			JSONObject groupCondition = new JSONObject();
+			JSONObject operationCondition = new JSONObject();
+			JSONObject groupKeys = new JSONObject();
+			if (null != groupField && !groupField.isEmpty()) {
+				groupKeys.put(groupField, "$"+groupField);
+				resultFields.put(groupField, "$_id."+groupField);
+			} else {
+				groupKeys.put("_id", "$_id");
+				resultFields.put("_id", "$_id._id");
+			}
+			
+			if ("count".equalsIgnoreCase(operation)) {
+				operationCondition.put("$sum", 1);
+			} else {
+				operationCondition.put("$"+operation, "$"+displayField);
+			}
+			groupCondition.put(displayField, operationCondition);
+			groupStage.put("$group", groupCondition);
+			groupCondition.put("_id", groupKeys);
+			
+			DataObject groupStageObj = (DataObject) DataObject.parseJSON(groupStage.toString());
+			pipelineDL.add(groupStageObj);
+
+			//Project resulting documents
+			resultStage.put("$project", resultFields);
+			DataObject resultStageObj = (DataObject) DataObject.parseJSON(resultStage.toString());
+			pipelineDL.add(resultStageObj);
+			
+			//Sort stage
+			JSONObject sortStage = new JSONObject();
+			JSONObject sortCondition = new JSONObject();
+			int sortType = 1;
+			if (null != sort && "des".equalsIgnoreCase(sort)) {
+				sortType = -1;
+			}
+			
+			sortCondition.put(groupField, sortType);
+			sortStage.put("$sort", sortCondition);
+			pipelineDL.add((DataObject) DataObject.parseJSON(sortStage.toString()));
+			
+			return pipelineDL;
 		}
 	}
 	

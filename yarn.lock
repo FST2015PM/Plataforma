@@ -6,10 +6,6 @@
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-5.3.1.tgz#5466b8f31c1f493a96754c1426c25796d0633dd9"
 
-"@uirouter/core@5.0.21":
-  version "5.0.21"
-  resolved "https://registry.yarnpkg.com/@uirouter/core/-/core-5.0.21.tgz#b6c4c311e9416a1e8ce76b072e042a60224d1b3a"
-
 angular-animate@~1.5.0:
   version "1.5.11"
   resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.5.11.tgz#1baa43c303d1b93c4e6aa89453b39114b7a1c669"
@@ -46,15 +42,19 @@ angular-ui-codemirror@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/angular-ui-codemirror/-/angular-ui-codemirror-0.3.0.tgz#e4286fc50f393f2a6e697c1bf3170424e12cbb60"
 
-angular-ui-router@^1.0.20:
-  version "1.0.20"
-  resolved "https://registry.yarnpkg.com/angular-ui-router/-/angular-ui-router-1.0.20.tgz#86dbaaa3368df0c319f3328f4ace616a246cf394"
+angular-ui-router@~0.2.15:
+  version "0.2.18"
+  resolved "https://registry.yarnpkg.com/angular-ui-router/-/angular-ui-router-0.2.18.tgz#1dad70415c73d7046fd2e130df03d62fb7464360"
   dependencies:
-    "@uirouter/core" "5.0.21"
+    angular "^1.0.8"
 
 "angular-uuid@https://github.com/munkychop/angular-uuid.git#0.0.4":
   version "0.0.4"
   resolved "https://github.com/munkychop/angular-uuid.git#80579ca5eef9c3687deef48cecf9728744ab5ba5"
+
+angular@^1.0.8:
+  version "1.7.5"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.5.tgz#d1c1c01c6f5dc835638f3f9aa51012857bdac49e"
 
 angular@~1.5.0:
   version "1.5.11"

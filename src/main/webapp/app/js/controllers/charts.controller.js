@@ -8,12 +8,12 @@
     ChartsCtrl.$inject = ['$scope', '$http'];
     function ChartsCtrl($scope, $http) {
       //Invoke dataviz functions here
-      let request = $http({
+      var request = $http({
         url: "/app/mockdata/piedata.json",
         method: "GET"
-      }).then((res) => {
+      }).then(function(res) {
         console.log(d3.scale);
         dataviz.chartsFactory.createChart("myChart", res.data);
       });
-    };
+    }
 })();

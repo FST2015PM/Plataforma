@@ -7,7 +7,7 @@
 
   PMEditCatalog.$inject = ["$Datasource", "$stateParams", "$state", "toaster"];
   function PMEditCatalog($Datasource, $stateParams, $state, toaster) {
-    let cnt = this;
+    var cnt = this;
     cnt.formTitle = "Agregar Pueblo Mágico";
     cnt.pmData = {};
     cnt.stateList = [];
@@ -117,11 +117,11 @@
     };
 
     cnt.processPicture = function() {
-      let mimes = "image/jpg|image/jpeg|image/png";
+      var mimes = "image/jpg|image/jpeg|image/png";
       cnt.validMime = cnt.pictureData.filetype.length && mimes.includes(cnt.pictureData.filetype);
       if (!cnt.validMime) cnt.pictureData = null;
     };
 
-  };
+  }
 
 })();

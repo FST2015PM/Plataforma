@@ -20,6 +20,6 @@
         $uibModalInstance.dismiss('cancel');
       };
 
-    };
+    }
 
 })();

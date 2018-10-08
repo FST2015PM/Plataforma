@@ -15,10 +15,10 @@
               </div>
             </div>
             <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid }">
-              <label class="col-sm-2 control-label">DataSource</label>
+              <label class="col-sm-2 control-label">Conjunto de datos</label>
               <div class="col-sm-10">
                 <select name="dataSourceName" required class="form-control" ng-model="widget.widget.dataSourceName" ng-options="option.id as option.name for option in widget.dsList" ng-change="widget.updateDSDefinition()">
-                  <option value="">Seleccione un datasource</option>
+                  <option value="">Seleccione un conjunto de datos</option>
                 </select>
                 <span ng-show="(editForm.$submitted || editForm.dataSourceName.$touched) && editForm.dataSourceName.$invalid" class="help-block">El datasource es requerido</span>
               </div>
@@ -26,17 +26,32 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">Tipo de gráfica</label>
               <div class="col-sm-10">
-                <div class="btn-group" data-toggle="buttons">
-                  <!--label class="btn btn-sm btn-default active" ng-click="widget.setChartType('pie')">
-                    <input type="radio" autocomplete="off" checked> <span class="fa fa-pie-chart"></span>
-                  </label-->
-                  <label class="btn btn-sm btn-default" ng-class="{ 'active' : widget.widget.chartType === 'bar'}" ng-click="widget.setChartType('bar')">
-                    <input type="radio" autocomplete="off" ng-checked="widget.widget.chartType === 'bar'"> <span class="fa fa-bar-chart"></span>
-                  </label>
-                  <label class="btn btn-sm btn-default" ng-class="{ 'active' : widget.widget.chartType === 'line'}" ng-click="widget.setChartType('line')">
-                    <input type="radio" autocomplete="off" ng-checked="widget.widget.chartType === 'line'"> <span class="fa fa-line-chart"></span>
-                  </label>
-                </div>
+                <select name="chartType" required class="form-control" ng-model="widget.widget.chartType" ng-options="option.id as option.title for option in widget.chartTypes">
+                  <option value="">Seleccione un tipo de gráfica</option>
+                </select>
+                <span ng-show="(editForm.$submitted || editForm.chartType.$touched) && editForm.chartType.$invalid" class="help-block">El tipo de gráfica es requerido</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1">
+            <h4>Filtrar valores</h4>
+            <hr/>
+          </div>
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Columna</label>
+              <div class="col-sm-10">
+                <select name="matchField" class="form-control" ng-model="widget.widget.matchField" ng-options="option for option in widget.dsColumns">
+                  <option value="">Seleccione una columna</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Valor</label>
+              <div class="col-sm-10">
+                <input name="matchVal" class="form-control" ng-model="widget.widget.matchVal">
               </div>
             </div>
           </div>
@@ -61,23 +76,21 @@
               </div>
             </div>
             <div class="form-group">
+              <label class="col-sm-2 control-label">Orden</label>
+              <div class="col-sm-10">
+                <select name="sortValue" required class="form-control" ng-model="widget.widget.sort">
+                  <option value="asc">Ascendente</option>
+                  <option value="des">Descendente</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
                   <label>
-                    <input type="checkbox" name="groupValues" ng-model="widget.widget.groupValues"> Agrupar valores
+                    <input type="checkbox" name="groupVals" ng-model="widget.widget.groupValues"> Agrupar valores
                   </label>
                 </div>
-              </div>
-            </div>
-            <div class="form-group" ng-show="widget.widget.groupValues">
-              <label class="col-sm-2 control-label">Valor</label>
-              <div class="col-sm-10">
-                <select name="showValue" required class="form-control" ng-model="widget.widget.showValue">
-                  <option value="sum">Suma</option>
-                  <option value="avg">Promedio</option>
-                  <option value="min">Mínimo</option>
-                  <option value="max">Máximo</option>
-                </select>
               </div>
             </div>
           </div>
@@ -101,11 +114,50 @@
                 <input type="text" name="yAxisTitle" class="form-control" ng-model="widget.widget.yAxisTitle" />
               </div>
             </div>
+            <div class="form-group" ng-show="widget.widget.groupValues">
+              <label class="col-sm-2 control-label">Valor</label>
+              <div class="col-sm-10">
+                <select name="showValue" ng-required="widget.widget.groupValues" class="form-control" ng-model="widget.widget.showValue">
+                  <option value="sum">Suma</option>
+                  <option value="avg">Promedio</option>
+                  <option value="min">Mínimo</option>
+                  <option value="max">Máximo</option>
+                  <option value="count">Conteo</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1" ng-show="widget.widget.chartType === 'bubble'">
+            <h4>Eje Z</h4>
+            <hr/>
+          </div>
+          <div class="col-sm-8 col-sm-offset-2" ng-show="widget.widget.chartType === 'bubble'">
+            <div class="form-group" ng-class="{ 'has-error' : (editForm.$submitted || editForm.zField.$touched) && editForm.zField.$invalid }">
+              <label class="col-sm-2 control-label">Columna</label>
+              <div class="col-sm-10">
+                <select name="zField" ng-required="widget.widget.chartType === 'bubble'" class="form-control" ng-model="widget.widget.zField" ng-options="option for option in widget.dsZColumns">
+                  <option value="">Seleccione una columna</option>
+                </select>
+                <span ng-show="(editForm.$submitted || editForm.zField.$touched) && editForm.zField.$invalid" class="help-block">La columna es requerida</span>
+              </div>
+            </div>
+            <div class="form-group" ng-show="widget.widget.groupValues">
+              <label class="col-sm-2 control-label">Valor</label>
+              <div class="col-sm-10">
+                <select name="zValue" ng-required="widget.widget.groupValues && widget.widget.chartType === 'bubble'" class="form-control" ng-model="widget.widget.zValue">
+                  <option value="sum">Suma</option>
+                  <option value="avg">Promedio</option>
+                  <option value="min">Mínimo</option>
+                  <option value="max">Máximo</option>
+                  <option value="count">Conteo</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
         <div class="panel-footer text-right">
           <button type="submit" ng-disabled="widget.processing" class="btn btn-primary btn-minw"><span ng-show="widget.processing" class="fa fa-cog fa-spin fa-lg fa-fw"></span>Guardar</button>
-          <button ui-sref="admin.editdashboard({id: widget.dashboardData._id})" ng-disabled="widget.processing" class="btn btn-default btn-minw">Cancelar</button>
+          <button ui-sref="admin.editdashboard({id: widget.dashboardData._id})" ng-disabled="widget.processing" class="btn btn-default btn-minw"><span ng-show="widget.processing" class="fa fa-cog fa-spin fa-lg fa-fw"></span>Cancelar</button>
         </div>
       </form>
     </div>
