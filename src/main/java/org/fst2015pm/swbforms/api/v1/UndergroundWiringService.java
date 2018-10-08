@@ -31,129 +31,129 @@ import org.semanticwb.datamanager.SWBScriptEngine;
 
 @Path ("/services/wiring")
 public class UndergroundWiringService {
-	@Context HttpServletRequest httpRequest;
-	@Context ServletContext context;
+    @Context HttpServletRequest httpRequest;
+    @Context ServletContext context;
 
-	boolean useCookies = false;
-	PMCredentialsManager mgr;
-	DBLogger logger = DBLogger.getInstance();
+    boolean useCookies = false;
+    PMCredentialsManager mgr;
+    DBLogger logger = DBLogger.getInstance();
 
-	public UndergroundWiringService() {
-		//Create credentials manager
-		mgr = new PMCredentialsManager();
-	}
+    public UndergroundWiringService() {
+        //Create credentials manager
+        mgr = new PMCredentialsManager();
+    }
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getWirings(@Context UriInfo context) {
-		HttpSession session = httpRequest.getSession();
-		SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getWirings(@Context UriInfo context) {
+        HttpSession session = httpRequest.getSession();
+        SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 
-		if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
-			return Response.status(Status.FORBIDDEN).build();
-		}
-		
-		SWBDataSource ds = engine.getDataSource("UndergroundWiring");
-		DataObject dsFetch = null;
-		DataList dlist = null;
+        if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
+            return Response.status(Status.FORBIDDEN).build();
+        }
 
-		try {
-			DataObject wrapper = new DataObject();
-			DataObject q = new DataObject();
-			MultivaluedMap<String, String> params = context.getQueryParameters();
-			for (String key : params.keySet()) {
-				q.put(key, params.getFirst(key));
-			}
+        SWBDataSource ds = engine.getDataSource("UndergroundWiring");
+        DataObject dsFetch = null;
+        DataList dlist = null;
 
-			wrapper.put("data", q);
-			dsFetch = ds.fetch(wrapper);
+        try {
+            DataObject wrapper = new DataObject();
+            DataObject q = new DataObject();
+            MultivaluedMap<String, String> params = context.getQueryParameters();
+            for (String key : params.keySet()) {
+                q.put(key, params.getFirst(key));
+            }
 
-			if (null != dsFetch) {
-				DataObject response = dsFetch.getDataObject("response");
-				if (null != response) {
-					dlist = response.getDataList("data");
-				}
-			}
-			if (!dlist.isEmpty()) {
-				return Response.ok(dlist).build();
-			} else {
-				return Response.ok("[]").build();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-		}
-	}
+            wrapper.put("data", q);
+            dsFetch = ds.fetch(wrapper);
 
-	@GET
-	@Path("/{objId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getWiring(@PathParam("objId") String oId) {
-		HttpSession session = httpRequest.getSession();
-		SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
+            if (null != dsFetch) {
+                DataObject response = dsFetch.getDataObject("response");
+                if (null != response) {
+                    dlist = response.getDataList("data");
+                }
+            }
+            if (!dlist.isEmpty()) {
+                return Response.ok(dlist).build();
+            } else {
+                return Response.ok("[]").build();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
-		if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
-			return Response.status(Status.FORBIDDEN).build();
-		}
-		
-		SWBDataSource ds = engine.getDataSource("UndergroundWiring");
-		DataObject dsFetch = null;
+    @GET
+    @Path("/{objId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getWiring(@PathParam("objId") String oId) {
+        HttpSession session = httpRequest.getSession();
+        SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
 
-		try {
-			dsFetch = ds.fetchObjById(oId);
+        if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
+            return Response.status(Status.FORBIDDEN).build();
+        }
 
-			if (null != dsFetch) {
-				return Response.ok(dsFetch).build();
-			} else {
-				return Response.status(Status.NOT_FOUND).build();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-		}
-	}
+        SWBDataSource ds = engine.getDataSource("UndergroundWiring");
+        DataObject dsFetch = null;
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response addWiring(String content) throws IOException {
-		HttpSession session = httpRequest.getSession();
-		SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
-		SWBDataSource ds = engine.getDataSource("UndergroundWiring");
+        try {
+            dsFetch = ds.fetchObjById(oId);
 
-		if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
-			return Response.status(Status.FORBIDDEN).build();
-		}
-		
-		if (null == ds) return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+            if (null != dsFetch) {
+                return Response.ok(dsFetch).build();
+            } else {
+                return Response.status(Status.NOT_FOUND).build();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
-		DataObject usr = mgr.getUser(httpRequest, false);
-		
-		try {
-			JSONArray objArray = new JSONArray(content);
-			JSONArray retArray = new JSONArray();
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addWiring(String content) throws IOException {
+        HttpSession session = httpRequest.getSession();
+        SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
+        SWBDataSource ds = engine.getDataSource("UndergroundWiring");
 
-			Iterator<Object> it = objArray.iterator();
-			while(it.hasNext()) {
-				JSONObject objData = (JSONObject)it.next();//objArray.getJSONObject(i);
-				objData.remove("_id");
+        if (!mgr.validateCredentials(httpRequest, useCookies, true)) {
+            return Response.status(Status.FORBIDDEN).build();
+        }
 
-				//Transform JSON to dataobject to avoid fail
-				DataObject obj = (DataObject) DataObject.parseJSON(objData.toString());
-				DataObject objNew = ds.addObj(obj);
-				DataObject response = objNew.getDataObject("response");
+        if (null == ds) return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 
-				if (null != response && 0 == response.getInt("status")) {
-					DataObject dlist = response.getDataObject("data");
-					JSONObject el = new JSONObject();
-					el.put("_id", dlist.getId());
-					retArray.put(el);
-				}
-			}
-			logger.logActivity(usr.getString("fullname"), usr.getId(), true, "ADD", "Cableado subterráneo");
-			return Response.ok(retArray.toString()).build();
-		} catch (JSONException jspex) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-	}
+        DataObject usr = mgr.getUser(httpRequest, false);
+
+        try {
+            JSONArray objArray = new JSONArray(content);
+            JSONArray retArray = new JSONArray();
+
+            Iterator<Object> it = objArray.iterator();
+            while(it.hasNext()) {
+                JSONObject objData = (JSONObject)it.next();//objArray.getJSONObject(i);
+                objData.remove("_id");
+
+                //Transform JSON to dataobject to avoid fail
+                DataObject obj = (DataObject) DataObject.parseJSON(objData.toString());
+                DataObject objNew = ds.addObj(obj);
+                DataObject response = objNew.getDataObject("response");
+
+                if (null != response && 0 == response.getInt("status")) {
+                    DataObject dlist = response.getDataObject("data");
+                    JSONObject el = new JSONObject();
+                    el.put("_id", dlist.getId());
+                    retArray.put(el);
+                }
+            }
+            logger.logActivity(usr.getString("fullname"), usr.getId(), true, "ADD", "Cableado subterráneo");
+            return Response.ok(retArray.toString()).build();
+        } catch (JSONException jspex) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+    }
 }

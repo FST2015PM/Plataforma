@@ -5,22 +5,17 @@
  */
 package org.fst2015pm.swbforms.api.v1;
 
-import java.io.*;
-import java.text.Normalizer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 import org.semanticwb.datamanager.DataMgr;
 import org.semanticwb.datamanager.DataObject;
 import org.semanticwb.datamanager.SWBDataSource;
 import org.semanticwb.datamanager.SWBScriptEngine;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.*;
+import java.text.Normalizer;
 
 @WebServlet(urlPatterns = {"/app/fileupload", "/app/fileupload/*"})
 @MultipartConfig
@@ -31,8 +26,7 @@ public class FileUpload extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        //PrintWriter out = response.getWriter();
+        throws ServletException, IOException {
         HttpSession session = request.getSession();
         SWBScriptEngine engine = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", session);
         SWBDataSource ds = engine.getDataSource("MagicTown");
@@ -51,9 +45,6 @@ public class FileUpload extends HttpServlet {
             }
         } else {
             DataObject data = saveData(request);
-            //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            //String date = sdf.format(new Date());
-            //data.addParam("fechaIncorporacion", date);
             pm = ds.addObj(data).getDataObject("response").getDataObject("data");
             strParameter = pm.getString("_id");
         }
@@ -106,24 +97,24 @@ public class FileUpload extends HttpServlet {
         dir.mkdirs();
         File file = new File(fileDir, fileName);
         file.createNewFile();
-        OutputStream os = new FileOutputStream(file);
 
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        //read from is to buffer
-        while ((bytesRead = is.read(buffer)) != -1) {
-            os.write(buffer, 0, bytesRead);
+        try (OutputStream os = new FileOutputStream(file)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            //read from is to buffer
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+
+            filepath = file.getAbsolutePath();
+            is.close();
+            os.flush();
         }
-
-        filepath = file.getAbsolutePath();
-        is.close();
-        os.flush();
-        os.close();
         return filepath;
     }
 
     private String getImagePath(String id) {
-        StringBuffer path = new StringBuffer(IMAGES_PATH);
+        StringBuilder path = new StringBuilder(IMAGES_PATH);
         if (id != null && !id.isEmpty() && id.lastIndexOf(":") > 0) {
             path.append("/");
             path.append(id.substring(id.lastIndexOf(":") + 1));

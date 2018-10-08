@@ -17,233 +17,233 @@ import java.util.logging.Logger;
  * @author Hasdai Pacheco
  */
 public class PMExtractorBase implements PMExtractor {
-	static Logger log = Logger.getLogger(PMExtractorBase.class.getName());
+    static Logger log = Logger.getLogger(PMExtractorBase.class.getName());
 
-	protected DataObject extractorDef;
-	private SWBDataSource ds;
-	public static enum STATUS {
-		LOADED, STARTED, EXTRACTING, STOPPED, ABORTED, FAILLOAD
-	}
-	private STATUS status;
-	private SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+    protected DataObject extractorDef;
+    private SWBDataSource ds;
+    public static enum STATUS {
+        LOADED, STARTED, EXTRACTING, STOPPED, ABORTED, FAILLOAD
+    }
+    private STATUS status;
+    private SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
 
-	/**
-	 * Constructor. Creates a new instance of PMExtractorBase.
-	 */
-	public PMExtractorBase(DataObject def) {
-		extractorDef = def;
+    /**
+     * Constructor. Creates a new instance of PMExtractorBase.
+     */
+    public PMExtractorBase(DataObject def) {
+        extractorDef = def;
 
-		String dsName = def.getString("dataSource");
-		SWBScriptEngine eng = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", null);
+        String dsName = def.getString("dataSource");
+        SWBScriptEngine eng = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", null);
 
-		ds = eng.getDataSource(dsName);
+        ds = eng.getDataSource(dsName);
 
-		if (null == ds) { //try to load it from app datasources file
-			status = STATUS.FAILLOAD;
-		} else {
-			log.info("LOADED extractor "+getName());
-			status = STATUS.LOADED;
-		}
-	}
+        if (null == ds) { //try to load it from app datasources file
+            status = STATUS.FAILLOAD;
+        } else {
+            log.info("LOADED extractor "+getName());
+            status = STATUS.LOADED;
+        }
+    }
 
-	@Override
-	public String getName() {
-		return null != extractorDef ? extractorDef.getString("name") : null;
-	}
+    @Override
+    public String getName() {
+        return null != extractorDef ? extractorDef.getString("name") : null;
+    }
 
-	/**
-	 * Sets extractor definition.
-	 * @param def Extractor definition.
-	 */
-	public void setExtractorDef(DataObject def) {
-		extractorDef = def;
-	}
+    /**
+     * Sets extractor definition.
+     * @param def Extractor definition.
+     */
+    public void setExtractorDef(DataObject def) {
+        extractorDef = def;
+    }
 
-	/**
-	 * Gets extractor definition.
-	 */
-	public DataObject getExtractorDef() {
-		return extractorDef;
-	}
+    /**
+     * Gets extractor definition.
+     */
+    public DataObject getExtractorDef() {
+        return extractorDef;
+    }
 
-	@Override
-	public String getStatus() {
-		return status.toString();
-	}
+    @Override
+    public String getStatus() {
+        return status.toString();
+    }
 
-	@Override
-	public void extract() throws IOException {
-		if (status == STATUS.EXTRACTING) return; //Prevent data overwrite
-		status = STATUS.EXTRACTING;
+    @Override
+    public void extract() throws IOException {
+        if (status == STATUS.EXTRACTING) return; //Prevent data overwrite
+        status = STATUS.EXTRACTING;
 
-		// Get scriptObject configuration parameters
-		String fileUrl = extractorDef.getString("fileLocation"); //Local path or URL of remote file
-		boolean zipped = Boolean.valueOf(extractorDef.getString("zipped")); //Zipped flag
-		boolean remote = false;
+        // Get scriptObject configuration parameters
+        String fileUrl = extractorDef.getString("fileLocation"); //Local path or URL of remote file
+        boolean zipped = Boolean.valueOf(extractorDef.getString("zipped")); //Zipped flag
+        boolean remote = false;
 
-		if (null == fileUrl || fileUrl.isEmpty()) {
-			status = STATUS.STARTED;
-			return;
-		}
+        if (null == fileUrl || fileUrl.isEmpty()) {
+            status = STATUS.STARTED;
+            return;
+        }
 
-		//Prepare file system
-		String uuid = UUID.randomUUID().toString().replace("-", "");
-		String destPath = org.apache.commons.io.FileUtils.getTempDirectoryPath();
-		if (!destPath.endsWith("/")) destPath += "/";
-		destPath += uuid;
+        //Prepare file system
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        String destPath = org.apache.commons.io.FileUtils.getTempDirectoryPath();
+        if (!destPath.endsWith("/")) destPath += "/";
+        destPath += uuid;
 
-		File destDir = new File(destPath);
+        File destDir = new File(destPath);
 
-		//Check if URL is provided
-		URL url = null;
-		try {
-			url = new URL(fileUrl);
-			remote = true;
-		} catch (MalformedURLException muex) { }
+        //Check if URL is provided
+        URL url = null;
+        try {
+            url = new URL(fileUrl);
+            remote = true;
+        } catch (MalformedURLException muex) { }
 
-		fileUrl = remote ? fileUrl : DataMgr.getApplicationPath() + fileUrl;
+        fileUrl = remote ? fileUrl : DataMgr.getApplicationPath() + fileUrl;
 
-		//Get local or remote file, store in localPath
-		if (remote) {
-			log.info("PMExtractor :: Downloading resource "+ url +"...");
-			destDir = new File(destPath,"tempFile"+(zipped ? "" : "." + getType().toLowerCase()));
+        //Get local or remote file, store in localPath
+        if (remote) {
+            log.info("PMExtractor :: Downloading resource "+ url +"...");
+            destDir = new File(destPath,"tempFile"+(zipped ? "" : "." + getType().toLowerCase()));
 
-			try {
-				org.apache.commons.io.FileUtils.copyURLToFile(url, destDir, 5000, 5000);
-			} catch (IOException ex) {
-				ex.printStackTrace();
-				status = STATUS.STARTED;
-				return;
-			}
+            try {
+                org.apache.commons.io.FileUtils.copyURLToFile(url, destDir, 5000, 5000);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                status = STATUS.STARTED;
+                return;
+            }
 
-			fileUrl = destPath + "/tempFile" + (zipped ? "" : "." + getType().toLowerCase());
-		}
+            fileUrl = destPath + "/tempFile" + (zipped ? "" : "." + getType().toLowerCase());
+        }
 
-		if (zipped) {
-			String zipPath = extractorDef.getString("zipPath");
-			if (null == zipPath || zipPath.isEmpty()) { //No relative path provided
-				org.apache.commons.io.FileUtils.deleteQuietly(new File(destPath));
-				status = STATUS.STARTED;
-				return;
-			}
-			log.info("PMExtractor :: Inflating file...");
-			FSTUtils.ZIP.extractAll(fileUrl, destPath);
-			//destPath += zipPath;
-		}
+        if (zipped) {
+            String zipPath = extractorDef.getString("zipPath");
+            if (null == zipPath || zipPath.isEmpty()) { //No relative path provided
+                org.apache.commons.io.FileUtils.deleteQuietly(new File(destPath));
+                status = STATUS.STARTED;
+                return;
+            }
+            log.info("PMExtractor :: Inflating file...");
+            FSTUtils.ZIP.extractAll(fileUrl, destPath);
+            //destPath += zipPath;
+        }
 
-		//Store data
-		log.info("PMExtractor :: Storing data...");
+        //Store data
+        log.info("PMExtractor :: Storing data...");
 
-		store(destPath);
-		status = STATUS.STARTED;
+        store(destPath);
+        status = STATUS.STARTED;
 
-		//Update execution date
-		extractorDef.put("lastExecution", sdf.format(new Date()));
+        //Update execution date
+        extractorDef.put("lastExecution", sdf.format(new Date()));
 
-		//Update DBDatasource metadata
-		SWBScriptEngine dbeng = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", null);
-		SWBDataSource dbds = dbeng.getDataSource("DBDataSource");
-		if (null != dbds) {
-			DataObject dsFetch = null;
-			DataList dlist = null;
+        //Update DBDatasource metadata
+        SWBScriptEngine dbeng = DataMgr.initPlatform("/WEB-INF/dbdatasources.js", null);
+        SWBDataSource dbds = dbeng.getDataSource("DBDataSource");
+        if (null != dbds) {
+            DataObject dsFetch = null;
+            DataList dlist = null;
 
-			try {
-				DataObject wrapper = new DataObject();
-				DataObject q = new DataObject();
-				q.put("name", extractorDef.getString("dataSource"));
+            try {
+                DataObject wrapper = new DataObject();
+                DataObject q = new DataObject();
+                q.put("name", extractorDef.getString("dataSource"));
 
-				wrapper.put("data", q);
-				dsFetch = dbds.fetch(wrapper);
+                wrapper.put("data", q);
+                dsFetch = dbds.fetch(wrapper);
 
-				if (null != dsFetch) {
-					DataObject response = dsFetch.getDataObject("response");
-					if (null != response) {
-						dlist = response.getDataList("data");
-					}
-				}
-				
-				if (!dlist.isEmpty()) {
-					DataObject dsource = dlist.getDataObject(0);
-					dsource.put("updated", sdf.format(new Date()));
-					dbds.updateObj(dsource);
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-		
-		ExtractorManager.datasource.updateObj(extractorDef);
-	}
+                if (null != dsFetch) {
+                    DataObject response = dsFetch.getDataObject("response");
+                    if (null != response) {
+                        dlist = response.getDataList("data");
+                    }
+                }
 
-	public SWBDataSource getDataSource() {
-		return ds;
-	}
+                if (!dlist.isEmpty()) {
+                    DataObject dsource = dlist.getDataObject(0);
+                    dsource.put("updated", sdf.format(new Date()));
+                    dbds.updateObj(dsource);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 
-	@Override
-	public boolean canStart() {
-		return status != STATUS.FAILLOAD && (status == STATUS.STARTED || status == STATUS.STOPPED || status == STATUS.LOADED);
-	}
+        ExtractorManager.datasource.updateObj(extractorDef);
+    }
 
-	@Override
-	public synchronized void start() {
-		if (canStart()) {
-			log.info("PMExtractor :: Started extractor " + getName());
-			try {
-				extract();
-			} catch (IOException ioex) {
-				status = STATUS.STARTED;
-				ioex.printStackTrace();
-			}
-		}
-	}
+    public SWBDataSource getDataSource() {
+        return ds;
+    }
 
-	@Override
-	public synchronized void stop() {
-		status = STATUS.STOPPED;
-	}
+    @Override
+    public boolean canStart() {
+        return status != STATUS.FAILLOAD && (status == STATUS.STARTED || status == STATUS.STOPPED || status == STATUS.LOADED);
+    }
 
-	/**
-	 * Sets extractor status flag.
-	 * @param st Status flag.
-	 */
-	public synchronized void setStatus(STATUS st) {
-		status = st;
-	}
+    @Override
+    public synchronized void start() {
+        if (canStart()) {
+            log.info("PMExtractor :: Started extractor " + getName());
+            try {
+                extract();
+            } catch (IOException ioex) {
+                status = STATUS.STARTED;
+                ioex.printStackTrace();
+            }
+        }
+    }
 
-	/**
-	 * Stores data in extracting phase
-	 * @param filePath
-	 * @throws IOException
-	 */
-	public void store(String filePath) throws IOException {
-		throw new UnsupportedOperationException("Method not implemented");
-	}
+    @Override
+    public synchronized void stop() {
+        status = STATUS.STOPPED;
+    }
 
-	public Object getTypedValue(String type, String source) {
-		switch(type) {
-			case "FLOAT": {
-				return FSTUtils.DATA.parseFloat(source);
-			}
-			case "INTEGER": {
-				return FSTUtils.DATA.parseInt(source);
-			}
-			case "DOUBLE": {
-				return FSTUtils.DATA.parseDouble(source);
-			}
-			case "LONG": {
-				return FSTUtils.DATA.parseLong(source);
-			}
-			case "BOOLEAN": {
-				return FSTUtils.DATA.parseBoolean(source);
-			}
-			default: {
-				return source;
-			}
-		}
-	}
+    /**
+     * Sets extractor status flag.
+     * @param st Status flag.
+     */
+    public synchronized void setStatus(STATUS st) {
+        status = st;
+    }
 
-	public String getType() {
-		throw new UnsupportedOperationException("Method not implemented");
-	}
+    /**
+     * Stores data in extracting phase
+     * @param filePath
+     * @throws IOException
+     */
+    public void store(String filePath) throws IOException {
+        throw new UnsupportedOperationException("Method not implemented");
+    }
+
+    public Object getTypedValue(String type, String source) {
+        switch(type) {
+            case "FLOAT": {
+                return FSTUtils.DATA.parseFloat(source);
+            }
+            case "INTEGER": {
+                return FSTUtils.DATA.parseInt(source);
+            }
+            case "DOUBLE": {
+                return FSTUtils.DATA.parseDouble(source);
+            }
+            case "LONG": {
+                return FSTUtils.DATA.parseLong(source);
+            }
+            case "BOOLEAN": {
+                return FSTUtils.DATA.parseBoolean(source);
+            }
+            default: {
+                return source;
+            }
+        }
+    }
+
+    public String getType() {
+        throw new UnsupportedOperationException("Method not implemented");
+    }
 
 }

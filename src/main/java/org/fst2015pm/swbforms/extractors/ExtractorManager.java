@@ -20,7 +20,7 @@ import org.semanticwb.datamanager.SWBScriptEngine;
  * @modified juan.fernandez
  */
 public class ExtractorManager {
-	private static Logger log = Logger.getLogger(ExtractorManager.class.getName());
+    private static Logger log = Logger.getLogger(ExtractorManager.class.getName());
     protected static ConcurrentHashMap<String, PMExtractor> hmExtractor = new ConcurrentHashMap<>(); //id del DataObject, instancia del extractor
     protected static SWBDataSource datasource = null;
     private static SWBScriptEngine engine = null;
@@ -38,7 +38,7 @@ public class ExtractorManager {
      * Initializes extractor manager
      */
     public void init() {
-    	log.info("Starting PM extractor manager");
+        log.info("Starting PM extractor manager");
         engine = DataMgr.initPlatform(null);
         datasource = engine.getDataSource("Extractor");
 
@@ -60,13 +60,13 @@ public class ExtractorManager {
                         className = dobj.getString("class");
                         extractor = null;
                         if (null != className) {
-                        	try {
-                        		Class clz = Class.forName(className);
-                        		Constructor c = clz.getConstructor(DataObject.class);
-                        		extractor = (PMExtractor) c.newInstance(dobj);
-                        	} catch (Exception e) {
-                        		e.printStackTrace();
-                        	}
+                            try {
+                                Class clz = Class.forName(className);
+                                Constructor c = clz.getConstructor(DataObject.class);
+                                extractor = (PMExtractor) c.newInstance(dobj);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
                             /*if (className.endsWith("CSVExtractor")) {
                                 extractor = new CSVExtractor(dobj);
@@ -97,12 +97,12 @@ public class ExtractorManager {
      * @param extractorDefID DataObject containing definition of Extractor.
      */
     public void loadExtractor(String extractorDefID) {
-    	try {
-    		DataObject dob = datasource.fetchObjById(extractorDefID);
-    		loadExtractor(dob);
-    	} catch (IOException ioex) {
-    		System.out.println("Error al cargar definición del extractor");
-    	}
+        try {
+            DataObject dob = datasource.fetchObjById(extractorDefID);
+            loadExtractor(dob);
+        } catch (IOException ioex) {
+            System.out.println("Error al cargar definición del extractor");
+        }
     }
 
     /**
@@ -116,22 +116,22 @@ public class ExtractorManager {
             PMExtractor extractor = hmExtractor.get(extractorConfig.getId());
             String status = null;
             if (null != extractor) {  //Revisando el tipo de extractor para saber su estaus.
-            	status = extractor.getStatus();
+                status = extractor.getStatus();
                 //if (null == status && status.equals("EXTRACTING")) {
-                    // el extractor tiene el status de EXTRACTING, se detiene o que se debería de hacer ??
-                    //extractor.stop();
+                // el extractor tiene el status de EXTRACTING, se detiene o que se debería de hacer ??
+                //extractor.stop();
                 //}
             }
 
             if (null != status && extractor.canStart() || null == extractor) {
                 if (null != className) { // Generando la nueva instancia del extractor
-                	try {
-                		Class clz = Class.forName(className);
-                		Constructor c = clz.getConstructor(DataObject.class);
-                		extractor = (PMExtractor) c.newInstance(extractorConfig);
-                	} catch (Exception e) {
-                		e.printStackTrace();
-                	}
+                    try {
+                        Class clz = Class.forName(className);
+                        Constructor c = clz.getConstructor(DataObject.class);
+                        extractor = (PMExtractor) c.newInstance(extractorConfig);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 	/*if (className.endsWith("CSVExtractor")) {
                         extractor = new CSVExtractor(extractorConfig);
                     } else if (className.endsWith("DBFExtractor")) {
@@ -157,14 +157,14 @@ public class ExtractorManager {
         }
         return null!=ret?ret.getStatus():null;
     }
-    
+
     /**
      * Gets name of an extractor
      * @param extractorId
      * @return
      */
     public String getExtractorName(String extractorId) {
-    	PMExtractor ret;
+        PMExtractor ret;
         if (null != extractorId) {
             ret = hmExtractor.get(extractorId);
             if (null != ret) {
