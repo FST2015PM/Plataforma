@@ -228,7 +228,7 @@
                                 cache: false,
                                 files: [
                                     'lib/bootbox/bootbox.min.js',
-                                    'lib/angular-bootstrap/ui-bootstrap.min.js',
+                                    'lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
                                     'lib/d3/dist/d3.min.js',
                                     'lib/datatables/media/js/jquery.dataTables.min.js',
                                     'lib/gridster/dist/jquery.gridster.min.js',
@@ -298,7 +298,7 @@
                                 cache: false,
                                 files: [
                                     'lib/bootbox/bootbox.js',
-                                    'lib/angular-bootstrap/ui-bootstrap.min.js',
+                                    'lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
                                     'lib/d3/dist/d3.min.js',
                                     'lib/datatables/media/js/jquery.dataTables.min.js',
                                     'lib/gridster/dist/jquery.gridster.min.js',
@@ -445,7 +445,7 @@
                                 cache: false,
                                 files: [
                                     'lib/bootbox/bootbox.js',
-                                    'lib/angular-bootstrap/ui-bootstrap.min.js',
+                                    'lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
                                     'lib/d3/dist/d3.min.js',
                                     'lib/datatables/media/js/jquery.dataTables.min.js',
                                     'lib/gridster/dist/jquery.gridster.min.js',
