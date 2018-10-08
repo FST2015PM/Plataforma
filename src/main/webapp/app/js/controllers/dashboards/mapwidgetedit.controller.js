@@ -13,6 +13,7 @@
         cnt.addedLayers = [];
         cnt.layerList = [];
         cnt.iLayer;
+        cnt.toggleStatus = {isOpen: false};
 
         $GeoLayer.listGeoLayers()
             .then(function(res) {

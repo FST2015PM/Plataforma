@@ -51,11 +51,11 @@
 
                     var widgetIdx;
                     var addedIds = [];
-                    cnt.dashboardData.widgets.forEach(function(item, idx) {
-                        if (item.id === $stateParams.wid) {
-                        widgetIdx = idx;
-                    }
-                });
+                        cnt.dashboardData.widgets.forEach(function(item, idx) {
+                            if (item.id === $stateParams.wid) {
+                            widgetIdx = idx;
+                        }
+                    });
 
                     cnt.widget = cnt.dashboardData.widgets.splice(widgetIdx, 1)[0];
                     cnt.widget.chartType = cnt.widget.chartType || "bar";
@@ -71,15 +71,16 @@
                         var cols = result.data.data[0].columns || [];
                         //cnt.dsColumns = result.data.data[0].columns || [];
 
-                        console.log(cnt.dsYColumns);
                         cnt.dsYColumns = cols.filter(function(item) {
-                            return item.type === "integer" || item.type === "float" || item.type === "double" || item.type === "long";
+                            return item.type === "int" || item.type === "integer" || item.type === "float" || item.type === "double" || item.type === "long";
                         }).map(function(item) {
                             return item.name;
                         });
 
+                        console.log(cnt.dsYColumns);
+
                         cnt.dsZColumns = cols.filter(function(item) {
-                            return item.type === "integer" || item.type === "float" || item.type === "double" || item.type === "long";
+                            return item.type === "int" || item.type === "integer" || item.type === "float" || item.type === "double" || item.type === "long";
                         }).map(function(item) {
                             return item.name;
                         });
